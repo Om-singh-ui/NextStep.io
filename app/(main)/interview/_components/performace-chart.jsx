@@ -19,10 +19,10 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { useEffect, useState, useRef } from "react";
-import { format, subDays } from "date-fns";
-import { motion, AnimatePresence } from "framer-motion";
-import { TrendingUp, Zap, Target, Activity, ChevronRight, Info, BarChart3 } from "lucide-react";
+import { useEffect, useState, useRef, useMemo, useCallback } from "react";
+import { format } from "date-fns";
+import { motion } from "framer-motion";
+import { TrendingUp, Zap, Target, Activity, Info, BarChart3 } from "lucide-react";
 
 // Custom tooltip component
 const CustomTooltip = ({ active, payload, label }) => {
@@ -61,7 +61,7 @@ const CustomTooltip = ({ active, payload, label }) => {
 };
 
 // Custom Animated Dot
-const AnimatedDot = ({ cx, cy, payload, index }) => {
+const AnimatedDot = ({ cx, cy, index }) => {
   return (
     <motion.circle
       key={`dot-${index}`}
@@ -88,6 +88,34 @@ export default function PerformanceChart({ assessments }) {
   const [isHovered, setIsHovered] = useState(false);
   const chartRef = useRef(null);
 
+  // Memoized data processing
+  const processedData = useMemo(() => {
+    if (!assessments?.length) return [];
+    
+    return assessments.map((assessment, index) => ({
+      date: format(new Date(assessment.createdAt), "MMM dd"),
+      fullDate: format(new Date(assessment.createdAt), "MMM dd, yyyy"),
+      score: assessment.quizScore,
+      index: index,
+    }));
+  }, [assessments]);
+
+  useEffect(() => {
+    if (processedData.length) {
+      setChartData(processedData);
+      
+      const total = processedData.reduce((sum, data) => sum + data.score, 0);
+      const avg = total / processedData.length;
+      setAverageScore(avg);
+      
+      if (processedData.length > 1) {
+        const firstScore = processedData[0].score;
+        const lastScore = processedData[processedData.length - 1].score;
+        setTrend(lastScore > firstScore ? 1 : lastScore < firstScore ? -1 : 0);
+      }
+    }
+  }, [processedData]);
+
   useEffect(() => {
     const checkDarkMode = () => {
       if (typeof window !== 'undefined') {
@@ -111,29 +139,7 @@ export default function PerformanceChart({ assessments }) {
     return () => observer.disconnect();
   }, []);
 
-  useEffect(() => {
-    if (assessments?.length) {
-      const formattedData = assessments.map((assessment, index) => ({
-        date: format(new Date(assessment.createdAt), "MMM dd"),
-        fullDate: format(new Date(assessment.createdAt), "MMM dd, yyyy"),
-        score: assessment.quizScore,
-        index: index,
-      }));
-      setChartData(formattedData);
-      
-      const total = assessments.reduce((sum, assessment) => sum + assessment.quizScore, 0);
-      const avg = total / assessments.length;
-      setAverageScore(avg);
-      
-      if (assessments.length > 1) {
-        const firstScore = assessments[0].quizScore;
-        const lastScore = assessments[assessments.length - 1].quizScore;
-        setTrend(lastScore > firstScore ? 1 : lastScore < firstScore ? -1 : 0);
-      }
-    }
-  }, [assessments]);
-
-  const getTrendText = () => {
+  const getTrendText = useCallback(() => {
     if (chartData.length < 2) return "Not enough data";
     
     const firstScore = chartData[0].score;
@@ -148,12 +154,45 @@ export default function PerformanceChart({ assessments }) {
     } else {
       return "No change in performance";
     }
-  };
+  }, [chartData]);
 
   const gridColor = isDarkMode ? "hsl(215, 28%, 17%)" : "hsl(220, 13%, 91%)";
   const textColor = isDarkMode ? "hsl(215, 20%, 65%)" : "hsl(215, 16%, 47%)";
   const primaryColor = "hsl(var(--primary))";
   const mutedColor = isDarkMode ? "hsl(215, 20%, 65%)" : "hsl(215, 16%, 47%)";
+
+  // Memoized chart insights
+  const chartInsights = useMemo(() => {
+    if (chartData.length <= 2) return null;
+    
+    const insights = [];
+    if (averageScore > 75) {
+      insights.push({
+        color: "green",
+        text: "You're consistently scoring above average - great job!"
+      });
+    }
+    if (trend > 0) {
+      insights.push({
+        color: "green",
+        text: "Your scores are improving - keep up the good work!"
+      });
+    }
+    if (chartData.some(d => d.score >= 90)) {
+      insights.push({
+        color: "amber",
+        text: "You've achieved mastery in some topics"
+      });
+    }
+    if (Math.max(...chartData.map(d => d.score)) - Math.min(...chartData.map(d => d.score)) > 30) {
+      insights.push({
+        color: "rose",
+        text: "Your performance varies significantly across topics"
+      });
+    }
+    
+    return insights;
+  }, [chartData, averageScore, trend]);
 
   return (
     <motion.div
@@ -390,7 +429,7 @@ export default function PerformanceChart({ assessments }) {
           )}
           
           {/* Insights section */}
-          {chartData.length > 2 && (
+          {chartInsights && chartInsights.length > 0 && (
             <motion.div 
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -402,30 +441,12 @@ export default function PerformanceChart({ assessments }) {
                 <span>Performance Insights</span>
               </div>
               <ul className="text-xs text-muted-foreground space-y-1.5">
-                {averageScore > 75 && (
-                  <li className="flex items-start">
-                    <span className="text-green-500 mr-2">•</span>
-                    You're consistently scoring above average - great job!
+                {chartInsights.map((insight, index) => (
+                  <li key={index} className="flex items-start">
+                    <span className={`text-${insight.color}-500 mr-2`}>•</span>
+                    {insight.text}
                   </li>
-                )}
-                {trend > 0 && (
-                  <li className="flex items-start">
-                    <span className="text-green-500 mr-2">•</span>
-                    Your scores are improving - keep up the good work!
-                  </li>
-                )}
-                {chartData.some(d => d.score >= 90) && (
-                  <li className="flex items-start">
-                    <span className="text-amber-500 mr-2">•</span>
-                    You've achieved mastery in some topics
-                  </li>
-                )}
-                {Math.max(...chartData.map(d => d.score)) - Math.min(...chartData.map(d => d.score)) > 30 && (
-                  <li className="flex items-start">
-                    <span className="text-rose-500 mr-2">•</span>
-                    Your performance varies significantly across topics
-                  </li>
-                )}
+                ))}
               </ul>
             </motion.div>
           )}

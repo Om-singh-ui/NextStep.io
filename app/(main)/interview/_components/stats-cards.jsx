@@ -3,59 +3,70 @@
 import { Brain, Target, Trophy, TrendingUp, TrendingDown, Sparkles } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { motion } from "framer-motion";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 
-export default function StatsCards({ assessments }) {
+export default function StatsCards({ assessments = [] }) {
   const [hoveredCard, setHoveredCard] = useState(null);
 
-  const getAverageScore = () => {
-    if (!assessments?.length) return 0;
-    const total = assessments.reduce((sum, a) => sum + a.quizScore, 0);
-    return (total / assessments.length).toFixed(1);
-  };
+  // Memoize calculations to prevent unnecessary re-renders
+  const { averageScore, totalQuestions, latestAssessment, scoreTrend } = useMemo(() => {
+    const safeAssessments = assessments || [];
+    
+    // Calculate average score
+    const avgScore = safeAssessments.length 
+      ? (safeAssessments.reduce((sum, a) => sum + (a.quizScore || 0), 0) / safeAssessments.length).toFixed(1)
+      : 0;
+    
+    // Calculate total questions
+    const totalQ = safeAssessments.reduce((sum, a) => sum + ((a.questions && a.questions.length) || 0), 0);
+    
+    // Get latest assessment
+    const latest = safeAssessments[0] || null;
+    
+    // Calculate score trend
+    let trend = 0;
+    if (safeAssessments.length >= 2) {
+      const [first, second] = safeAssessments.slice(0, 2);
+      const trendValue = (first.quizScore || 0) - (second.quizScore || 0);
+      trend = trendValue > 0 ? 1 : trendValue < 0 ? -1 : 0;
+    }
+    
+    return {
+      averageScore: avgScore,
+      totalQuestions: totalQ,
+      latestAssessment: latest,
+      scoreTrend: trend
+    };
+  }, [assessments]);
 
-  const getLatestAssessment = () => assessments?.[0] || null;
-
-  const getTotalQuestions = () => {
-    if (!assessments?.length) return 0;
-    return assessments.reduce((sum, a) => sum + a.questions.length, 0);
-  };
-
-  const getScoreTrend = () => {
-    if (!assessments?.length || assessments.length < 2) return 0;
-    const [latest, previous] = assessments.slice(0, 2);
-    const trend = latest.quizScore - previous.quizScore;
-    return trend > 0 ? 1 : trend < 0 ? -1 : 0;
-  };
-
-  const cards = [
+  const cards = useMemo(() => [
     {
       title: "Average Score",
-      value: `${getAverageScore()}%`,
+      value: `${averageScore}%`,
       subtitle: "Across all assessments",
       icon: <Trophy className="h-6 w-6" />,
       color: "from-amber-400 to-orange-500",
-      progress: getAverageScore(),
-      trend: getScoreTrend(),
+      progress: averageScore,
+      trend: scoreTrend,
     },
     {
       title: "Questions Practiced",
-      value: getTotalQuestions().toLocaleString(),
+      value: totalQuestions.toLocaleString(),
       subtitle: "Total questions answered",
       icon: <Brain className="h-6 w-6" />,
       color: "from-blue-400 to-indigo-500",
-      progress: Math.min(100, (getTotalQuestions() / 500) * 100),
+      progress: Math.min(100, (totalQuestions / 500) * 100),
     },
     {
       title: "Latest Score",
-      value: `${getLatestAssessment()?.quizScore.toFixed(1) || 0}%`,
+      value: `${latestAssessment?.quizScore?.toFixed(1) || 0}%`,
       subtitle: "Most recent assessment",
       icon: <Target className="h-6 w-6" />,
       color: "from-emerald-400 to-green-500",
-      progress: getLatestAssessment()?.quizScore || 0,
-      trend: getScoreTrend(),
+      progress: latestAssessment?.quizScore || 0,
+      trend: scoreTrend,
     },
-  ];
+  ], [averageScore, totalQuestions, latestAssessment, scoreTrend]);
 
   const FloatingParticles = ({ cardIndex, isHovered }) => (
     <>
@@ -97,17 +108,15 @@ export default function StatsCards({ assessments }) {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, delay: index * 0.15 }}
-          whileHover={{ scale: 1.05, rotateX: 3, rotateY: -3 }}
+          whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.97 }}
           onMouseEnter={() => setHoveredCard(index)}
           onMouseLeave={() => setHoveredCard(null)}
-          className={`relative rounded-2xl border border-transparent transition-all duration-300 cursor-pointer overflow-hidden bg-transparent`}
+          className="relative rounded-2xl border border-transparent transition-all duration-300 cursor-pointer overflow-hidden bg-transparent"
           style={{
-            boxShadow:
-              hoveredCard === index
-                ? `0 0 20px 4px var(--tw-gradient-stops)`
-                : "0 4px 15px rgba(0,0,0,0.08)",
-            transformStyle: "preserve-3d",
+            boxShadow: hoveredCard === index
+              ? "0 0 20px 4px rgba(0, 0, 0, 0.1)"
+              : "0 4px 15px rgba(0,0,0,0.08)",
           }}
         >
           <motion.div
@@ -184,7 +193,7 @@ export default function StatsCards({ assessments }) {
                       />
                     </svg>
                     <div className="absolute inset-0 flex items-center justify-center text-xs font-bold text-gray-700 dark:text-gray-300">
-                      {card.progress}%
+                      {Math.round(card.progress)}%
                     </div>
 
                     {card.progress > 80 && (
@@ -209,7 +218,7 @@ export default function StatsCards({ assessments }) {
                   </div>
                 </div>
 
-                {card.trend !== undefined && card.trend !== 0 && (
+                {card.trend !== undefined && card.trend !== 0 && assessments && assessments.length >= 2 && (
                   <motion.div
                     initial={{ opacity: 0, y: 8 }}
                     animate={{ opacity: 1, y: 0 }}

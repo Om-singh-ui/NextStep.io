@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { format, formatDistanceToNow } from "date-fns";
+import { useState, useMemo } from "react";
+import { format, formatDistanceToNow, isValid } from "date-fns";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
@@ -22,41 +22,74 @@ import { Badge } from "@/components/ui/badge";
 import QuizResult from "./quiz-result";
 import { Trophy, Clock, BarChart3, ChevronRight, Sparkles, Zap } from "lucide-react";
 
-export default function QuizList({ assessments }) {
+export default function QuizList({ assessments = [] }) {
   const router = useRouter();
   const [selectedQuiz, setSelectedQuiz] = useState(null);
   const [hoveredCard, setHoveredCard] = useState(null);
 
+  // Memoize score calculations to prevent unnecessary re-renders
+  const scoreConfigs = useMemo(() => ({
+    high: { 
+      threshold: 80, 
+      badgeClass: "bg-gradient-to-r from-green-400 via-emerald-500 to-green-600", 
+      colorClass: "from-green-400/15 via-emerald-500/15 to-green-600/15", 
+      gradientClass: "bg-gradient-to-b from-green-400 to-emerald-600", 
+      textColor: "text-green-600", 
+      bgColor: "bg-green-500",
+      label: "Excellent"
+    },
+    medium: { 
+      threshold: 60, 
+      badgeClass: "bg-gradient-to-r from-amber-400 via-orange-500 to-orange-600", 
+      colorClass: "from-amber-400/15 via-orange-500/15 to-orange-600/15", 
+      gradientClass: "bg-gradient-to-b from-amber-400 to-orange-600", 
+      textColor: "text-amber-600", 
+      bgColor: "bg-amber-500",
+      label: "Good"
+    },
+    low: { 
+      threshold: 0, 
+      badgeClass: "bg-gradient-to-r from-rose-400 via-pink-500 to-fuchsia-600", 
+      colorClass: "from-rose-400/15 via-pink-500/15 to-fuchsia-600/15", 
+      gradientClass: "bg-gradient-to-b from-rose-400 to-pink-600", 
+      textColor: "text-rose-600", 
+      bgColor: "bg-rose-500",
+      label: "Needs Improvement"
+    }
+  }), []);
+
+  const getScoreConfig = (score) => {
+    if (score >= scoreConfigs.high.threshold) return scoreConfigs.high;
+    if (score >= scoreConfigs.medium.threshold) return scoreConfigs.medium;
+    return scoreConfigs.low;
+  };
+
   const getScoreBadge = (score) => {
-    if (score >= 80)
-      return (
-        <Badge className="bg-gradient-to-r from-green-400 via-emerald-500 to-green-600 text-white border-0 px-3 py-1 shadow-md animate-pulse">
-          Excellent
-        </Badge>
-      );
-    if (score >= 60)
-      return (
-        <Badge className="bg-gradient-to-r from-amber-400 via-orange-500 to-orange-600 text-white border-0 px-3 py-1 shadow-md animate-pulse">
-          Good
-        </Badge>
-      );
+    const config = getScoreConfig(score);
     return (
-      <Badge className="bg-gradient-to-r from-rose-400 via-pink-500 to-fuchsia-600 text-white border-0 px-3 py-1 shadow-md animate-pulse">
-        Needs Improvement
+      <Badge className={`${config.badgeClass} text-white border-0 px-3 py-1 shadow-md animate-pulse`}>
+        {config.label}
       </Badge>
     );
   };
 
-  const getScoreColor = (score) => {
-    if (score >= 80) return "from-green-400/15 via-emerald-500/15 to-green-600/15";
-    if (score >= 60) return "from-amber-400/15 via-orange-500/15 to-orange-600/15";
-    return "from-rose-400/15 via-pink-500/15 to-fuchsia-600/15";
+  // Safe date formatting to prevent errors with invalid dates
+  const formatDate = (dateString) => {
+    try {
+      const date = new Date(dateString);
+      return isValid(date) ? format(date, "MMMM dd, yyyy") : "Invalid date";
+    } catch (error) {
+      return "Invalid date";
+    }
   };
 
-  const getScoreGradient = (score) => {
-    if (score >= 80) return "bg-gradient-to-b from-green-400 to-emerald-600";
-    if (score >= 60) return "bg-gradient-to-b from-amber-400 to-orange-600";
-    return "bg-gradient-to-b from-rose-400 to-pink-600";
+  const formatDateDistance = (dateString) => {
+    try {
+      const date = new Date(dateString);
+      return isValid(date) ? formatDistanceToNow(date, { addSuffix: true }) : "";
+    } catch (error) {
+      return "";
+    }
   };
 
   return (
@@ -67,16 +100,11 @@ export default function QuizList({ assessments }) {
         transition={{ duration: 0.5 }}
         className="relative"
       >
-        {/* Floating sparkles */}
+        {/* Reduced floating elements for better performance */}
         <motion.div
           className="absolute top-0 left-0 w-2 h-2 bg-yellow-400 rounded-full blur-sm"
           animate={{ y: [0, -6, 0], x: [0, 3, 0] }}
           transition={{ repeat: Infinity, duration: 3, ease: "easeInOut" }}
-        />
-        <motion.div
-          className="absolute top-2 right-10 w-2 h-2 bg-indigo-400 rounded-full blur-sm"
-          animate={{ y: [0, 5, 0], x: [0, -4, 0] }}
-          transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
         />
 
         <Card className="relative overflow-hidden border-0 shadow-2xl bg-gradient-to-br from-slate-50 via-white to-indigo-50 dark:from-slate-900 dark:via-slate-950 dark:to-indigo-900/40">
@@ -108,6 +136,7 @@ export default function QuizList({ assessments }) {
                 <Button
                   onClick={() => router.push("/interview/mock")}
                   className="relative overflow-hidden px-8 py-3 text-white bg-gradient-to-r from-indigo-500 via-purple-500 to-fuchsia-500 rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 group"
+                  aria-label="Start a new quiz"
                 >
                   <span className="relative z-10 flex items-center gap-2 font-medium">
                     <Zap size={18} className="group-hover:animate-pulse" />
@@ -125,7 +154,7 @@ export default function QuizList({ assessments }) {
           </CardHeader>
 
           <CardContent className="relative z-10">
-            {assessments?.length === 0 ? (
+            {assessments.length === 0 ? (
               <div className="text-center py-12">
                 <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-indigo-100 to-purple-100 dark:from-indigo-900/40 dark:to-purple-900/40 rounded-full mb-4 shadow-inner">
                   <Trophy className="h-8 w-8 text-indigo-500" />
@@ -146,9 +175,11 @@ export default function QuizList({ assessments }) {
             ) : (
               <div className="space-y-4">
                 <AnimatePresence>
-                  {assessments?.map((assessment, i) => (
+                  {assessments.map((assessment, i) => {
+                    const scoreConfig = getScoreConfig(assessment.quizScore);
+                    return (
                     <motion.div
-                      key={assessment.id}
+                      key={assessment.id || i}
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -20 }}
@@ -159,10 +190,16 @@ export default function QuizList({ assessments }) {
                       onHoverEnd={() => setHoveredCard(null)}
                     >
                       <Card
-                        className={`cursor-pointer border-0 shadow-md hover:shadow-2xl transition-all duration-300 bg-gradient-to-br ${getScoreColor(
-                          assessment.quizScore
-                        )} relative overflow-hidden group backdrop-blur-sm`}
+                        className={`cursor-pointer border-0 shadow-md hover:shadow-2xl transition-all duration-300 bg-gradient-to-br ${scoreConfig.colorClass} relative overflow-hidden group backdrop-blur-sm`}
                         onClick={() => setSelectedQuiz(assessment)}
+                        role="button"
+                        tabIndex={0}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter' || e.key === ' ') {
+                            setSelectedQuiz(assessment);
+                          }
+                        }}
+                        aria-label={`View details for quiz ${i + 1} with score ${assessment.quizScore}%`}
                       >
                         <motion.div
                           className="absolute inset-0 bg-gradient-to-r from-white/5 to-transparent opacity-0 group-hover:opacity-100 rounded-xl"
@@ -172,9 +209,9 @@ export default function QuizList({ assessments }) {
 
                         <div className="absolute left-0 top-0 bottom-0 w-1.5">
                           <motion.div
-                            className={`w-full ${getScoreGradient(assessment.quizScore)}`}
+                            className={`w-full ${scoreConfig.gradientClass}`}
                             initial={{ height: "0%" }}
-                            animate={{ height: `${assessment.quizScore}%` }}
+                            animate={{ height: `${Math.min(assessment.quizScore, 100)}%` }}
                             transition={{ delay: i * 0.2 + 0.3, duration: 0.8 }}
                           />
                         </div>
@@ -200,22 +237,12 @@ export default function QuizList({ assessments }) {
                           <CardDescription className="flex flex-col md:flex-row md:justify-between w-full text-sm mt-3 gap-2">
                             <div className="flex items-center gap-2">
                               <div
-                                className={`w-3 h-3 rounded-full ${assessment.quizScore >= 80
-                                  ? "bg-green-500"
-                                  : assessment.quizScore >= 60
-                                    ? "bg-amber-500"
-                                    : "bg-rose-500"
-                                  }`}
+                                className={`w-3 h-3 rounded-full ${scoreConfig.bgColor}`}
                               ></div>
                               <span className="font-medium">
                                 Score:{" "}
                                 <span
-                                  className={`font-bold ${assessment.quizScore >= 80
-                                    ? "text-green-600"
-                                    : assessment.quizScore >= 60
-                                      ? "text-amber-600"
-                                      : "text-rose-600"
-                                    }`}
+                                  className={`font-bold ${scoreConfig.textColor}`}
                                 >
                                   {assessment.quizScore.toFixed(1)}%
                                 </span>
@@ -225,11 +252,11 @@ export default function QuizList({ assessments }) {
                               <div className="flex items-center gap-1">
                                 <Clock size={14} />
                                 <span>
-                                  {format(new Date(assessment.createdAt), "MMMM dd, yyyy")}
+                                  {formatDate(assessment.createdAt)}
                                 </span>
                               </div>
                               <span className="text-xs">
-                                {formatDistanceToNow(new Date(assessment.createdAt), { addSuffix: true })}
+                                {formatDateDistance(assessment.createdAt)}
                               </span>
                             </div>
                           </CardDescription>
@@ -263,7 +290,7 @@ export default function QuizList({ assessments }) {
                         </motion.div>
                       </Card>
                     </motion.div>
-                  ))}
+                  )})}
                 </AnimatePresence>
               </div>
             )}
@@ -280,11 +307,13 @@ export default function QuizList({ assessments }) {
               Quiz Details
             </DialogTitle>
           </DialogHeader>
-          <QuizResult
-            result={selectedQuiz}
-            hideStartNew
-            onStartNew={() => router.push("/interview/mock")}
-          />
+          {selectedQuiz && (
+            <QuizResult
+              result={selectedQuiz}
+              hideStartNew
+              onStartNew={() => router.push("/interview/mock")}
+            />
+          )}
         </DialogContent>
       </Dialog>
     </>

@@ -3,20 +3,18 @@
 import HeroSection from "@/components/hero";
 import { useTheme } from "@/components/theme-provider";
 import { Button } from "@/components/ui/button";
-import { Moon, Sparkle, Sun } from "lucide-react";
+import { Sun, Moon, Sparkles, ArrowRight } from "lucide-react";
 import { features } from "@/data/features";
-import { Card, CardContent } from "@/components/ui/card";
-import { motion } from "framer-motion";
 import { howItWorks } from "@/data/howItWorks";
-import { ArrowRight } from "lucide-react";
-import { Sparkles } from "lucide-react";
 import { faqs } from "@/data/faqs";
 import {
   Accordion,
   AccordionItem,
   AccordionTrigger,
+  AccordionContent,
 } from "@/components/ui/accordion";
-import { AccordionContent } from "@/components/ui/accordion";
+import { motion } from "framer-motion";
+import { Card, CardContent } from "@/components/ui/card";
 import { useState, useEffect } from "react";
 
 const ClientParticle = ({ index }) => {
@@ -56,10 +54,14 @@ export default function Home() {
   return (
     <div>
       <HeroSection />
+
       {/* Features Section */}
-      <section id="features" className="w-full py-10 sm:py-12 md:py-20 lg:py-28 bg-background">
+      <section
+        id="features"
+        className="w-full py-10 sm:py-12 md:py-20 lg:py-28 bg-background"
+      >
         <div className="container mx-auto px-4 sm:px-5 md:px-6">
-          {/* Features Heading */}
+          {/* Heading */}
           <div className="text-center mb-10 sm:mb-14 md:mb-20">
             <motion.h2
               className="text-3xl sm:text-4xl md:text-6xl font-extrabold tracking-tight leading-snug sm:leading-tight"
@@ -79,36 +81,28 @@ export default function Home() {
                 <span className="text-2xl sm:text-3xl">🚀</span>
                 <span
                   className="bg-gradient-to-r from-emerald-400 via-teal-300 to-cyan-500 
-                       bg-clip-text text-transparent font-extrabold 
-                       text-2xl sm:text-4xl md:text-5xl flex items-center gap-2"
+                    bg-clip-text text-transparent font-extrabold 
+                    text-2xl sm:text-4xl md:text-5xl flex items-center gap-2"
                   style={{
                     backgroundSize: "200% 200%",
                     textShadow: `
-                0 0 12px rgba(16, 185, 129, 0.7),   /* emerald */
-                0 0 22px rgba(45, 212, 191, 0.6),   /* teal */
-                0 0 32px rgba(6, 182, 212, 0.5),    /* cyan */
-                0 0 45px rgba(59, 130, 246, 0.4)    /* blue glow */
-              `,
+                      0 0 12px rgba(16, 185, 129, 0.7),
+                      0 0 22px rgba(45, 212, 191, 0.6),
+                      0 0 32px rgba(6, 182, 212, 0.5),
+                      0 0 45px rgba(59, 130, 246, 0.4)
+                    `,
                   }}
                 >
                   Advanced Features
                   <span className="ml-2 sm:ml-3 animate-pulse text-white flex items-center gap-1">
                     Start Exploring
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="w-5 h-5 sm:w-6 sm:h-6 text-yellow-300 drop-shadow-md"
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
-                    >
-                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.176 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                    </svg>
                   </span>
                 </span>
               </motion.span>
 
               <motion.span
                 className="block mt-2 sm:mt-3 md:mt-5 text-foreground 
-                     text-base sm:text-lg md:text-2xl font-semibold"
+                  text-base sm:text-lg md:text-2xl font-semibold"
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.4, duration: 0.7 }}
@@ -120,7 +114,7 @@ export default function Home() {
             {/* Subtitle */}
             <motion.p
               className="mt-4 sm:mt-6 text-muted-foreground max-w-2xl sm:max-w-3xl mx-auto 
-                   text-sm sm:text-lg md:text-xl leading-relaxed"
+                text-sm sm:text-lg md:text-xl leading-relaxed"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.6, duration: 0.7 }}
@@ -144,16 +138,16 @@ export default function Home() {
               <Card
                 key={index}
                 className="group h-full border border-blue-400/40 bg-card/40 backdrop-blur-sm
-                     hover:border-blue-500 hover:shadow-[0_0_25px_rgba(59,130,246,0.55)] 
-                     hover:scale-[1.03] active:scale-[0.98]
-                     transition-all duration-500 ease-out rounded-2xl overflow-hidden"
+                  hover:border-blue-500 hover:shadow-[0_0_25px_rgba(59,130,246,0.55)] 
+                  hover:scale-[1.03] active:scale-[0.98]
+                  transition-all duration-500 ease-out rounded-2xl overflow-hidden"
               >
                 <CardContent className="p-5 sm:p-6 text-center flex flex-col items-center">
                   {/* Icon */}
                   <div
                     className="p-3 sm:p-4 rounded-xl bg-gradient-to-tr from-blue-400/20 to-indigo-500/20 
-                         mb-3 sm:mb-4 group-hover:scale-110 group-hover:rotate-3 
-                         transition-all duration-500 ease-out"
+                      mb-3 sm:mb-4 group-hover:scale-110 group-hover:rotate-3 
+                      transition-all duration-500 ease-out"
                   >
                     {feature.icon}
                   </div>
@@ -167,12 +161,6 @@ export default function Home() {
                   <p className="text-muted-foreground text-sm sm:text-base leading-relaxed">
                     {feature.description}
                   </p>
-
-                  {/* Hover underline effect */}
-                  <div
-                    className="mt-3 sm:mt-4 w-10 sm:w-12 h-1 bg-gradient-to-r from-blue-500 to-indigo-400 rounded-full 
-                         opacity-0 group-hover:opacity-100 transition-all duration-500"
-                  ></div>
                 </CardContent>
               </Card>
             ))}
@@ -181,7 +169,10 @@ export default function Home() {
       </section>
 
       {/* Stats Section */}
-      <section id ="stats" className="w-full py-16 sm:py-20 md:py-28 bg-gradient-to-b from-background to-muted/20">
+      <section
+        id="stats"
+        className="w-full py-16 sm:py-20 md:py-28 bg-gradient-to-b from-background to-muted/20"
+      >
         <div className="container mx-auto px-4 md:px-6">
           {/* Enhanced Heading */}
           <div className="text-center mb-20">
@@ -537,7 +528,7 @@ export default function Home() {
       </section>
 
       {/* Enhanced FAQ Section */}
-      <section id = "faq" className="w-full py-12 md:py-24 bg-background/50">
+      <section id="faq" className="w-full py-12 md:py-24 bg-background/50">
         <div className="container mx-auto px-4 md:px-6">
           {/* Enhanced FAQ Heading */}
           <motion.div

@@ -1,30 +1,45 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { motion } from "framer-motion";
 import { Waves, Sparkles, Rocket, ArrowRight, Play } from "lucide-react";
-import Spline from "@splinetool/react-spline";
+import dynamic from "next/dynamic";
 import { Button } from "@/components/ui/button";
 import HackathonShoutoutPopup from "@/components/HackathonShoutoutPopup";
 import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 
+// Dynamically import Spline to reduce initial bundle size
+const Spline = dynamic(() => import("@splinetool/react-spline"), {
+  ssr: false,
+  loading: () => (
+    <div className="w-full h-[300px] sm:h-[400px] md:h-[500px] mt-6 bg-gradient-to-br from-purple-500/10 to-blue-500/10 rounded-lg flex items-center justify-center">
+      <div className="text-muted-foreground">Loading 3D experience...</div>
+    </div>
+  ),
+});
+
 const Hero = () => {
   const [mounted, setMounted] = useState(false);
-  const { isSignedIn } = useUser(); // Clerk hook
+  const { isSignedIn } = useUser();
   const router = useRouter();
 
   useEffect(() => {
     setMounted(true);
   }, []);
 
-  const handleGetStarted = () => {
+  const handleGetStarted = useCallback(() => {
     if (isSignedIn) {
-      router.push("/"); // ✅ user signed in → go home
+      router.push("/");
     } else {
-      router.push("/sign-in"); // ❌ not signed in → go to sign-in
+      router.push("/sign-in");
     }
-  };
+  }, [isSignedIn, router]);
+
+  const handleWatchDemo = useCallback(() => {
+    // Add your demo video functionality here
+    console.log("Watch demo clicked");
+  }, []);
 
   return (
     <section className="relative min-h-[90vh] mt-16 sm:mt-20 flex flex-col items-center justify-center py-8 sm:py-12 px-4 overflow-hidden">
@@ -180,9 +195,9 @@ const Hero = () => {
         </motion.p>
 
         {/* 3D Spline */}
-        <main className="w-full h-[300px] sm:h-[400px] md:h-[500px] mt-6">
+        <div className="w-full h-[300px] sm:h-[400px] md:h-[500px] mt-6">
           <Spline scene="https://prod.spline.design/OJwaOly6ZDOqlmaT/scene.splinecode" />
-        </main>
+        </div>
 
         {/* CTA Buttons */}
         <motion.div
@@ -191,7 +206,7 @@ const Hero = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 1, duration: 0.6 }}
         >
-          {/* ✅ Get Started Button */}
+          {/* Get Started Button */}
           <Button
             onClick={handleGetStarted}
             size="lg"
@@ -219,6 +234,7 @@ const Hero = () => {
 
           {/* Watch Demo Button */}
           <Button
+            onClick={handleWatchDemo}
             size="lg"
             className="group w-full sm:w-auto px-6 sm:px-10 py-4 sm:py-6 
               text-base sm:text-lg rounded-xl sm:rounded-2xl font-semibold 

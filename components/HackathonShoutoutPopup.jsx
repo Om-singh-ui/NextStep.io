@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import Confetti from "react-confetti";
+import dynamic from "next/dynamic";
 import {
   Sparkles,
   X,
@@ -19,7 +19,13 @@ import {
   User,
 } from "lucide-react";
 
-const Button = ({ children, className, ...props }) => (
+// Dynamically import Confetti to avoid SSR issues
+const Confetti = dynamic(() => import("react-confetti"), {
+  ssr: false,
+});
+
+// Button component without TypeScript syntax
+const Button = ({ children, className = "", ...props }) => (
   <button
     {...props}
     className={`px-4 py-2 rounded-lg font-semibold transition-all duration-300 ${className}`}
@@ -57,9 +63,17 @@ const HackathonShoutoutPopup = () => {
       });
     };
 
-    handleResize();
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
+    // Only run in browser environment
+    if (typeof window !== "undefined") {
+      handleResize();
+      window.addEventListener("resize", handleResize);
+    }
+    
+    return () => {
+      if (typeof window !== "undefined") {
+        window.removeEventListener("resize", handleResize);
+      }
+    };
   }, []);
 
   useEffect(() => {
@@ -78,7 +92,7 @@ const HackathonShoutoutPopup = () => {
   const particles = useMemo(() => {
     if (!isMounted) return [];
     
-    return [...Array(20)].map(() => ({
+    return Array.from({ length: 20 }, () => ({
       left: `${Math.random() * 100}%`,
       top: `${Math.random() * 100}%`,
       duration: 2 + Math.random() * 2,
@@ -87,13 +101,14 @@ const HackathonShoutoutPopup = () => {
     }));
   }, [isMounted]);
 
+  // Don't render anything during SSR or if not mounted
   if (!isMounted) {
-    return null; // Don't render anything during SSR
+    return null;
   }
 
   return (
     <>
-      {confetti && (
+      {confetti && typeof window !== "undefined" && (
         <Confetti
           width={windowSize.width}
           height={windowSize.height}
@@ -119,6 +134,9 @@ const HackathonShoutoutPopup = () => {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={() => setShow(false)}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="popup-title"
           >
             {/* Enhanced backdrop with gradient animation */}
             <motion.div
@@ -142,7 +160,7 @@ const HackathonShoutoutPopup = () => {
               onClick={(e) => e.stopPropagation()}
             >
               {/* Enhanced gradient border effect */}
-              <div className="absolute -inset-2  bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-600 rounded-3xl opacity-20 blur-lg transition-all duration-1000 hover:opacity-30 hover:blur-xl" />
+              <div className="absolute -inset-2 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-600 rounded-3xl opacity-20 blur-lg transition-all duration-1000 hover:opacity-30 hover:blur-xl" />
 
               {/* Enhanced background pattern */}
               <div className="absolute inset-0 opacity-15">
@@ -211,6 +229,7 @@ const HackathonShoutoutPopup = () => {
                 className="absolute top-3 right-3 p-1.5 rounded-full bg-white/90 hover:bg-gray-200 transition-all duration-300 shadow-sm hover:shadow-md z-10 border border-gray-200"
                 whileHover={{ scale: 1.1, rotate: 90 }}
                 whileTap={{ scale: 0.9 }}
+                aria-label="Close popup"
               >
                 <X className="h-4 w-4 text-gray-600" />
               </motion.button>
@@ -247,6 +266,7 @@ const HackathonShoutoutPopup = () => {
 
                 {/* Title */}
                 <motion.h2
+                  id="popup-title"
                   className="text-2xl font-bold bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-600 bg-clip-text text-transparent mb-3"
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -311,35 +331,55 @@ const HackathonShoutoutPopup = () => {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.6 }}
                     onClick={() => setIsTeamDropdownOpen(!isTeamDropdownOpen)}
+                    onKeyPress={(e) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        setIsTeamDropdownOpen(!isTeamDropdownOpen);
+                      }
+                    }}
+                    tabIndex={0}
+                    role="button"
+                    aria-expanded={isTeamDropdownOpen}
+                    aria-haspopup="true"
                   >
                     <Users className="h-3 w-3 text-indigo-500" />
                     <span className="text-xs text-indigo-700">2 Members</span>
                     <ChevronDown className={`h-3 w-3 text-indigo-500 transition-transform ${isTeamDropdownOpen ? 'rotate-180' : ''}`} />
 
                     {/* Dropdown menu */}
-                    {isTeamDropdownOpen && (
-                      <motion.div
-                        className="absolute top-full left-0 right-0 mt-1 bg-white rounded-md shadow-lg border border-indigo-100 z-20 overflow-hidden"
-                        initial={{ opacity: 0, y: -10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -10 }}
-                      >
-                        {teamMembers.map((member, index) => (
-                          <div
-                            key={index}
-                            className="px-3 py-2 text-xs text-indigo-700 hover:bg-indigo-50 flex items-center gap-2 transition-colors"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              window.open(member.linkedin, '_blank');
-                            }}
-                          >
-                            <User className="h-3 w-3" />
-                            {member.name}
-                            <Linkedin className="h-3 w-3 ml-auto text-blue-500" />
-                          </div>
-                        ))}
-                      </motion.div>
-                    )}
+                    <AnimatePresence>
+                      {isTeamDropdownOpen && (
+                        <motion.div
+                          className="absolute top-full left-0 right-0 mt-1 bg-white rounded-md shadow-lg border border-indigo-100 z-20 overflow-hidden"
+                          initial={{ opacity: 0, y: -10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: -10 }}
+                          role="menu"
+                        >
+                          {teamMembers.map((member, index) => (
+                            <div
+                              key={index}
+                              className="px-3 py-2 text-xs text-indigo-700 hover:bg-indigo-50 flex items-center gap-2 transition-colors"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                window.open(member.linkedin, '_blank');
+                              }}
+                              onKeyPress={(e) => {
+                                if (e.key === 'Enter' || e.key === ' ') {
+                                  e.stopPropagation();
+                                  window.open(member.linkedin, '_blank');
+                                }
+                              }}
+                              tabIndex={0}
+                              role="menuitem"
+                            >
+                              <User className="h-3 w-3" />
+                              {member.name}
+                              <Linkedin className="h-3 w-3 ml-auto text-blue-500" />
+                            </div>
+                          ))}
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
                   </motion.div>
 
                   <motion.div
