@@ -172,7 +172,6 @@ export default function Quiz() {
           </motion.div>
         )}
       </AnimatePresence>
-
       <Card className="shadow-lg rounded-xl">
         {/* Progress bar */}
         <div className="px-6 pt-6">
@@ -274,7 +273,7 @@ export default function Quiz() {
               Show Explanation
             </Button>
           ) : (
-            <div className="flex-1" /> // Spacer for layout
+            (<div className="flex-1" />) // Spacer for layout
           )}
           
           <Button

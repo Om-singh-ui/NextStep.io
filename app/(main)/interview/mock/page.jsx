@@ -15,20 +15,22 @@ export default function MockInterviewPage() {
         <div className="flex flex-col space-y-6">
           {/* Back Button */}
           <div className="group">
-            <Link href="/interview" passHref legacyBehavior>
-              <Button
-                variant="ghost"
-                className="flex items-center gap-2 pl-0 transition-all duration-300 group-hover:gap-3 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm rounded-full px-4 py-2 shadow-sm hover:shadow-md border border-slate-200 dark:border-slate-700 hover:border-blue-300 dark:hover:border-blue-600"
-              >
-                <div className="relative">
-                  <ArrowLeft className="h-4 w-4 transition-transform duration-300 group-hover:-translate-x-1" />
-                  <ChevronRight className="h-4 w-4 absolute top-0 -right-2 opacity-0 transition-all duration-300 group-hover:opacity-100 group-hover:-translate-x-1" />
-                </div>
-                <span className="bg-gradient-to-r from-blue-600 to-blue-800 dark:from-blue-400 dark:to-blue-300 bg-clip-text text-transparent font-medium">
-                  Back to Interview Preparation
-                </span>
-                <div className="h-4 w-1 bg-gradient-to-b from-blue-400 to-blue-600 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-              </Button>
+            <Link href="/interview">
+              <span className="inline-flex">
+                <Button
+                  variant="ghost"
+                  className="flex items-center gap-2 pl-0 transition-all duration-300 group-hover:gap-3 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm rounded-full px-4 py-2 shadow-sm hover:shadow-md border border-slate-200 dark:border-slate-700 hover:border-blue-300 dark:hover:border-blue-600"
+                >
+                  <div className="relative">
+                    <ArrowLeft className="h-4 w-4 transition-transform duration-300 group-hover:-translate-x-1" />
+                    <ChevronRight className="h-4 w-4 absolute top-0 -right-2 opacity-0 transition-all duration-300 group-hover:opacity-100 group-hover:-translate-x-1" />
+                  </div>
+                  <span className="bg-gradient-to-r from-blue-600 to-blue-800 dark:from-blue-400 dark:to-blue-300 bg-clip-text text-transparent font-medium">
+                    Back to Interview Preparation
+                  </span>
+                  <div className="h-4 w-1 bg-gradient-to-b from-blue-400 to-blue-600 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                </Button>
+              </span>
             </Link>
           </div>
 

@@ -7,7 +7,7 @@ export default function NewCoverLetterPage() {
   return (
     <div className="container mx-auto px-4 sm:px-5 md:px-6 py-10 sm:py-12 md:py-20">
       <div className="flex flex-col space-y-6 mb-8">
-        <Link href="/ai-cover-letter">
+        <Link href="/ai-cover-letter" legacyBehavior>
           <Button 
             variant="outline" 
             className="
@@ -61,7 +61,6 @@ export default function NewCoverLetterPage() {
           </p>
         </div>
       </div>
-
       <CoverLetterGenerator />
     </div>
   );

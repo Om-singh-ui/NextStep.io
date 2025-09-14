@@ -288,7 +288,7 @@ export default function Footer() {
                     target="_blank"
                     className="hover:text-blue-500 transition-all duration-300 hover:scale-110 transform relative group"
                     onMouseEnter={() => setIsHovered("github")}
-                    onMouseLeave={() => setIsHered(null)}
+                    onMouseLeave={() => setIsHovered(null)}
                   >
                     <Github className="w-6 h-6 group-hover:rotate-12 transition-transform" />
                     <span className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 text-xs bg-gray-800 text-white px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">
@@ -312,7 +312,7 @@ export default function Footer() {
             </>
           ) : (
             /* Desktop layout */
-            <>
+            (<>
               {/* Quick Links */}
               <div className="space-y-4">
                 <h4 className="font-semibold text-gray-900 dark:text-gray-200 text-lg group hover:text-blue-500 dark:hover:text-blue-400 transition-colors">
@@ -380,7 +380,6 @@ export default function Footer() {
                   </li>
                 </ul>
               </div>
-
               {/* Resources */}
               <div className="space-y-4">
                 <h4 className="font-semibold text-gray-900 dark:text-gray-200 text-lg group hover:text-blue-500 dark:hover:text-blue-400 transition-colors">
@@ -422,7 +421,6 @@ export default function Footer() {
                   </li>
                 </ul>
               </div>
-
               {/* Social */}
               <div className="space-y-4">
                 <h4 className="font-semibold text-gray-900 dark:text-gray-200 text-lg group hover:text-blue-500 dark:hover:text-blue-400 transition-colors">
@@ -467,7 +465,7 @@ export default function Footer() {
                   </Link>
                 </div>
               </div>
-            </>
+            </>)
           )}
         </div>
 

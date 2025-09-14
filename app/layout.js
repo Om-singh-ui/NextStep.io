@@ -6,6 +6,8 @@ import { ClerkProvider } from "@clerk/nextjs";
 import { dark } from "@clerk/themes";
 import Footer from "@/components/footer";
 import HeroSection from "@/components/hero";
+import Chatbot from "@/components/chatbot";
+
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -36,6 +38,7 @@ export default function RootLayout({ children }) {
         >
           <ThemeProvider>
             <Header />
+            <Chatbot />
             <main suppressHydrationWarning className="flex-grow">
               {children}
             </main>

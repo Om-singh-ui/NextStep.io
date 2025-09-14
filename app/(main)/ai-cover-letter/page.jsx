@@ -13,7 +13,7 @@ export default async function CoverLetterPage() {
         <h1 className="text-4xl sm:text-5xl md:text-6xl font-plus-jakarta font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-violet-500 to-fuchsia-500">
           My Cover Letters
         </h1>
-        <Link href="/ai-cover-letter/new">
+        <Link href="/ai-cover-letter/new" legacyBehavior>
           <Button className="
             relative group overflow-hidden
             px-6 py-4 h-12 rounded-xl
@@ -40,7 +40,6 @@ export default async function CoverLetterPage() {
           </Button>
         </Link>
       </div>
-
       <CoverLetterList coverLetters={coverLetters} />
     </div>
   );

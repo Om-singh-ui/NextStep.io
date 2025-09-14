@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   BarChart,
   Bar,
@@ -97,35 +97,57 @@ const DashboardView = ({ insights, dashboardConfig }) => {
 
   const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884D8'];
 
+  // Get demand level colors that work in both themes
   const getDemandLevelColor = (level) => {
     switch (level.toLowerCase()) {
       case "high":
-        return "bg-gradient-to-r from-green-400 to-emerald-600";
+        return "bg-gradient-to-r from-green-400 to-emerald-600 dark:from-green-500 dark:to-emerald-700";
       case "medium":
-        return "bg-gradient-to-r from-amber-400 to-orange-600";
+        return "bg-gradient-to-r from-amber-400 to-orange-600 dark:from-amber-500 dark:to-orange-700";
       case "low":
-        return "bg-gradient-to-r from-rose-400 to-red-600";
+        return "bg-gradient-to-r from-rose-400 to-red-600 dark:from-rose-500 dark:to-red-700";
       default:
-        return "bg-gradient-to-r from-slate-400 to-gray-600";
+        return "bg-gradient-to-r from-slate-400 to-gray-600 dark:from-slate-500 dark:to-gray-700";
     }
   };
 
   const getMarketOutlookInfo = (outlook) => {
     switch (outlook.toLowerCase()) {
       case "positive":
-        return { icon: TrendingUp, color: "text-green-400", bg: "from-green-500 to-emerald-600" };
+        return { 
+          icon: TrendingUp, 
+          color: "text-green-500 dark:text-green-400", 
+          bg: "from-green-500 to-emerald-600 dark:from-green-600 dark:to-emerald-700",
+          text: "text-green-600 dark:text-green-300"
+        };
       case "neutral":
-        return { icon: TrendingUp, color: "text-amber-400", bg: "from-amber-500 to-orange-600" };
+        return { 
+          icon: TrendingUp, 
+          color: "text-amber-500 dark:text-amber-400", 
+          bg: "from-amber-500 to-orange-600 dark:from-amber-600 dark:to-orange-700",
+          text: "text-amber-600 dark:text-amber-300"
+        };
       case "negative":
-        return { icon: TrendingDown, color: "text-rose-400", bg: "from-rose-500 to-red-600" };
+        return { 
+          icon: TrendingDown, 
+          color: "text-rose-500 dark:text-rose-400", 
+          bg: "from-rose-500 to-red-600 dark:from-rose-600 dark:to-red-700",
+          text: "text-rose-600 dark:text-rose-300"
+        };
       default:
-        return { icon: TrendingUp, color: "text-slate-400", bg: "from-slate-500 to-gray-600" };
+        return { 
+          icon: TrendingUp, 
+          color: "text-slate-500 dark:text-slate-400", 
+          bg: "from-slate-500 to-gray-600 dark:from-slate-600 dark:to-gray-700",
+          text: "text-slate-600 dark:text-slate-300"
+        };
     }
   };
 
   const OutlookIcon = getMarketOutlookInfo(insights.marketOutlook).icon;
   const outlookColor = getMarketOutlookInfo(insights.marketOutlook).color;
   const outlookBg = getMarketOutlookInfo(insights.marketOutlook).bg;
+  const outlookText = getMarketOutlookInfo(insights.marketOutlook).text;
 
   // Dates
   const lastUpdatedDate = format(new Date(insights.lastUpdated), "dd/MM/yyyy");
@@ -184,18 +206,46 @@ const DashboardView = ({ insights, dashboardConfig }) => {
 
   // Toggle full screen mode
   const toggleFullScreen = () => {
-    if (!document.fullscreenElement) {
-      document.documentElement.requestFullscreen().catch(err => {
+    const doc = document.documentElement;
+    const requestFullScreen = doc.requestFullscreen || 
+                             doc.webkitRequestFullscreen || 
+                             doc.msRequestFullscreen;
+    
+    if (!document.fullscreenElement && !document.webkitFullscreenElement && 
+        !document.msFullscreenElement) {
+      requestFullScreen.call(doc).catch(err => {
         console.error(`Error attempting to enable full-screen mode: ${err.message}`);
       });
       setIsFullScreen(true);
     } else {
-      if (document.exitFullscreen) {
-        document.exitFullscreen();
+      const exitFullScreen = document.exitFullscreen || 
+                            document.webkitExitFullscreen || 
+                            document.msExitFullscreen;
+      if (exitFullScreen) {
+        exitFullScreen.call(document);
         setIsFullScreen(false);
       }
     }
   };
+
+  // Handle fullscreen change events
+  useEffect(() => {
+    const handleFullscreenChange = () => {
+      setIsFullScreen(!!(document.fullscreenElement || 
+                        document.webkitFullscreenElement || 
+                        document.msFullscreenElement));
+    };
+    
+    document.addEventListener('fullscreenchange', handleFullscreenChange);
+    document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
+    document.addEventListener('msfullscreenchange', handleFullscreenChange);
+    
+    return () => {
+      document.removeEventListener('fullscreenchange', handleFullscreenChange);
+      document.removeEventListener('webkitfullscreenchange', handleFullscreenChange);
+      document.removeEventListener('msfullscreenchange', handleFullscreenChange);
+    };
+  }, []);
 
   // Filter data based on search query
   const filteredSkills = insights.topSkills.filter(skill => 
@@ -249,7 +299,7 @@ const DashboardView = ({ insights, dashboardConfig }) => {
         className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4"
       >
         <div className="flex items-center gap-3">
-          <h1 className="text-3xl font-bold font-plus-jakarta bg-clip-text text-transparent bg-gradient-to-r from-violet-600 to-fuchsia-600">
+          <h1 className="text-3xl font-bold font-plus-jakarta bg-clip-text text-transparent bg-gradient-to-r from-violet-600 to-fuchsia-600 dark:from-violet-400 dark:to-fuchsia-400">
             Market Insights Dashboard
           </h1>
           <Badge
@@ -363,17 +413,123 @@ const DashboardView = ({ insights, dashboardConfig }) => {
         )}
       </AnimatePresence>
 
-      {/* Main Dashboard Tabs */}
+      {/* Market Overview Cards */}
+      <motion.div 
+        initial="hidden"
+        animate="visible"
+        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4"
+      >
+        <MotionCard 
+          variants={cardVariants}
+          whileHover="hover"
+          className="overflow-hidden border-0 shadow-lg"
+        >
+          <CardHeader className={`pb-3 bg-gradient-to-r ${outlookBg} text-white`}>
+            <div className="flex justify-between items-center">
+              <CardTitle className="text-lg">Market Outlook</CardTitle>
+              <OutlookIcon className={`h-5 w-5 ${outlookColor}`} />
+            </div>
+            <CardDescription className="text-white/80 capitalize">
+              {insights.marketOutlook}
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="pt-6">
+            <div className={`text-3xl font-bold ${outlookText}`}>
+              {insights.growthRate.toFixed(1)}%
+            </div>
+            <p className="text-sm text-muted-foreground mt-1">
+              Annual Growth Rate
+            </p>
+          </CardContent>
+        </MotionCard>
+
+        <MotionCard 
+          variants={cardVariants}
+          whileHover="hover"
+          custom={1}
+          className="overflow-hidden border-0 shadow-lg"
+        >
+          <CardHeader className="pb-3 bg-gradient-to-r from-blue-500 to-cyan-500 dark:from-blue-600 dark:to-cyan-600 text-white">
+            <div className="flex justify-between items-center">
+              <CardTitle className="text-lg">Demand Level</CardTitle>
+              <BriefcaseIcon className="h-5 w-5" />
+            </div>
+            <CardDescription className="text-white/80 capitalize">
+              {insights.demandLevel}
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="pt-6">
+            <div className={`text-3xl font-bold ${getMarketOutlookInfo(insights.demandLevel).text}`}>
+              {insights.demandLevel}
+            </div>
+            <p className="text-sm text-muted-foreground mt-1">
+              Current Market Demand
+            </p>
+          </CardContent>
+        </MotionCard>
+
+        <MotionCard 
+          variants={cardVariants}
+          whileHover="hover"
+          custom={2}
+          className="overflow-hidden border-0 shadow-lg"
+        >
+          <CardHeader className="pb-3 bg-gradient-to-r from-violet-500 to-purple-600 dark:from-violet-600 dark:to-purple-700 text-white">
+            <div className="flex justify-between items-center">
+              <CardTitle className="text-lg">Top Skills</CardTitle>
+              <Brain className="h-5 w-5" />
+            </div>
+            <CardDescription className="text-white/80">
+              In Highest Demand
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="pt-6">
+            <div className="text-3xl font-bold text-violet-600 dark:text-violet-400">
+              {insights.topSkills.length}+
+            </div>
+            <p className="text-sm text-muted-foreground mt-1">
+              Skills Tracked
+            </p>
+          </CardContent>
+        </MotionCard>
+
+        <MotionCard 
+          variants={cardVariants}
+          whileHover="hover"
+          custom={3}
+          className="overflow-hidden border-0 shadow-lg"
+        >
+          <CardHeader className="pb-3 bg-gradient-to-r from-amber-500 to-orange-600 dark:from-amber-600 dark:to-orange-700 text-white">
+            <div className="flex justify-between items-center">
+              <CardTitle className="text-lg">Next Update</CardTitle>
+              <Calendar className="h-5 w-5" />
+            </div>
+            <CardDescription className="text-white/80">
+              Scheduled Refresh
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="pt-6">
+            <div className="text-3xl font-bold text-amber-600 dark:text-amber-400">
+              {nextUpdateDistance}
+            </div>
+            <p className="text-sm text-muted-foreground mt-1">
+              Data will be updated
+            </p>
+          </CardContent>
+        </MotionCard>
+      </motion.div>
+
+      {/* Main Content Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-        <TabsList className="bg-muted/30 p-1 rounded-xl backdrop-blur-sm border border-border/50">
+        <TabsList className="bg-muted/50 p-1 rounded-xl backdrop-blur-sm">
           <TabsTrigger value="overview" className="rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm">
             Overview
           </TabsTrigger>
-          <TabsTrigger value="analytics" className="rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm">
-            Analytics
-          </TabsTrigger>
           <TabsTrigger value="skills" className="rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm">
             Skills Analysis
+          </TabsTrigger>
+          <TabsTrigger value="salaries" className="rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm">
+            Salary Trends
           </TabsTrigger>
           <TabsTrigger value="trends" className="rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm">
             Market Trends
@@ -382,473 +538,67 @@ const DashboardView = ({ insights, dashboardConfig }) => {
 
         {/* Overview Tab */}
         <TabsContent value="overview" className="space-y-6">
-          {/* Market Overview Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {/* Market Outlook */}
-            <MotionCard
-              variants={cardVariants}
-              initial="hidden"
-              animate="visible"
-              whileHover="hover"
-              className={`rounded-2xl backdrop-blur-xl bg-card/50 border border-primary/30 shadow-lg hover:shadow-xl transition-all duration-500 overflow-hidden relative group`}
-            >
-              <div className={`absolute inset-0 bg-gradient-to-br ${outlookBg} opacity-0 group-hover:opacity-5 transition-opacity duration-500`} />
-              <CardHeader className="flex flex-row items-center justify-between pb-3 relative z-10">
-                <CardTitle className="text-sm font-medium font-plus-jakarta">
-                  Market Outlook
-                </CardTitle>
-                <div className="p-1.5 rounded-lg bg-muted/30">
-                  <OutlookIcon className={`h-4 w-4 ${outlookColor}`} />
-                </div>
-              </CardHeader>
-              <CardContent className="relative z-10">
-                <motion.div
-                  whileHover={{ scale: 1.05 }}
-                  className="text-2xl font-bold font-plus-jakarta bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-cyan-500"
-                >
-                  {insights.marketOutlook}
-                </motion.div>
-                <p className="text-xs text-muted-foreground/80 mt-2">
-                  Next update {nextUpdateDistance}
-                </p>
-              </CardContent>
-            </MotionCard>
-
-            {/* Industry Growth */}
-            <MotionCard
-              variants={cardVariants}
-              initial="hidden"
-              animate="visible"
-              whileHover="hover"
-              transition={{ delay: 0.1 }}
-              className="rounded-2xl backdrop-blur-xl bg-card/50 border border-green-400/30 shadow-lg hover:shadow-xl transition-all duration-500 overflow-hidden relative group"
-            >
-              <div className="absolute inset-0 bg-gradient-to-br from-green-500 to-emerald-600 opacity-0 group-hover:opacity-5 transition-opacity duration-500" />
-              <CardHeader className="flex flex-row items-center justify-between pb-3 relative z-10">
-                <CardTitle className="text-sm font-medium font-plus-jakarta">
-                  Industry Growth
-                </CardTitle>
-                <div className="p-1.5 rounded-lg bg-muted/30">
-                  <TrendingUp className="h-4 w-4 text-muted-foreground" />
-                </div>
-              </CardHeader>
-              <CardContent className="relative z-10">
-                <div className="text-2xl font-bold font-plus-jakarta bg-clip-text text-transparent bg-gradient-to-r from-green-500 to-emerald-500">
-                  {insights.growthRate.toFixed(1)}%
-                </div>
-                <motion.div
-                  whileHover={{ scaleX: 1.05 }}
-                  className="mt-3 h-2 w-full rounded-full bg-muted/20 overflow-hidden"
-                >
-                  <div
-                    className="h-full rounded-full bg-gradient-to-r from-green-500 to-emerald-500 transition-all duration-700 ease-out"
-                    style={{ width: `${Math.min(insights.growthRate, 100)}%` }}
-                  />
-                </motion.div>
-              </CardContent>
-            </MotionCard>
-
-            {/* Demand Level */}
-            <MotionCard
-              variants={cardVariants}
-              initial="hidden"
-              animate="visible"
-              whileHover="hover"
-              transition={{ delay: 0.2 }}
-              className="rounded-2xl backdrop-blur-xl bg-card/50 border border-violet-400/30 shadow-lg hover:shadow-xl transition-all duration-500 overflow-hidden relative group"
-            >
-              <div className="absolute inset-0 bg-gradient-to-br from-violet-500 to-fuchsia-600 opacity-0 group-hover:opacity-5 transition-opacity duration-500" />
-              <CardHeader className="flex flex-row items-center justify-between pb-3 relative z-10">
-                <CardTitle className="text-sm font-medium font-plus-jakarta">
-                  Demand Level
-                </CardTitle>
-                <div className="p-1.5 rounded-lg bg-muted/30">
-                  <BriefcaseIcon className="h-4 w-4 text-muted-foreground" />
-                </div>
-              </CardHeader>
-              <CardContent className="relative z-10">
-                <div className="text-2xl font-bold font-plus-jakarta bg-clip-text text-transparent bg-gradient-to-r from-violet-500 to-fuchsia-500">
-                  {insights.demandLevel}
-                </div>
-                <motion.div 
-                  whileHover={{ scaleX: 1.05 }}
-                  className={`h-2 w-full rounded-full mt-3 overflow-hidden transition-all duration-500 ${getDemandLevelColor(insights.demandLevel)}`}
-                />
-              </CardContent>
-            </MotionCard>
-
-            {/* Top Skills */}
-            <MotionCard
-              variants={cardVariants}
-              initial="hidden"
-              animate="visible"
-              whileHover="hover"
-              transition={{ delay: 0.3 }}
-              className="rounded-2xl backdrop-blur-xl bg-card/50 border border-cyan-400/30 shadow-lg hover:shadow-xl transition-all duration-500 overflow-hidden relative group"
-            >
-              <div className="absolute inset-0 bg-gradient-to-br from-cyan-500 to-blue-600 opacity-0 group-hover:opacity-5 transition-opacity duration-500" />
-              <CardHeader className="flex flex-row items-center justify-between pb-3 relative z-10">
-                <CardTitle className="text-sm font-medium font-plus-jakarta">
-                  Top Skills
-                </CardTitle>
-                <div className="p-1.5 rounded-lg bg-muted/30">
-                  <Brain className="h-4 w-4 text-muted-foreground" />
-                </div>
-              </CardHeader>
-              <CardContent className="relative z-10">
-                <div className="flex flex-wrap gap-2">
-                  {filteredSkills.slice(0, 3).map((skill, index) => (
-                    <motion.div
-                      initial={{ opacity: 0, scale: 0.8 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      transition={{ delay: 0.4 + (index * 0.1) }}
-                      whileHover={{ scale: 1.1, rotate: 2 }}
-                      key={skill}
-                      className="cursor-pointer"
-                    >
-                      <Badge
-                        variant="secondary"
-                        className="rounded-full bg-gradient-to-r from-blue-500/20 to-cyan-500/20 text-foreground/80 border border-cyan-400/40 backdrop-blur-sm font-plus-jakarta font-semibold hover:from-blue-500/30 hover:to-cyan-500/30 hover:shadow-[0_0_12px_rgba(59,130,246,0.35)] transition-all duration-300"
-                      >
-                        {skill}
-                      </Badge>
-                    </motion.div>
-                  ))}
-                  {filteredSkills.length > 3 && (
-                    <Badge variant="outline" className="rounded-full">
-                      +{filteredSkills.length - 3}
-                    </Badge>
-                  )}
-                </div>
-              </CardContent>
-            </MotionCard>
-          </div>
-
-          {/* Charts Row */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* Salary Ranges */}
-            <MotionCard
+            <MotionCard 
               variants={cardVariants}
-              initial="hidden"
-              animate="visible"
               whileHover="hover"
-              className="rounded-2xl backdrop-blur-xl bg-card/50 border border-violet-400/30 shadow-lg hover:shadow-xl transition-all duration-500 overflow-hidden"
+              className="border-0 shadow-lg"
             >
-              <CardHeader className="flex flex-row items-center justify-between">
-                <div>
-                  <CardTitle className="font-plus-jakarta font-bold text-xl bg-clip-text text-transparent bg-gradient-to-r from-violet-500 to-fuchsia-500">
-                    Salary Ranges by Role
-                  </CardTitle>
-                  <CardDescription className="text-muted-foreground/80">
-                    Displaying minimum, median, and maximum salaries (in thousands)
-                  </CardDescription>
-                </div>
-                <Button variant="ghost" size="icon">
-                  <Download className="h-4 w-4" />
-                </Button>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <TrendingUp className="h-5 w-5" />
+                  Market Growth Trend
+                </CardTitle>
+                <CardDescription>
+                  Monthly performance over the last year
+                </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="h-[300px]">
+                <div className="h-80">
                   <ResponsiveContainer width="100%" height="100%">
-                    <BarChart data={salaryData}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="#374151" opacity={0.2} />
-                      <XAxis
-                        dataKey="name"
-                        stroke="#9ca3af"
-                        fontSize={12}
-                        fontFamily="Plus Jakarta Sans"
-                      />
-                      <YAxis
-                        stroke="#9ca3af"
-                        fontSize={12}
-                        fontFamily="Plus Jakarta Sans"
-                      />
-                      <Tooltip
-                        contentStyle={{
-                          borderRadius: "12px",
-                          backdropFilter: "blur(12px)",
-                          backgroundColor: "rgba(255, 255, 255, 0.1)",
-                          border: "1px solid rgba(255, 255, 255, 0.2)",
-                          boxShadow: "0 0 30px rgba(139, 92, 246, 0.2)",
-                          fontFamily: "Plus Jakarta Sans",
-                        }}
-                        content={({ active, payload, label }) => {
-                          if (active && payload && payload.length) {
-                            return (
-                              <div className="bg-background/80 backdrop-blur-sm border border-border/50 rounded-xl p-3 shadow-lg">
-                                <p className="font-medium font-plus-jakarta text-foreground">
-                                  {label}
-                                </p>
-                                {payload.map((item) => (
-                                  <p
-                                    key={item.name}
-                                    className="text-sm text-foreground/80 font-plus-jakarta"
-                                  >
-                                    {item.name}: ${item.value}K
-                                  </p>
-                                ))}
-                              </div>
-                            );
-                          }
-                          return null;
-                        }}
-                      />
-                      <Bar
-                        dataKey="min"
-                        fill="url(#minGradient)"
-                        name="Min Salary (K)"
-                        radius={[4, 4, 0, 0]}
-                      />
-                      <Bar
-                        dataKey="median"
-                        fill="url(#medianGradient)"
-                        name="Median Salary (K)"
-                        radius={[4, 4, 0, 0]}
-                      />
-                      <Bar
-                        dataKey="max"
-                        fill="url(#maxGradient)"
-                        name="Max Salary (K)"
-                        radius={[4, 4, 0, 0]}
-                      />
+                    <AreaChart
+                      data={trendData}
+                      margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
+                    >
                       <defs>
-                        <linearGradient id="minGradient" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="0%" stopColor="#c7d2fe" />
-                          <stop offset="100%" stopColor="#818cf8" />
-                        </linearGradient>
-                        <linearGradient id="medianGradient" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="0%" stopColor="#818cf8" />
-                          <stop offset="100%" stopColor="#6366f1" />
-                        </linearGradient>
-                        <linearGradient id="maxGradient" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="0%" stopColor="#6366f1" />
-                          <stop offset="100%" stopColor="#4f46e5" />
+                        <linearGradient id="colorValue" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="5%" stopColor="#8884d8" stopOpacity={0.8}/>
+                          <stop offset="95%" stopColor="#8884d8" stopOpacity={0}/>
                         </linearGradient>
                       </defs>
-                    </BarChart>
-                  </ResponsiveContainer>
-                </div>
-              </CardContent>
-            </MotionCard>
-
-            {/* Market Trends */}
-            <MotionCard
-              variants={cardVariants}
-              initial="hidden"
-              animate="visible"
-              whileHover="hover"
-              className="rounded-2xl backdrop-blur-xl bg-card/50 border border-blue-400/30 shadow-lg hover:shadow-xl transition-all duration-500 overflow-hidden"
-            >
-              <CardHeader className="flex flex-row items-center justify-between">
-                <div>
-                  <CardTitle className="font-plus-jakarta font-bold text-xl bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-cyan-500">
-                    Market Trends
-                  </CardTitle>
-                  <CardDescription className="text-muted-foreground/80">
-                    Industry growth over the past year
-                  </CardDescription>
-                </div>
-                <Button variant="ghost" size="icon">
-                  <Download className="h-4 w-4" />
-                </Button>
-              </CardHeader>
-              <CardContent>
-                <div className="h-[300px]">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <AreaChart data={trendData}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="#374151" opacity={0.2} />
-                      <XAxis
-                        dataKey="month"
-                        stroke="#9ca3af"
-                        fontSize={12}
-                        fontFamily="Plus Jakarta Sans"
-                      />
-                      <YAxis
-                        stroke="#9ca3af"
-                        fontSize={12}
-                        fontFamily="Plus Jakarta Sans"
-                      />
-                      <Tooltip
+                      <CartesianGrid strokeDasharray="3 3" className="opacity-30" />
+                      <XAxis dataKey="month" />
+                      <YAxis />
+                      <Tooltip 
                         contentStyle={{
-                          borderRadius: "12px",
-                          backdropFilter: "blur(12px)",
-                          backgroundColor: "rgba(255, 255, 255, 0.1)",
-                          border: "1px solid rgba(255, 255, 255, 0.2)",
-                          boxShadow: "0 0 30px rgba(59, 130, 246, 0.2)",
-                          fontFamily: "Plus Jakarta Sans",
+                          backgroundColor: 'hsl(var(--background))',
+                          borderColor: 'hsl(var(--border))',
+                          borderRadius: 'var(--radius)'
                         }}
                       />
-                      <Area
-                        type="monotone"
-                        dataKey="value"
-                        stroke="url(#trendGradient)"
-                        fill="url(#trendFill)"
-                        strokeWidth={2}
-                      />
-                      <defs>
-                        <linearGradient id="trendGradient" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="0%" stopColor="#3b82f6" />
-                          <stop offset="100%" stopColor="#06b6d4" />
-                        </linearGradient>
-                        <linearGradient id="trendFill" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="0%" stopColor="#3b82f6" stopOpacity={0.3} />
-                          <stop offset="100%" stopColor="#06b6d4" stopOpacity={0.1} />
-                        </linearGradient>
-                      </defs>
+                      <Area type="monotone" dataKey="value" stroke="#8884d8" fillOpacity={1} fill="url(#colorValue)" />
                     </AreaChart>
                   </ResponsiveContainer>
                 </div>
               </CardContent>
             </MotionCard>
-          </div>
 
-          {/* Industry Trends & Recommended Skills */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Trends */}
-            <MotionCard
+            <MotionCard 
               variants={cardVariants}
-              initial="hidden"
-              animate="visible"
               whileHover="hover"
-              className="rounded-2xl backdrop-blur-xl bg-card/50 border border-cyan-400/30 shadow-lg hover:shadow-xl transition-all duration-500 overflow-hidden"
+              className="border-0 shadow-lg"
             >
               <CardHeader>
-                <CardTitle className="font-plus-jakarta font-bold text-xl bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-cyan-500">
-                  Key Industry Trends
-                </CardTitle>
-                <CardDescription className="text-muted-foreground/80">
-                  Current trends shaping the industry
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <ul className="space-y-4">
-                  {insights.keyTrends.map((trend, index) => (
-                    <motion.li
-                      key={index}
-                      custom={index}
-                      variants={listItemVariants}
-                      initial="hidden"
-                      animate="visible"
-                      whileHover="hover"
-                      className="flex items-start space-x-3 group"
-                    >
-                      <div className="h-2 w-2 mt-2 rounded-full bg-gradient-to-r from-blue-500 to-cyan-500 flex-shrink-0" />
-                      <span className="text-foreground/80 group-hover:text-foreground transition-colors duration-300 font-plus-jakarta">
-                        {trend}
-                      </span>
-                    </motion.li>
-                  ))}
-                </ul>
-              </CardContent>
-            </MotionCard>
-
-            {/* Recommended Skills */}
-            <MotionCard
-              variants={cardVariants}
-              initial="hidden"
-              animate="visible"
-              whileHover="hover"
-              className="rounded-2xl backdrop-blur-xl bg-card/50 border border-violet-400/30 shadow-lg hover:shadow-xl transition-all duration-500 overflow-hidden"
-            >
-              <CardHeader>
-                <CardTitle className="font-plus-jakarta font-bold text-xl bg-clip-text text-transparent bg-gradient-to-r from-violet-500 to-fuchsia-500">
-                  Recommended Skills
-                </CardTitle>
-                <CardDescription className="text-muted-foreground/80">
-                  Skills to consider developing
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="flex flex-wrap gap-3">
-                  {filteredRecommendedSkills.map((skill, index) => (
-                    <motion.div 
-                      key={skill}
-                      initial={{ opacity: 0, scale: 0.8 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      transition={{ delay: 0.2 + (index * 0.1) }}
-                      whileHover={{ scale: 1.1, rotate: 2 }}
-                    >
-                      <Badge
-                        variant="outline"
-                        className="rounded-xl px-3 py-1.5 bg-gradient-to-r from-violet-500/20 to-fuchsia-500/20 text-foreground/80 border border-violet-400/40 backdrop-blur-sm hover:from-violet-500/30 hover:to-fuchsia-500/30 hover:shadow-[0_0_12px_rgba(139,92,246,0.35)] transition-all duration-300 font-plus-jakarta font-semibold"
-                      >
-                        {skill}
-                      </Badge>
-                    </motion.div>
-                  ))}
-                </div>
-              </CardContent>
-            </MotionCard>
-          </div>
-        </TabsContent>
-
-        {/* Analytics Tab */}
-        <TabsContent value="analytics" className="space-y-6">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <MotionCard
-              variants={cardVariants}
-              initial="hidden"
-              animate="visible"
-              whileHover="hover"
-              className="rounded-2xl backdrop-blur-xl bg-card/50 border border-violet-400/30 shadow-lg hover:shadow-xl transition-all duration-500 overflow-hidden"
-            >
-              <CardHeader>
-                <CardTitle className="font-plus-jakarta font-bold text-xl">
-                  Salary Distribution
-                </CardTitle>
-                <CardDescription>
-                  Detailed breakdown of salary ranges across roles
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="h-[400px]">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <BarChart data={salaryData} layout="vertical">
-                      <CartesianGrid strokeDasharray="3 3" stroke="#374151" opacity={0.2} />
-                      <XAxis type="number" stroke="#9ca3af" fontSize={12} />
-                      <YAxis 
-                        dataKey="name" 
-                        type="category" 
-                        stroke="#9ca3af" 
-                        fontSize={12} 
-                        width={100}
-                      />
-                      <Tooltip
-                        contentStyle={{
-                          borderRadius: "12px",
-                          backdropFilter: "blur(12px)",
-                          backgroundColor: "rgba(255, 255, 255, 0.1)",
-                          border: "1px solid rgba(255, 255, 255, 0.2)",
-                          boxShadow: "0 0 30px rgba(139, 92, 246, 0.2)",
-                          fontFamily: "Plus Jakarta Sans",
-                        }}
-                      />
-                      <Bar dataKey="min" fill="url(#minGradient)" name="Min Salary (K)" radius={[0, 4, 4, 0]} />
-                      <Bar dataKey="median" fill="url(#medianGradient)" name="Median Salary (K)" radius={[0, 4, 4, 0]} />
-                      <Bar dataKey="max" fill="url(#maxGradient)" name="Max Salary (K)" radius={[0, 4, 4, 0]} />
-                    </BarChart>
-                  </ResponsiveContainer>
-                </div>
-              </CardContent>
-            </MotionCard>
-
-            <MotionCard
-              variants={cardVariants}
-              initial="hidden"
-              animate="visible"
-              whileHover="hover"
-              className="rounded-2xl backdrop-blur-xl bg-card/50 border border-blue-400/30 shadow-lg hover:shadow-xl transition-all duration-500 overflow-hidden"
-            >
-              <CardHeader>
-                <CardTitle className="font-plus-jakarta font-bold text-xl">
+                <CardTitle className="flex items-center gap-2">
+                  <Brain className="h-5 w-5" />
                   Skill Demand Distribution
                 </CardTitle>
                 <CardDescription>
-                  Current market demand for key skills
+                  Most in-demand skills in the current market
                 </CardDescription>
               </CardHeader>
-                           <CardContent>
-                <div className="h-[400px]">
+              <CardContent>
+                <div className="h-80">
                   <ResponsiveContainer width="100%" height="100%">
                     <PieChart>
                       <Pie
@@ -856,23 +606,20 @@ const DashboardView = ({ insights, dashboardConfig }) => {
                         cx="50%"
                         cy="50%"
                         labelLine={false}
-                        outerRadius={120}
+                        outerRadius={80}
                         fill="#8884d8"
                         dataKey="value"
-                        label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                        label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
                       >
                         {skillData.map((entry, index) => (
                           <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                         ))}
                       </Pie>
-                      <Tooltip
+                      <Tooltip 
                         contentStyle={{
-                          borderRadius: "12px",
-                          backdropFilter: "blur(12px)",
-                          backgroundColor: "rgba(255, 255, 255, 0.1)",
-                          border: "1px solid rgba(255, 255, 255, 0.2)",
-                          boxShadow: "0 0 30px rgba(59, 130, 246, 0.2)",
-                          fontFamily: "Plus Jakarta Sans",
+                          backgroundColor: 'hsl(var(--background))',
+                          borderColor: 'hsl(var(--border))',
+                          borderRadius: 'var(--radius)'
                         }}
                       />
                     </PieChart>
@@ -882,64 +629,36 @@ const DashboardView = ({ insights, dashboardConfig }) => {
             </MotionCard>
           </div>
 
-          {/* Detailed Trend Analysis */}
-          <MotionCard
+          <MotionCard 
             variants={cardVariants}
-            initial="hidden"
-            animate="visible"
             whileHover="hover"
-            className="rounded-2xl backdrop-blur-xl bg-card/50 border border-green-400/30 shadow-lg hover:shadow-xl transition-all duration-500 overflow-hidden"
+            className="border-0 shadow-lg"
           >
             <CardHeader>
-              <CardTitle className="font-plus-jakarta font-bold text-xl">
-                Detailed Trend Analysis
-              </CardTitle>
+              <CardTitle>Top In-Demand Skills</CardTitle>
               <CardDescription>
-                Monthly performance metrics with trend lines
+                Skills with the highest market demand and growth potential
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="h-[400px]">
-                <ResponsiveContainer width="100%" height="100%">
-                  <LineChart data={trendData}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#374151" opacity={0.2} />
-                    <XAxis 
-                      dataKey="month" 
-                      stroke="#9ca3af" 
-                      fontSize={12}
-                      fontFamily="Plus Jakarta Sans"
-                    />
-                    <YAxis 
-                      stroke="#9ca3af" 
-                      fontSize={12}
-                      fontFamily="Plus Jakarta Sans"
-                    />
-                    <Tooltip
-                      contentStyle={{
-                        borderRadius: "12px",
-                        backdropFilter: "blur(12px)",
-                        backgroundColor: "rgba(255, 255, 255, 0.1)",
-                        border: "1px solid rgba(255, 255, 255, 0.2)",
-                        boxShadow: "0 0 30px rgba(34, 197, 94, 0.2)",
-                        fontFamily: "Plus Jakarta Sans",
-                      }}
-                    />
-                    <Line 
-                      type="monotone" 
-                      dataKey="value" 
-                      stroke="url(#lineGradient)" 
-                      strokeWidth={3} 
-                      dot={{ r: 5, fill: "#22c55e" }}
-                      activeDot={{ r: 8, stroke: "#22c55e", strokeWidth: 2, fill: "#fff" }}
-                    />
-                    <defs>
-                      <linearGradient id="lineGradient" x1="0" y1="0" x2="1" y2="0">
-                        <stop offset="0%" stopColor="#22c55e" />
-                        <stop offset="100%" stopColor="#84cc16" />
-                      </linearGradient>
-                    </defs>
-                  </LineChart>
-                </ResponsiveContainer>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {filteredSkills.map((skill, index) => (
+                  <motion.div
+                    key={index}
+                    custom={index}
+                    variants={listItemVariants}
+                    initial="hidden"
+                    animate="visible"
+                    whileHover="hover"
+                    className="flex items-center gap-3 p-3 rounded-lg border bg-card/50 backdrop-blur-sm"
+                  >
+                    <div className={`flex-shrink-0 w-3 h-3 rounded-full ${getDemandLevelColor("high")}`}></div>
+                    <span className="font-medium">{skill}</span>
+                    <Badge variant="secondary" className="ml-auto">
+                      +24%
+                    </Badge>
+                  </motion.div>
+                ))}
               </div>
             </CardContent>
           </MotionCard>
@@ -947,173 +666,84 @@ const DashboardView = ({ insights, dashboardConfig }) => {
 
         {/* Skills Analysis Tab */}
         <TabsContent value="skills" className="space-y-6">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* Top Skills Detailed */}
-            <MotionCard
-              variants={cardVariants}
-              initial="hidden"
-              animate="visible"
-              whileHover="hover"
-              className="rounded-2xl backdrop-blur-xl bg-card/50 border border-cyan-400/30 shadow-lg hover:shadow-xl transition-all duration-500 overflow-hidden"
-            >
-              <CardHeader>
-                <CardTitle className="font-plus-jakarta font-bold text-xl">
-                  Top Skills Analysis
-                </CardTitle>
-                <CardDescription>
-                  Most in-demand skills in the current market
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {filteredSkills.map((skill, index) => (
-                    <motion.div 
-                      key={skill}
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: index * 0.1 }}
-                      className="flex items-center justify-between p-3 rounded-xl bg-muted/20 hover:bg-muted/40 transition-colors duration-300"
-                    >
-                      <div className="flex items-center gap-3">
-                        <div className="h-10 w-10 rounded-full bg-gradient-to-r from-blue-500 to-cyan-500 flex items-center justify-center text-white font-bold">
-                          {index + 1}
-                        </div>
-                        <span className="font-medium font-plus-jakarta">{skill}</span>
-                      </div>
-                      <Badge 
-                        variant="outline" 
-                        className="bg-gradient-to-r from-blue-500/20 to-cyan-500/20 text-foreground/80 border border-cyan-400/40"
-                      >
-                        {85 - (index * 10)}% demand
-                      </Badge>
-                    </motion.div>
-                  ))}
-                </div>
-              </CardContent>
-            </MotionCard>
-
-            {/* Skill Growth Potential */}
-            <MotionCard
-              variants={cardVariants}
-              initial="hidden"
-              animate="visible"
-              whileHover="hover"
-              className="rounded-2xl backdrop-blur-xl bg-card/50 border border-violet-400/30 shadow-lg hover:shadow-xl transition-all duration-500 overflow-hidden"
-            >
-              <CardHeader>
-                <CardTitle className="font-plus-jakarta font-bold text-xl">
-                  Skill Growth Potential
-                </CardTitle>
-                <CardDescription>
-                  Skills with the highest projected growth
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="h-[400px]">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <BarChart
-                      data={[
-                        { name: 'AI/ML', value: 95 },
-                        { name: 'Cloud Computing', value: 85 },
-                        { name: 'Cybersecurity', value: 90 },
-                        { name: 'Data Science', value: 88 },
-                        { name: 'DevOps', value: 82 },
-                      ]}
-                      layout="vertical"
-                    >
-                      <CartesianGrid strokeDasharray="3 3" stroke="#374151" opacity={0.2} />
-                      <XAxis 
-                        type="number" 
-                        stroke="#9ca3af" 
-                        fontSize={12}
-                        domain={[0, 100]}
-                      />
-                      <YAxis 
-                        dataKey="name" 
-                        type="category" 
-                        stroke="#9ca3af" 
-                        fontSize={12}
-                        width={100}
-                      />
-                      <Tooltip
-                        contentStyle={{
-                          borderRadius: "12px",
-                          backdropFilter: "blur(12px)",
-                          backgroundColor: "rgba(255, 255, 255, 0.1)",
-                          border: "1px solid rgba(255, 255, 255, 0.2)",
-                          boxShadow: "0 0 30px rgba(139, 92, 246, 0.2)",
-                          fontFamily: "Plus Jakarta Sans",
-                        }}
-                        formatter={(value) => [`${value}%`, "Growth Potential"]}
-                      />
-                      <Bar 
-                        dataKey="value" 
-                        fill="url(#growthGradient)"
-                        radius={[0, 4, 4, 0]}
-                      >
-                        {[
-                          { name: 'AI/ML', value: 95 },
-                          { name: 'Cloud Computing', value: 85 },
-                          { name: 'Cybersecurity', value: 90 },
-                          { name: 'Data Science', value: 88 },
-                          { name: 'DevOps', value: 82 },
-                        ].map((entry, index) => (
-                          <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                        ))}
-                      </Bar>
-                      <defs>
-                        <linearGradient id="growthGradient" x1="0" y1="0" x2="1" y2="0">
-                          <stop offset="0%" stopColor="#6366f1" />
-                          <stop offset="100%" stopColor="#8b5cf6" />
-                        </linearGradient>
-                      </defs>
-                    </BarChart>
-                  </ResponsiveContainer>
-                </div>
-              </CardContent>
-            </MotionCard>
-          </div>
-
-          {/* Skill Combinations */}
-          <MotionCard
+          <MotionCard 
             variants={cardVariants}
-            initial="hidden"
-            animate="visible"
             whileHover="hover"
-            className="rounded-2xl backdrop-blur-xl bg-card/50 border border-amber-400/30 shadow-lg hover:shadow-xl transition-all duration-500 overflow-hidden"
+            className="border-0 shadow-lg"
           >
             <CardHeader>
-              <CardTitle className="font-plus-jakarta font-bold text-xl">
-                High-Value Skill Combinations
-              </CardTitle>
+              <CardTitle>Skills Gap Analysis</CardTitle>
               <CardDescription>
-                Pairing these skills increases market value significantly
+                Compare your current skills with market demands
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {[
-                  { combo: "React + Node.js", value: "+35% salary premium" },
-                  { combo: "Python + AWS", value: "+42% salary premium" },
-                  { combo: "UI/UX + Frontend", value: "+28% salary premium" },
-                  { combo: "Data Science + Cloud", value: "+45% salary premium" },
-                ].map((item, index) => (
-                  <motion.div
-                    key={index}
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ delay: index * 0.1 }}
-                    whileHover={{ scale: 1.02 }}
-                    className="p-4 rounded-xl bg-gradient-to-r from-amber-500/10 to-orange-500/10 border border-amber-400/30 backdrop-blur-sm"
+              <div className="space-y-4">
+                <div>
+                  <h3 className="font-semibold mb-2">Your Current Skills</h3>
+                  <div className="flex flex-wrap gap-2">
+                    {['JavaScript', 'React', 'CSS', 'HTML', 'Node.js'].map((skill, index) => (
+                      <Badge key={index} variant="outline" className="px-3 py-1">
+                        {skill}
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
+                
+                <div>
+                  <h3 className="font-semibold mb-2">Recommended Skills to Learn</h3>
+                  <div className="flex flex-wrap gap-2">
+                    {filteredRecommendedSkills.map((skill, index) => (
+                      <Badge 
+                        key={index} 
+                        variant="secondary" 
+                        className="px-3 py-1 bg-gradient-to-r from-violet-500 to-purple-600 text-white"
+                      >
+                        {skill}
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </MotionCard>
+        </TabsContent>
+
+        {/* Salary Trends Tab */}
+        <TabsContent value="salaries" className="space-y-6">
+          <MotionCard 
+            variants={cardVariants}
+            whileHover="hover"
+            className="border-0 shadow-lg"
+          >
+            <CardHeader>
+              <CardTitle>Salary Ranges by Role (in $K)</CardTitle>
+              <CardDescription>
+                Annual salary ranges for key positions in the market
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="h-96">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart
+                    data={salaryData}
+                    margin={{ top: 20, right: 30, left: 20, bottom: 70 }}
                   >
-                    <h4 className="font-semibold font-plus-jakarta text-foreground/90 mb-1">
-                      {item.combo}
-                    </h4>
-                    <p className="text-sm text-amber-500/80 font-plus-jakarta font-medium">
-                      {item.value}
-                    </p>
-                  </motion.div>
-                ))}
+                    <CartesianGrid strokeDasharray="3 3" className="opacity-30" />
+                    <XAxis dataKey="name" angle={-45} textAnchor="end" height={60} />
+                    <YAxis />
+                    <Tooltip 
+                      contentStyle={{
+                        backgroundColor: 'hsl(var(--background))',
+                        borderColor: 'hsl(var(--border))',
+                        borderRadius: 'var(--radius)'
+                      }}
+                    />
+                    <Bar dataKey="min" fill="#8884d8" name="Minimum Salary" />
+                    <Bar dataKey="median" fill="#82ca9d" name="Median Salary" />
+                    <Bar dataKey="max" fill="#ffc658" name="Maximum Salary" />
+                  </BarChart>
+                </ResponsiveContainer>
               </div>
             </CardContent>
           </MotionCard>
@@ -1121,227 +751,50 @@ const DashboardView = ({ insights, dashboardConfig }) => {
 
         {/* Market Trends Tab */}
         <TabsContent value="trends" className="space-y-6">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* Regional Analysis */}
-            <MotionCard
-              variants={cardVariants}
-              initial="hidden"
-              animate="visible"
-              whileHover="hover"
-              className="rounded-2xl backdrop-blur-xl bg-card/50 border border-blue-400/30 shadow-lg hover:shadow-xl transition-all duration-500 overflow-hidden"
-            >
-              <CardHeader>
-                <CardTitle className="font-plus-jakarta font-bold text-xl">
-                  Regional Demand Analysis
-                </CardTitle>
-                <CardDescription>
-                  Demand distribution across different regions
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="h-[400px]">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <BarChart
-                      data={[
-                        { region: 'North America', demand: 85 },
-                        { region: 'Europe', demand: 75 },
-                        { region: 'Asia Pacific', demand: 90 },
-                        { region: 'Middle East', demand: 65 },
-                        { region: 'Africa', demand: 60 },
-                      ]}
-                    >
-                      <CartesianGrid strokeDasharray="3 3" stroke="#374151" opacity={0.2} />
-                      <XAxis 
-                        dataKey="region" 
-                        stroke="#9ca3af" 
-                        fontSize={12}
-                        fontFamily="Plus Jakarta Sans"
-                      />
-                      <YAxis 
-                        stroke="#9ca3af" 
-                        fontSize={12}
-                        fontFamily="Plus Jakarta Sans"
-                        domain={[0, 100]}
-                      />
-                      <Tooltip
-                        contentStyle={{
-                          borderRadius: "12px",
-                          backdropFilter: "blur(12px)",
-                          backgroundColor: "rgba(255, 255, 255, 0.1)",
-                          border: "1px solid rgba(255, 255, 255, 0.2)",
-                          boxShadow: "0 0 30px rgba(59, 130, 246, 0.2)",
-                          fontFamily: "Plus Jakarta Sans",
-                        }}
-                        formatter={(value) => [`${value}%`, "Demand Level"]}
-                      />
-                      <Bar 
-                        dataKey="demand" 
-                        fill="url(#regionGradient)"
-                        radius={[4, 4, 0, 0]}
-                      />
-                      <defs>
-                        <linearGradient id="regionGradient" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="0%" stopColor="#3b82f6" />
-                          <stop offset="100%" stopColor="#1d4ed8" />
-                        </linearGradient>
-                      </defs>
-                    </BarChart>
-                  </ResponsiveContainer>
-                </div>
-              </CardContent>
-            </MotionCard>
-
-            {/* Future Projections */}
-            <MotionCard
-              variants={cardVariants}
-              initial="hidden"
-              animate="visible"
-              whileHover="hover"
-              className="rounded-2xl backdrop-blur-xl bg-card/50 border border-green-400/30 shadow-lg hover:shadow-xl transition-all duration-500 overflow-hidden"
-            >
-              <CardHeader>
-                <CardTitle className="font-plus-jakarta font-bold text-xl">
-                  Future Market Projections
-                </CardTitle>
-                <CardDescription>
-                  Expected growth over the next 3 years
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="h-[400px]">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <AreaChart
-                      data={[
-                        { year: '2024', value: 75 },
-                        { year: '2025', value: 82 },
-                        { year: '2026', value: 88 },
-                        { year: '2027', value: 92 },
-                      ]}
-                    >
-                      <CartesianGrid strokeDasharray="3 3" stroke="#374151" opacity={0.2} />
-                      <XAxis 
-                        dataKey="year" 
-                        stroke="#9ca3af" 
-                        fontSize={12}
-                        fontFamily="Plus Jakarta Sans"
-                      />
-                      <YAxis 
-                        stroke="#9ca3af" 
-                        fontSize={12}
-                        fontFamily="Plus Jakarta Sans"
-                        domain={[0, 100]}
-                      />
-                      <Tooltip
-                        contentStyle={{
-                          borderRadius: "12px",
-                          backdropFilter: "blur(12px)",
-                          backgroundColor: "rgba(255, 255, 255, 0.1)",
-                          border: "1px solid rgba(255, 255, 255, 0.2)",
-                          boxShadow: "0 0 30px rgba(34, 197, 94, 0.2)",
-                          fontFamily: "Plus Jakarta Sans",
-                        }}
-                        formatter={(value) => [`${value}%`, "Market Growth"]}
-                      />
-                      <Area 
-                        type="monotone" 
-                        dataKey="value" 
-                        stroke="url(#projectionStroke)" 
-                        fill="url(#projectionFill)" 
-                        strokeWidth={2}
-                      />
-                      <defs>
-                        <linearGradient id="projectionStroke" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="0%" stopColor="#22c55e" />
-                          <stop offset="100%" stopColor="#16a34a" />
-                        </linearGradient>
-                        <linearGradient id="projectionFill" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="0%" stopColor="#22c55e" stopOpacity={0.3} />
-                          <stop offset="100%" stopColor="#16a34a" stopOpacity={0.1} />
-                        </linearGradient>
-                      </defs>
-                    </AreaChart>
-                  </ResponsiveContainer>
-                </div>
-              </CardContent>
-            </MotionCard>
-          </div>
-
-          {/* Emerging Technologies */}
-          <MotionCard
+          <MotionCard 
             variants={cardVariants}
-            initial="hidden"
-            animate="visible"
             whileHover="hover"
-            className="rounded-2xl backdrop-blur-xl bg-card/50 border border-purple-400/30 shadow-lg hover:shadow-xl transition-all duration-500 overflow-hidden"
+            className="border-0 shadow-lg"
           >
             <CardHeader>
-              <CardTitle className="font-plus-jakarta font-bold text-xl">
-                Emerging Technologies Watchlist
-              </CardTitle>
+              <CardTitle>Emerging Technology Trends</CardTitle>
               <CardDescription>
-                Technologies expected to impact the market significantly
+                Technologies expected to grow in importance over the next 2 years
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                {[
-                  { tech: "Generative AI", impact: "High", growth: "87%" },
-                  { tech: "Quantum Computing", impact: "Medium", growth: "63%" },
-                  { tech: "Web3 & Blockchain", impact: "Medium", growth: "71%" },
-                  { tech: "Edge Computing", impact: "High", growth: "79%" },
-                ].map((item, index) => (
-                  <motion.div
-                    key={index}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: index * 0.1 }}
-                    whileHover={{ y: -5 }}
-                    className="p-4 rounded-xl bg-gradient-to-br from-purple-500/10 to-fuchsia-500/10 border border-purple-400/30 backdrop-blur-sm text-center"
+              <div className="h-96">
+                <ResponsiveContainer width="100%" height="100%">
+                  <LineChart
+                    data={[
+                      { name: 'AI/ML', current: 40, future: 85 },
+                      { name: 'Cloud Computing', current: 60, future: 90 },
+                      { name: 'Cybersecurity', current: 50, future: 88 },
+                      { name: 'IoT', current: 30, future: 75 },
+                      { name: 'Blockchain', current: 25, future: 65 },
+                      { name: 'AR/VR', current: 20, future: 70 },
+                    ]}
+                    margin={{ top: 20, right: 30, left: 20, bottom: 20 }}
                   >
-                    <h4 className="font-bold font-plus-jakarta text-foreground/90 mb-2">
-                      {item.tech}
-                    </h4>
-                    <div className="flex justify-between items-center mb-2">
-                      <span className="text-xs text-muted-foreground">Impact:</span>
-                      <Badge 
-                        variant="outline" 
-                        className={
-                          item.impact === "High" 
-                            ? "bg-red-500/20 text-red-500 border-red-500/30" 
-                            : "bg-amber-500/20 text-amber-500 border-amber-500/30"
-                        }
-                      >
-                        {item.impact}
-                      </Badge>
-                    </div>
-                    <div className="flex justify-between items-center">
-                      <span className="text-xs text-muted-foreground">Growth:</span>
-                      <span className="text-sm font-semibold text-purple-500/90">
-                        {item.growth}
-                      </span>
-                    </div>
-                  </motion.div>
-                ))}
+                    <CartesianGrid strokeDasharray="3 3" className="opacity-30" />
+                    <XAxis dataKey="name" />
+                    <YAxis />
+                    <Tooltip 
+                      contentStyle={{
+                        backgroundColor: 'hsl(var(--background))',
+                        borderColor: 'hsl(var(--border))',
+                        borderRadius: 'var(--radius)'
+                      }}
+                    />
+                    <Line type="monotone" dataKey="current" stroke="#8884d8" name="Current Adoption" strokeWidth={2} />
+                    <Line type="monotone" dataKey="future" stroke="#82ca9d" name="Future Projection" strokeWidth={2} />
+                  </LineChart>
+                </ResponsiveContainer>
               </div>
             </CardContent>
           </MotionCard>
         </TabsContent>
       </Tabs>
-
-      {/* Footer */}
-      <motion.div 
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.5 }}
-        className="text-center text-sm text-muted-foreground/70 pt-4 border-t border-border/30"
-      >
-        <p className="font-plus-jakarta">
-          Data sourced from multiple industry reports and market analysis. Last updated: {lastUpdatedDate}
-        </p>
-        <p className="mt-1 font-plus-jakarta">
-          Next automatic update: {nextUpdateDistance}
-        </p>
-      </motion.div>
     </div>
   );
 };
