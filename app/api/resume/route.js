@@ -1,20 +1,15 @@
-import { NextResponse } from "next/server";
-import { generatePDF } from "@/lib/pdf"; // your function
+// pages/api/resume.js
+import { generatePDF } from "@/lib/pdf";
 
-export async function POST(req) {
-  try {
-    const body = await req.json();
-    const pdfBuffer = await generatePDF(body.content);
+export default async function handler(req, res) {
+  if (req.method === "POST") {
+    const { content } = req.body;
+    const pdfBuffer = await generatePDF(content);
 
-    return new NextResponse(pdfBuffer, {
-      status: 200,
-      headers: {
-        "Content-Type": "application/pdf",
-        "Content-Disposition": 'attachment; filename="resume.pdf"',
-      },
-    });
-  } catch (error) {
-    console.error("PDF generation error:", error);
-    return NextResponse.json({ error: "Failed to generate PDF" }, { status: 500 });
+    res.setHeader("Content-Type", "application/pdf");
+    res.setHeader("Content-Disposition", 'attachment; filename="resume.pdf"');
+    res.send(pdfBuffer);
+  } else {
+    res.status(405).json({ error: "Method not allowed" });
   }
 }
