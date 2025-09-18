@@ -3,7 +3,7 @@ import { PDFDocument, StandardFonts, rgb } from "pdf-lib";
 
 export async function generatePDF(content) {
   const pdfDoc = await PDFDocument.create();
-  const page = pdfDoc.addPage([595, 842]); // A4
+  const page = pdfDoc.addPage([595, 842]); // A4 size
 
   const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
   const { height } = page.getSize();
@@ -17,5 +17,5 @@ export async function generatePDF(content) {
   });
 
   const pdfBytes = await pdfDoc.save();
-  return Buffer.from(pdfBytes); // works with Vercel API response
+  return Buffer.from(pdfBytes);
 }
