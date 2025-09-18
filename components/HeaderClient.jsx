@@ -44,12 +44,12 @@ export default function HeaderClient() {
       icon: <Briefcase className="h-4 w-4 text-blue-500" />,
     },
     {
-      href: "/skills-development",
+      href: "/interview/mock",
       label: "Skills Development",
       icon: <GraduationCap className="h-4 w-4 text-green-500" />,
     },
     {
-      href: "/mentorship",
+      href: "/career-paths/generate-roadmap",
       label: "Mentorship",
       icon: <Users className="h-4 w-4 text-purple-500" />,
     },

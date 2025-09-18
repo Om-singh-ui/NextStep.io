@@ -23,6 +23,8 @@ model User {
   coverLetter     CoverLetter[]
   resume          Resume?
   industryInsight IndustryInsight? @relation(fields: [industry], references: [industry])
+
+  // Career Growth fields removed: currentRole, targetRole, careerPath removed
 }
 
 model Assessment {

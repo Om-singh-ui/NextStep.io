@@ -17,7 +17,7 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
-import { saveResume } from "@/actions/resume";
+import { saveResume, generatePDF } from "@/actions/resume";
 import { EntryForm } from "./entry-form";
 import useFetch from "@/hooks/use-fetch";
 import { useUser } from "@clerk/nextjs";
@@ -27,20 +27,27 @@ import { resumeSchema } from "@/app/lib/schema";
 export default function ResumeBuilder({ initialContent }) {
   const [isMounted, setIsMounted] = useState(false);
   const [activeTab, setActiveTab] = useState("edit");
-  const [previewContent, setPreviewContent] = useState(initialContent);
+  const [previewContent, setPreviewContent] = useState(initialContent || "");
   const { user } = useUser();
   const [resumeMode, setResumeMode] = useState("preview");
+  const [isGenerating, setIsGenerating] = useState(false);
 
   const {
     control,
     register,
     handleSubmit,
     watch,
+    setValue,
     formState: { errors },
   } = useForm({
     resolver: zodResolver(resumeSchema),
     defaultValues: {
-      contactInfo: {},
+      contactInfo: {
+        email: "",
+        mobile: "",
+        linkedin: "",
+        twitter: "",
+      },
       summary: "",
       skills: "",
       experience: [],
@@ -56,6 +63,13 @@ export default function ResumeBuilder({ initialContent }) {
     error: saveError,
   } = useFetch(saveResume);
 
+  const {
+    loading: isGeneratingPDF,
+    fn: generatePDFFn,
+    data: pdfData,
+    error: pdfError,
+  } = useFetch(generatePDF);
+
   const formValues = watch();
 
   useEffect(() => {
@@ -70,15 +84,18 @@ export default function ResumeBuilder({ initialContent }) {
   }, []);
 
   useEffect(() => {
-    if (initialContent) setActiveTab("preview");
+    if (initialContent) {
+      setPreviewContent(initialContent);
+      setActiveTab("preview");
+    }
   }, [initialContent]);
 
   useEffect(() => {
     if (activeTab === "edit") {
       const newContent = getCombinedContent();
-      setPreviewContent(newContent ? newContent : initialContent);
+      setPreviewContent(newContent || initialContent || "");
     }
-  }, [formValues, activeTab]);
+  }, [formValues, activeTab, initialContent]);
 
   useEffect(() => {
     if (saveResult && !isSaving) {
@@ -88,6 +105,34 @@ export default function ResumeBuilder({ initialContent }) {
       toast.error(saveError.message || "Failed to save resume");
     }
   }, [saveResult, saveError, isSaving]);
+
+  useEffect(() => {
+    if (pdfData && !isGeneratingPDF) {
+      // Create a blob from the PDF data
+      const blob = new Blob([pdfData], { type: 'application/pdf' });
+      const url = URL.createObjectURL(blob);
+      
+      // Create a download link and trigger the download
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'resume.pdf';
+      document.body.appendChild(a);
+      a.click();
+      
+      // Clean up
+      setTimeout(() => {
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      }, 100);
+      
+      toast.success("PDF downloaded successfully!");
+      setIsGenerating(false);
+    }
+    if (pdfError) {
+      toast.error(pdfError.message || "Failed to generate PDF");
+      setIsGenerating(false);
+    }
+  }, [pdfData, pdfError, isGeneratingPDF]);
 
   const getContactMarkdown = () => {
     const { contactInfo } = formValues;
@@ -99,8 +144,7 @@ export default function ResumeBuilder({ initialContent }) {
     if (contactInfo.twitter) parts.push(`🐦 [Twitter](${contactInfo.twitter})`);
 
     return parts.length > 0
-      ? `## <div align="center">${user.fullName}</div>
-        \n\n<div align="center">\n\n${parts.join(" | ")}\n\n</div>`
+      ? `## <div align="center">${user?.fullName || "Your Name"}</div>\n\n<div align="center">\n\n${parts.join(" | ")}\n\n</div>`
       : "";
   };
 
@@ -118,27 +162,14 @@ export default function ResumeBuilder({ initialContent }) {
       .join("\n\n");
   };
 
-  const [isGenerating, setIsGenerating] = useState(false);
-
-  const generatePDF = async () => {
+  const handleGeneratePDF = async () => {
     setIsGenerating(true);
     try {
-      // ✅ dynamically import only on client
-      const html2pdf = (await import("html2pdf.js")).default;
-
-      const element = document.getElementById("resume-pdf");
-      const opt = {
-        margin: [15, 15],
-        filename: "resume.pdf",
-        image: { type: "jpeg", quality: 0.98 },
-        html2canvas: { scale: 2 },
-        jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
-      };
-
-      await html2pdf().set(opt).from(element).save();
+      // Convert markdown to HTML for PDF generation
+      const htmlContent = await generatePDFFn(previewContent);
     } catch (error) {
       console.error("PDF generation error:", error);
-    } finally {
+      toast.error("Failed to generate PDF");
       setIsGenerating(false);
     }
   };
@@ -150,8 +181,7 @@ export default function ResumeBuilder({ initialContent }) {
         .replace(/\n\s*\n/g, "\n\n")
         .trim();
 
-      console.log(previewContent, formattedContent);
-      await saveResumeFn(previewContent);
+      await saveResumeFn(formattedContent);
     } catch (error) {
       console.error("Save error:", error);
     }
@@ -174,10 +204,9 @@ export default function ResumeBuilder({ initialContent }) {
         </h1>
         <div className="space-x-2">
           <Button
-            variant="destructive"
+            variant="default"
             onClick={handleSubmit(onSubmit)}
             disabled={isSaving}
-            suppressHydrationWarning
           >
             {isSaving ? (
               <>
@@ -191,7 +220,7 @@ export default function ResumeBuilder({ initialContent }) {
               </>
             )}
           </Button>
-          <Button onClick={generatePDF} disabled={isGenerating} suppressHydrationWarning>
+          <Button onClick={handleGeneratePDF} disabled={isGenerating}>
             {isGenerating ? (
               <>
                 <Loader2 className="h-4 w-4 animate-spin" />
@@ -209,8 +238,8 @@ export default function ResumeBuilder({ initialContent }) {
 
       <Tabs value={activeTab} onValueChange={setActiveTab}>
         <TabsList>
-          <TabsTrigger value="edit" suppressHydrationWarning>Form</TabsTrigger>
-          <TabsTrigger value="preview" suppressHydrationWarning>Markdown</TabsTrigger>
+          <TabsTrigger value="edit">Form</TabsTrigger>
+          <TabsTrigger value="preview">Markdown</TabsTrigger>
         </TabsList>
 
         {/* Form Tab */}
@@ -226,7 +255,6 @@ export default function ResumeBuilder({ initialContent }) {
                     {...register("contactInfo.email")}
                     type="email"
                     placeholder="your@email.com"
-                    suppressHydrationWarning
                   />
                   {errors.contactInfo?.email && (
                     <p className="text-sm text-red-500">
@@ -240,7 +268,6 @@ export default function ResumeBuilder({ initialContent }) {
                     {...register("contactInfo.mobile")}
                     type="tel"
                     placeholder="+1 234 567 8900"
-                    suppressHydrationWarning
                   />
                   {errors.contactInfo?.mobile && (
                     <p className="text-sm text-red-500">
@@ -254,7 +281,6 @@ export default function ResumeBuilder({ initialContent }) {
                     {...register("contactInfo.linkedin")}
                     type="url"
                     placeholder="https://linkedin.com/in/your-profile"
-                    suppressHydrationWarning
                   />
                   {errors.contactInfo?.linkedin && (
                     <p className="text-sm text-red-500">
@@ -270,7 +296,6 @@ export default function ResumeBuilder({ initialContent }) {
                     {...register("contactInfo.twitter")}
                     type="url"
                     placeholder="https://twitter.com/your-handle"
-                    suppressHydrationWarning
                   />
                   {errors.contactInfo?.twitter && (
                     <p className="text-sm text-red-500">
@@ -292,7 +317,6 @@ export default function ResumeBuilder({ initialContent }) {
                     {...field}
                     className="h-32"
                     placeholder="Write a compelling professional summary..."
-                    suppressHydrationWarning
                   />
                 )}
               />
@@ -312,7 +336,6 @@ export default function ResumeBuilder({ initialContent }) {
                     {...field}
                     className="h-32"
                     placeholder="List your key skills..."
-                    suppressHydrationWarning
                   />
                 )}
               />
@@ -396,7 +419,6 @@ export default function ResumeBuilder({ initialContent }) {
               onClick={() =>
                 setResumeMode(resumeMode === "preview" ? "edit" : "preview")
               }
-              suppressHydrationWarning
             >
               {resumeMode === "preview" ? (
                 <>
@@ -428,22 +450,6 @@ export default function ResumeBuilder({ initialContent }) {
               height={800}
               preview={resumeMode}
             />
-          </div>
-
-          {/* Hidden content used for PDF generation */}
-          <div className="hidden">
-            <div id="resume-pdf">
-              <MDEditor.Markdown
-                source={previewContent}
-                style={{
-                  background: "white",
-                  color: "black",
-                  fontSize: "14px",
-                  lineHeight: "1.6",
-                  padding: "20px",
-                }}
-              />
-            </div>
           </div>
         </TabsContent>
       </Tabs> 
