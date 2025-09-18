@@ -1,6 +1,6 @@
 // app/api/resume/route.js
 import { NextResponse } from "next/server";
-import { generatePDF } from "@/lib/pdf";
+import { generatePDF } from "../../../lib/pdf";
 
 export async function POST(req) {
   const { content } = await req.json();
