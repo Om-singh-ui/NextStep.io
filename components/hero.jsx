@@ -5,7 +5,6 @@ import { motion } from "framer-motion";
 import { Waves, Sparkles, Rocket, ArrowRight, Play } from "lucide-react";
 import dynamic from "next/dynamic";
 import { Button } from "@/components/ui/button";
-import HackathonShoutoutPopup from "@/components/HackathonShoutoutPopup";
 import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 
@@ -55,7 +54,6 @@ const Hero = () => {
         <div className="absolute inset-0 bg-background/80 backdrop-blur-2xl" />
       </div>
 
-      <HackathonShoutoutPopup />
 
       {/* Hero Content */}
       <motion.div
