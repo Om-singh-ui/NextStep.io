@@ -9,16 +9,20 @@ import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import HackathonShoutoutPopup from "./HackathonShoutoutPopup";
 
-// Dynamically import Spline to reduce initial bundle size
-const Spline = dynamic(() => import("@splinetool/react-spline"), {
-  ssr: false,
-  loading: () => (
-    <div className="w-full h-[300px] sm:h-[400px] md:h-[500px] mt-6 bg-gradient-to-br from-purple-500/10 to-blue-500/10 rounded-lg flex items-center justify-center">
-      <div className="text-muted-foreground">Loading 3D experience...</div>
-    </div>
-  ),
-});
+import dynamic from "next/dynamic";
 
+// Dynamically import Spline to reduce initial bundle size
+const Spline = dynamic(
+  () => import("@splinetool/react-spline/dist/react-spline.esm.js"), // <-- use this path
+  {
+    ssr: false,
+    loading: () => (
+      <div className="w-full h-[300px] sm:h-[400px] md:h-[500px] mt-6 bg-gradient-to-br from-purple-500/10 to-blue-500/10 rounded-lg flex items-center justify-center">
+        <div className="text-muted-foreground">Loading 3D experience...</div>
+      </div>
+    ),
+  }
+);
 const Hero = () => {
   const [mounted, setMounted] = useState(false);
   const { isSignedIn } = useUser();
