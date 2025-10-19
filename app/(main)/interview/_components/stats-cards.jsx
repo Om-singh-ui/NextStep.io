@@ -1,6 +1,6 @@
 "use client";
 
-import { Brain, Target, Trophy, TrendingUp, TrendingDown, Sparkles } from "lucide-react";
+import { Brain, Target, Trophy, TrendingUp, TrendingDown, Sparkles, Flame } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { motion } from "framer-motion";
 import { useState, useMemo } from "react";
@@ -9,7 +9,7 @@ export default function StatsCards({ assessments = [] }) {
   const [hoveredCard, setHoveredCard] = useState(null);
 
   // Memoize calculations to prevent unnecessary re-renders
-  const { averageScore, totalQuestions, latestAssessment, scoreTrend } = useMemo(() => {
+  const { averageScore, totalQuestions, latestAssessment, scoreTrend, streak } = useMemo(() => {
     const safeAssessments = assessments || [];
     
     // Calculate average score
@@ -18,7 +18,7 @@ export default function StatsCards({ assessments = [] }) {
       : 0;
     
     // Calculate total questions
-    const totalQ = safeAssessments.reduce((sum, a) => sum + ((a.questions && a.questions.length) || 0), 0);
+    const totalQ = safeAssessments.reduce((sum, a) => sum + ((a.totalQuestions || a.questions?.length) || 0), 0);
     
     // Get latest assessment
     const latest = safeAssessments[0] || null;
@@ -31,11 +31,33 @@ export default function StatsCards({ assessments = [] }) {
       trend = trendValue > 0 ? 1 : trendValue < 0 ? -1 : 0;
     }
     
+    // Calculate streak
+    let streakCount = 0;
+    if (safeAssessments.length > 0) {
+      const today = new Date().toDateString();
+      const dates = [...new Set(safeAssessments.map(a => new Date(a.createdAt).toDateString()))].sort().reverse();
+      
+      let currentDate = new Date();
+      
+      for (let i = 0; i < dates.length; i++) {
+        const assessmentDate = new Date(dates[i]);
+        const diffTime = currentDate.getTime() - assessmentDate.getTime();
+        const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+        
+        if (diffDays === i) {
+          streakCount++;
+        } else {
+          break;
+        }
+      }
+    }
+    
     return {
       averageScore: avgScore,
       totalQuestions: totalQ,
       latestAssessment: latest,
-      scoreTrend: trend
+      scoreTrend: trend,
+      streak: streakCount
     };
   }, [assessments]);
 
@@ -58,6 +80,14 @@ export default function StatsCards({ assessments = [] }) {
       progress: Math.min(100, (totalQuestions / 500) * 100),
     },
     {
+      title: "Current Streak",
+      value: `${streak} days`,
+      subtitle: "Consecutive practice days",
+      icon: <Flame className="h-6 w-6" />,
+      color: "from-red-400 to-pink-500",
+      progress: Math.min(100, (streak / 7) * 100),
+    },
+    {
       title: "Latest Score",
       value: `${latestAssessment?.quizScore?.toFixed(1) || 0}%`,
       subtitle: "Most recent assessment",
@@ -66,7 +96,7 @@ export default function StatsCards({ assessments = [] }) {
       progress: latestAssessment?.quizScore || 0,
       trend: scoreTrend,
     },
-  ], [averageScore, totalQuestions, latestAssessment, scoreTrend]);
+  ], [averageScore, totalQuestions, latestAssessment, scoreTrend, streak]);
 
   const FloatingParticles = ({ cardIndex, isHovered }) => (
     <>
@@ -93,6 +123,8 @@ export default function StatsCards({ assessments = [] }) {
                 ? "linear-gradient(45deg, #f59e0b, #f97316)"
                 : cardIndex === 1
                 ? "linear-gradient(45deg, #3b82f6, #6366f1)"
+                : cardIndex === 2
+                ? "linear-gradient(45deg, #ef4444, #ec4899)"
                 : "linear-gradient(45deg, #10b981, #059669)",
           }}
         />
@@ -101,7 +133,7 @@ export default function StatsCards({ assessments = [] }) {
   );
 
   return (
-    <div className="grid gap-6 md:grid-cols-3 p-4 max-w-6xl mx-auto">
+    <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4 p-4 max-w-7xl mx-auto">
       {cards.map((card, index) => (
         <motion.div
           key={index}
@@ -188,6 +220,8 @@ export default function StatsCards({ assessments = [] }) {
                               ? "#f59e0b"
                               : index === 1
                               ? "#3b82f6"
+                              : index === 2
+                              ? "#ef4444"
                               : "#10b981",
                         }}
                       />
@@ -210,6 +244,8 @@ export default function StatsCards({ assessments = [] }) {
                               ? "text-amber-500"
                               : index === 1
                               ? "text-blue-500"
+                              : index === 2
+                              ? "text-red-500"
                               : "text-emerald-500"
                           }
                         />

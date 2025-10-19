@@ -3,45 +3,37 @@
 import { useState, useEffect, useCallback } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { generateQuiz, saveQuizResult } from "@/actions/interview";
-import QuizResult from "./quiz-result";
-import useFetch from "@/hooks/use-fetch";
-import { ClipLoader } from "react-spinners";
-import { motion, AnimatePresence } from "framer-motion";
-import { Info, Sparkles } from "lucide-react";
-import { Progress } from "@/components/ui/progress";
 import { Label } from "@/components/ui/label";
+import { generateQuiz, saveQuizResult } from "@/actions/interview";
+import { BarLoader } from "react-spinners";
+import { useRouter } from "next/navigation";
 
-export default function Quiz() {
+export default function Quiz({ onQuizComplete }) {
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [answers, setAnswers] = useState([]);
-  const [showExplanation, setShowExplanation] = useState(false);
-  const [celebrate, setCelebrate] = useState(false);
+  const [quizData, setQuizData] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [result, setResult] = useState(null);
+  const [startTime, setStartTime] = useState(null);
+  const [timeSpent, setTimeSpent] = useState(0);
+  const router = useRouter();
 
-  const {
-    loading: generatingQuiz,
-    fn: generateQuizFn,
-    data: quizData,
-  } = useFetch(generateQuiz);
-
-  const {
-    loading: savingResult,
-    fn: saveQuizResultFn,
-    data: resultData,
-    setData: setResultData,
-  } = useFetch(saveQuizResult);
-
-  useEffect(() => {
-    if (quizData) setAnswers(new Array(quizData.length).fill(null));
-  }, [quizData]);
+  const startQuiz = async () => {
+    setLoading(true);
+    try {
+      // Generate 10 questions
+      const questions = await generateQuiz(10);
+      setQuizData(questions);
+      setAnswers(new Array(questions.length).fill(null));
+      setStartTime(Date.now());
+    } catch (error) {
+      toast.error(error.message || "Failed to generate quiz");
+    }
+    setLoading(false);
+  };
 
   const handleAnswer = useCallback((answer) => {
     setAnswers(prev => {
@@ -51,88 +43,167 @@ export default function Quiz() {
     });
   }, [currentQuestion]);
 
-  const calculateScore = useCallback(() => {
-    if (!quizData) return 0;
-    let correct = 0;
-    answers.forEach((answer, index) => {
-      if (answer === quizData[index].correctAnswer) correct++;
-    });
-    return (correct / quizData.length) * 100;
-  }, [quizData, answers]);
-
-  const finishQuiz = useCallback(async () => {
-    const score = calculateScore();
-    try {
-      await saveQuizResultFn(quizData, answers, score);
-      toast.success("🎉 Quiz completed!");
-      setCelebrate(true);
-    } catch (error) {
-      toast.error(error.message || "Failed to save quiz results");
-    }
-  }, [quizData, answers, calculateScore, saveQuizResultFn]);
-
-  const handleNext = useCallback(() => {
+  const nextQuestion = useCallback(() => {
     if (currentQuestion < quizData.length - 1) {
       setCurrentQuestion(prev => prev + 1);
-      setShowExplanation(false);
     } else {
       finishQuiz();
     }
-  }, [currentQuestion, quizData, finishQuiz]);
+  }, [currentQuestion, quizData]);
 
-  const startNewQuiz = useCallback(() => {
-    setCurrentQuestion(0);
-    setAnswers([]);
-    setShowExplanation(false);
-    setCelebrate(false);
-    generateQuizFn();
-    setResultData(null);
-  }, [generateQuizFn, setResultData]);
+  const finishQuiz = async () => {
+    if (!quizData || !startTime) return;
+    
+    setSaving(true);
+    try {
+      const endTime = Date.now();
+      const totalTime = Math.round((endTime - startTime) / 1000);
+      setTimeSpent(totalTime);
 
-  // Early return for loading state
-  if (generatingQuiz) {
+      const correctAnswers = answers.filter((answer, index) => 
+        answer === quizData[index].correctAnswer
+      ).length;
+      
+      const score = Math.round((correctAnswers / quizData.length) * 100);
+      
+      const result = await saveQuizResult({
+        questions: quizData,
+        answers,
+        score,
+        timeSpent: totalTime,
+        totalQuestions: quizData.length,
+        correctAnswers
+      });
+      
+      const completeResult = { ...result, timeSpent: totalTime };
+      setResult(completeResult);
+      
+      // Notify parent component about the new assessment
+      if (onQuizComplete) {
+        onQuizComplete(completeResult);
+      }
+      
+      toast.success("Quiz completed! Your progress has been updated.");
+    } catch (error) {
+      toast.error(error.message || "Failed to save quiz result");
+    }
+    setSaving(false);
+  };
+
+  const navigateQuestion = useCallback((direction) => {
+    if (direction === 'next') {
+      nextQuestion();
+    } else if (direction === 'prev' && currentQuestion > 0) {
+      setCurrentQuestion(prev => prev - 1);
+    }
+  }, [nextQuestion, currentQuestion]);
+
+  // Keyboard navigation
+  useEffect(() => {
+    const handleKeyPress = (e) => {
+      if (!quizData) return;
+      
+      if (e.key === 'ArrowRight' && answers[currentQuestion]) {
+        navigateQuestion('next');
+      } else if (e.key === 'ArrowLeft' && currentQuestion > 0) {
+        navigateQuestion('prev');
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyPress);
+    return () => window.removeEventListener('keydown', handleKeyPress);
+  }, [quizData, currentQuestion, answers, navigateQuestion]);
+
+  if (loading) {
     return (
-      <div className="flex justify-center items-center mt-8">
-        <ClipLoader size={32} color="#3b82f6" />
-        <span className="ml-3 text-muted-foreground">Generating your quiz...</span>
-      </div>
+      <Card>
+        <CardContent className="p-8 text-center">
+          <BarLoader width={200} color="#3b82f6" />
+          <p className="mt-4">Generating your 10-question quiz...</p>
+        </CardContent>
+      </Card>
     );
   }
 
-  // Show results if available
-  if (resultData) {
-    return <QuizResult result={resultData} onStartNew={startNewQuiz} />;
-  }
-
-  // Show initial state if no quiz data
   if (!quizData) {
     return (
-      <Card className="mx-auto max-w-md shadow-lg rounded-xl transition-shadow duration-300 bg-gradient-to-br from-white to-blue-50/50 dark:from-slate-900 dark:to-blue-950/20 border border-blue-200/50 dark:border-slate-700/50 overflow-hidden">
-        <CardHeader className="text-center">
-          <CardTitle className="text-2xl font-bold bg-gradient-to-r from-indigo-500 to-purple-600 bg-clip-text text-transparent">
-            Ready to test your knowledge?
-          </CardTitle>
+      <Card>
+        <CardHeader>
+          <CardTitle>Ready to test your knowledge?</CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-muted-foreground text-center">
-            This quiz contains 10 questions specific to your industry and skills.
-            Take your time and choose the best answer for each question.
-          </p>
+          <p>Take this 10-question technical quiz to assess your skills.</p>
+          <ul className="mt-2 text-sm text-muted-foreground space-y-1">
+            <li>• 10 carefully selected questions</li>
+            <li>• Instant feedback and scoring</li>
+            <li>• Performance tracking</li>
+          </ul>
         </CardContent>
-        <CardFooter>
-          <Button
-            onClick={generateQuizFn}
-            className="w-full bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-xl"
-            disabled={generatingQuiz}
+        <CardFooter className="flex flex-col space-y-3">
+          <Button onClick={startQuiz} className="w-full" size="lg">
+            Start 10-Question Quiz
+          </Button>
+          <Button 
+            variant="outline" 
+            onClick={() => router.push('/interview')}
+            className="w-full"
           >
-            {generatingQuiz ? (
-              <>
-                <ClipLoader size={16} color="white" className="mr-2" />
-                Preparing Quiz...
-              </>
-            ) : (
-              "🚀 Start Quiz"
-            )}
+            Back to Dashboard
+          </Button>
+        </CardFooter>
+      </Card>
+    );
+  }
+
+  if (result) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle>Quiz Completed!</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="grid grid-cols-2 gap-4 text-center">
+            <div className="p-3 bg-muted rounded-lg">
+              <div className="text-2xl font-bold text-primary">{result.quizScore}%</div>
+              <div className="text-sm text-muted-foreground">Score</div>
+            </div>
+            <div className="p-3 bg-muted rounded-lg">
+              <div className="text-2xl font-bold text-primary">
+                {result.correctAnswers}/{quizData.length}
+              </div>
+              <div className="text-sm text-muted-foreground">Correct</div>
+            </div>
+          </div>
+          {result.improvementTip && (
+            <div className="p-3 bg-blue-50 dark:bg-blue-950/20 rounded-lg border">
+              <p className="text-sm font-medium text-blue-800 dark:text-blue-200">
+                💡 {result.improvementTip}
+              </p>
+            </div>
+          )}
+          <div className="text-center text-sm text-muted-foreground">
+            Time spent: {Math.floor(timeSpent / 60)}:{(timeSpent % 60).toString().padStart(2, '0')}
+          </div>
+        </CardContent>
+        <CardFooter className="flex flex-col space-y-3">
+          <Button 
+            onClick={() => {
+              setQuizData(null);
+              setResult(null);
+              setCurrentQuestion(0);
+              setAnswers([]);
+              setTimeSpent(0);
+            }} 
+            className="w-full"
+          >
+            Start New Quiz
+          </Button>
+          <Button 
+            variant="outline"
+            onClick={() => router.push('/interview')}
+            className="w-full"
+          >
+            View Dashboard
           </Button>
         </CardFooter>
       </Card>
@@ -140,160 +211,66 @@ export default function Quiz() {
   }
 
   const question = quizData[currentQuestion];
-  const progressValue = ((currentQuestion + 1) / quizData.length) * 100;
+  const progress = ((currentQuestion + 1) / quizData.length) * 100;
 
   return (
-    <div className="relative max-w-2xl mx-auto">
-      {/* Celebration Animation */}
-      <AnimatePresence>
-        {celebrate && (
-          <motion.div
-            className="absolute inset-0 flex items-center justify-center pointer-events-none z-10"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.5 }}
-          >
-            {[...Array(15)].map((_, i) => (
-              <motion.div
-                key={i}
-                className="absolute w-3 h-3 rounded-full bg-yellow-400"
-                initial={{ x: 0, y: 0, scale: 0, opacity: 1 }}
-                animate={{
-                  x: Math.random() * 400 - 200,
-                  y: -150 - Math.random() * 100,
-                  scale: [0, 1, 0],
-                  opacity: [0, 1, 0],
-                }}
-                transition={{ duration: 1.5, delay: i * 0.1 }}
-              />
-            ))}
-            <Sparkles size={48} className="text-yellow-400" />
-          </motion.div>
-        )}
-      </AnimatePresence>
-      <Card className="shadow-lg rounded-xl">
-        {/* Progress bar */}
-        <div className="px-6 pt-6">
-          <div className="flex justify-between items-center mb-2">
-            <span className="text-sm text-muted-foreground">
-              Question {currentQuestion + 1} of {quizData.length}
-            </span>
-            <span className="text-sm font-medium">{Math.round(progressValue)}%</span>
+    <Card>
+      <CardHeader className="pb-4">
+        <div className="flex justify-between items-center">
+          <CardTitle className="text-lg">
+            Question {currentQuestion + 1} of {quizData.length}
+          </CardTitle>
+          <div className="text-sm text-muted-foreground">
+            {Math.round(progress)}%
           </div>
-          <Progress value={progressValue} className="h-2" />
         </div>
-
-        <CardHeader>
-          <CardTitle className="text-xl">Question {currentQuestion + 1}</CardTitle>
-        </CardHeader>
-
-        <CardContent className="space-y-6">
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={currentQuestion}
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -20 }}
-              transition={{ duration: 0.3 }}
+        <div className="w-full bg-muted rounded-full h-2">
+          <div 
+            className="bg-primary h-2 rounded-full transition-all duration-300"
+            style={{ width: `${progress}%` }}
+          />
+        </div>
+      </CardHeader>
+      <CardContent>
+        <p className="mb-4 font-medium text-base">{question.question}</p>
+        <RadioGroup 
+          onValueChange={handleAnswer} 
+          value={answers[currentQuestion] || ""}
+          className="space-y-3"
+        >
+          {question.options.map((option, index) => (
+            <div 
+              key={index} 
+              className="flex items-center space-x-3 p-3 rounded-lg border hover:bg-muted/50 transition-colors"
             >
-              <p className="text-lg font-medium mb-6">{question.question}</p>
-
-              <RadioGroup
-                onValueChange={handleAnswer}
-                value={answers[currentQuestion] || ""}
-                className="space-y-3"
+              <RadioGroupItem value={option} id={`option-${index}`} />
+              <Label 
+                htmlFor={`option-${index}`} 
+                className="flex-1 cursor-pointer text-sm"
               >
-                {question.options.map((option, index) => {
-                  const isSelected = answers[currentQuestion] === option;
-                  const isCorrect = option === question.correctAnswer;
-                  const showCorrectness = showExplanation && isCorrect;
-                  
-                  return (
-                    <motion.div
-                      key={index}
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
-                      className={`p-4 border rounded-lg cursor-pointer transition-all ${
-                        isSelected
-                          ? "border-blue-500 bg-blue-50 dark:bg-blue-900/20"
-                          : "border-muted hover:bg-muted/20"
-                      } ${
-                        showCorrectness ? "border-green-500 bg-green-50 dark:bg-green-900/20" : ""
-                      }`}
-                      onClick={() => !showExplanation && handleAnswer(option)}
-                    >
-                      <div className="flex items-center space-x-2">
-                        <RadioGroupItem 
-                          value={option} 
-                          id={`option-${index}`} 
-                          disabled={showExplanation}
-                        />
-                        <Label htmlFor={`option-${index}`} className="cursor-pointer flex-1">
-                          {option}
-                        </Label>
-                        {showExplanation && showCorrectness && (
-                          <div className="h-5 w-5 rounded-full bg-green-500 flex items-center justify-center">
-                            <svg className="h-3 w-3 text-white" viewBox="0 0 24 24" fill="none">
-                              <path d="M5 13l4 4L19 7" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/>
-                            </svg>
-                          </div>
-                        )}
-                      </div>
-                    </motion.div>
-                  );
-                })}
-              </RadioGroup>
-
-              {showExplanation && (
-                <motion.div
-                  initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: "auto" }}
-                  className="mt-6 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border flex gap-3"
-                >
-                  <Info className="h-5 w-5 text-blue-500 flex-shrink-0 mt-0.5" />
-                  <div>
-                    <p className="font-medium text-blue-700 dark:text-blue-300">Explanation:</p>
-                    <p className="text-muted-foreground mt-1">{question.explanation}</p>
-                  </div>
-                </motion.div>
-              )}
-            </motion.div>
-          </AnimatePresence>
-        </CardContent>
-
-        <CardFooter className="flex justify-between gap-3 flex-wrap">
-          {!showExplanation ? (
-            <Button
-              onClick={() => setShowExplanation(true)}
-              variant="outline"
-              disabled={!answers[currentQuestion]}
-              className="flex-1"
-            >
-              Show Explanation
-            </Button>
-          ) : (
-            (<div className="flex-1" />) // Spacer for layout
-          )}
-          
-          <Button
-            onClick={handleNext}
-            disabled={!answers[currentQuestion] || savingResult}
-            className="min-w-[120px]"
-          >
-            {savingResult ? (
-              <>
-                <ClipLoader size={16} color="white" className="mr-2" />
-                Saving...
-              </>
-            ) : currentQuestion < quizData.length - 1 ? (
-              "Next Question"
-            ) : (
-              "Finish Quiz"
-            )}
-          </Button>
-        </CardFooter>
-      </Card>
-    </div>
+                {option}
+              </Label>
+            </div>
+          ))}
+        </RadioGroup>
+      </CardContent>
+      <CardFooter className="flex justify-between">
+        <Button
+          variant="outline"
+          disabled={currentQuestion === 0}
+          onClick={() => navigateQuestion('prev')}
+          size="sm"
+        >
+          Previous
+        </Button>
+        <Button
+          onClick={() => navigateQuestion('next')}
+          disabled={!answers[currentQuestion] || saving}
+          size="sm"
+        >
+          {saving ? "Saving..." : currentQuestion < quizData.length - 1 ? "Next" : "Finish"}
+        </Button>
+      </CardFooter>
+    </Card>
   );
 }

@@ -7,6 +7,7 @@ import dynamic from "next/dynamic";
 import { Button } from "@/components/ui/button";
 import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
+import HackathonShoutoutPopup from "./HackathonShoutoutPopup";
 
 // Dynamically import Spline to reduce initial bundle size
 const Spline = dynamic(() => import("@splinetool/react-spline"), {
@@ -54,6 +55,7 @@ const Hero = () => {
         <div className="absolute inset-0 bg-background/80 backdrop-blur-2xl" />
       </div>
 
+        <HackathonShoutoutPopup />
 
       {/* Hero Content */}
       <motion.div
