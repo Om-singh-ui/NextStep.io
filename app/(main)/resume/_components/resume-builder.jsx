@@ -133,53 +133,32 @@ export default function ResumeBuilder({ initialContent }) {
     setIsGenerating(true);
     
     try {
-      console.log('📤 Sending content to server...');
+      console.log('📤 Generating PDF with content...');
       console.log('Content preview:', previewContent ? previewContent.substring(0, 100) : '(empty)');
       
-      const result = await generateResumePDF(previewContent);
-      console.log('📥 Server response:', result);
-
-      if (!result) {
-        throw new Error('No response from server');
-      }
-
-      if (result.success && result.pdfData) {
-        console.log('🔧 Converting base64 to PDF blob...');
-        
-        // Convert base64 to blob
-        const byteCharacters = atob(result.pdfData);
-        const byteNumbers = new Array(byteCharacters.length);
-        for (let i = 0; i < byteCharacters.length; i++) {
-          byteNumbers[i] = byteCharacters.charCodeAt(i);
-        }
-        const byteArray = new Uint8Array(byteNumbers);
-        const blob = new Blob([byteArray], { type: 'application/pdf' });
-        
-        console.log('📥 PDF blob created, size:', blob.size, 'bytes');
-        
-        // Create download link
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = result.filename || 'resume.pdf';
-        document.body.appendChild(a);
-        a.click();
-        
-        // Clean up
-        setTimeout(() => {
-          document.body.removeChild(a);
-          window.URL.revokeObjectURL(url);
-        }, 100);
-        
-        console.log('✅ PDF download initiated');
-        toast.success("PDF downloaded successfully!");
-      } else {
-        console.error('❌ Server returned error or missing data:', result.error || result);
-        toast.error(result.error || "Failed to generate PDF: server returned no PDF");
-      }
+      // Generate PDF blob directly (client-side)
+      const blob = await generateResumePDF(previewContent);
+      console.log('📥 PDF blob created, size:', blob.size, 'bytes');
+      
+      // Create download link
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'resume.pdf';
+      document.body.appendChild(a);
+      a.click();
+      
+      // Clean up
+      setTimeout(() => {
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      }, 100);
+      
+      console.log('✅ PDF download initiated');
+      toast.success("PDF downloaded successfully!");
     } catch (error) {
       console.error('💥 Client-side error generating PDF:', error);
-      toast.error("Failed to generate PDF: " + (error.message || error));
+      toast.error("Failed to generate PDF: " + (error.message || 'Unknown error'));
     } finally {
       setIsGenerating(false);
       console.log('🏁 PDF generation process completed');
@@ -234,7 +213,7 @@ export default function ResumeBuilder({ initialContent }) {
           <Button onClick={handleGeneratePDF} disabled={isGenerating}>
             {isGenerating ? (
               <>
-                <Loader2 className="h-4 w-4 animate-spin" />
+                <Loader2 className="h-4 w-4" />
                 Generating PDF...
               </>
             ) : (
