@@ -1,19 +1,21 @@
+
 "use client";
 
 import React, { useState, useEffect, useCallback } from "react";
 import { motion } from "framer-motion";
 import { Waves, Sparkles, Rocket, ArrowRight, Play } from "lucide-react";
-import dynamic from "next/dynamic";
+import dynamic from "next/dynamic"; // ← Keep only this one
 import { Button } from "@/components/ui/button";
 import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import HackathonShoutoutPopup from "./HackathonShoutoutPopup";
 
-import dynamic from "next/dynamic";
+// Remove this duplicate import:
+// import dynamic from "next/dynamic";
 
 // Dynamically import Spline to reduce initial bundle size
 const Spline = dynamic(
-  () => import("@splinetool/react-spline/dist/react-spline.esm.js"), // <-- use this path
+  () => import("@splinetool/react-spline/dist/react-spline.esm.js"),
   {
     ssr: false,
     loading: () => (
@@ -23,6 +25,7 @@ const Spline = dynamic(
     ),
   }
 );
+
 const Hero = () => {
   const [mounted, setMounted] = useState(false);
   const { isSignedIn } = useUser();
