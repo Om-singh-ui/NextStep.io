@@ -506,7 +506,15 @@ export async function generatePDF(content) {
       preferCSSPageSize: true
     });
     
-    return pdfBuffer;
+    // Return proper Response object for download
+    return new Response(pdfBuffer, {
+      headers: {
+        "Content-Type": "application/pdf",
+        "Content-Disposition": "attachment; filename=resume.pdf",
+        "Cache-Control": "no-cache",
+      },
+    });
+    
   } catch (error) {
     console.error('Error generating PDF:', error);
     throw new Error('Failed to generate PDF');
