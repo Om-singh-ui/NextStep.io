@@ -63,13 +63,6 @@ export default function ResumeBuilder({ initialContent }) {
     error: saveError,
   } = useFetch(saveResume);
 
-  const {
-    loading: isGeneratingPDF,
-    fn: generatePDFFn,
-    data: pdfData,
-    error: pdfError,
-  } = useFetch(generatePDF);
-
   const formValues = watch();
 
   useEffect(() => {
@@ -106,34 +99,6 @@ export default function ResumeBuilder({ initialContent }) {
     }
   }, [saveResult, saveError, isSaving]);
 
-  useEffect(() => {
-    if (pdfData && !isGeneratingPDF) {
-      // Create a blob from the PDF data
-      const blob = new Blob([pdfData], { type: 'application/pdf' });
-      const url = URL.createObjectURL(blob);
-      
-      // Create a download link and trigger the download
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'resume.pdf';
-      document.body.appendChild(a);
-      a.click();
-      
-      // Clean up
-      setTimeout(() => {
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
-      }, 100);
-      
-      toast.success("PDF downloaded successfully!");
-      setIsGenerating(false);
-    }
-    if (pdfError) {
-      toast.error(pdfError.message || "Failed to generate PDF");
-      setIsGenerating(false);
-    }
-  }, [pdfData, pdfError, isGeneratingPDF]);
-
   const getContactMarkdown = () => {
     const { contactInfo } = formValues;
     const parts = [];
@@ -165,11 +130,36 @@ export default function ResumeBuilder({ initialContent }) {
   const handleGeneratePDF = async () => {
     setIsGenerating(true);
     try {
-      // Convert markdown to HTML for PDF generation
-      const htmlContent = await generatePDFFn(previewContent);
+      // Call the server action and handle the base64 response
+      const result = await generatePDF(previewContent);
+      
+      if (result.success && result.pdfData) {
+        // Convert base64 to blob and download
+        const byteCharacters = atob(result.pdfData);
+        const byteNumbers = new Array(byteCharacters.length);
+        for (let i = 0; i < byteCharacters.length; i++) {
+          byteNumbers[i] = byteCharacters.charCodeAt(i);
+        }
+        const byteArray = new Uint8Array(byteNumbers);
+        const blob = new Blob([byteArray], { type: 'application/pdf' });
+        
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = result.filename || 'resume.pdf';
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+        
+        toast.success("PDF downloaded successfully!");
+      } else {
+        toast.error(result.error || "Failed to generate PDF");
+      }
     } catch (error) {
       console.error("PDF generation error:", error);
       toast.error("Failed to generate PDF");
+    } finally {
       setIsGenerating(false);
     }
   };

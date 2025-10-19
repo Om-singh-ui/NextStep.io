@@ -67,7 +67,7 @@ export async function improveWithAI({ current, type }) {
     console.log("Improving content for user:", userId, "Type:", type);
 
     const user = await db.user.findUnique({
-      where: { clerkUserId: userId },
+    where: { clerkUserId: userId },
     });
 
     if (!user) throw new Error("User not found");
@@ -506,18 +506,22 @@ export async function generatePDF(content) {
       preferCSSPageSize: true
     });
     
-    // Return proper Response object for download
-    return new Response(pdfBuffer, {
-      headers: {
-        "Content-Type": "application/pdf",
-        "Content-Disposition": "attachment; filename=resume.pdf",
-        "Cache-Control": "no-cache",
-      },
-    });
+    // FIX: Use Buffer.from() for proper base64 conversion
+    const pdfBase64 = Buffer.from(pdfBuffer).toString('base64');
+    
+    return {
+      success: true,
+      pdfData: pdfBase64,
+      filename: 'resume.pdf'
+    };
     
   } catch (error) {
     console.error('Error generating PDF:', error);
-    throw new Error('Failed to generate PDF');
+    // FIX: Return error object instead of throwing for better client handling
+    return {
+      success: false,
+      error: 'Failed to generate PDF: ' + error.message
+    };
   } finally {
     if (browser) {
       await browser.close().catch(console.error);
