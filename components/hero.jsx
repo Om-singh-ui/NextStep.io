@@ -1,30 +1,23 @@
-
 "use client";
 
 import React, { useState, useEffect, useCallback } from "react";
 import { motion } from "framer-motion";
 import { Waves, Sparkles, Rocket, ArrowRight, Play } from "lucide-react";
-import dynamic from "next/dynamic"; // ← Keep only this one
+import dynamic from "next/dynamic";
 import { Button } from "@/components/ui/button";
 import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import HackathonShoutoutPopup from "./HackathonShoutoutPopup";
 
-// Remove this duplicate import:
-// import dynamic from "next/dynamic";
-
-// Dynamically import Spline to reduce initial bundle size
-const Spline = dynamic(
-  () => import("@splinetool/react-spline/dist/react-spline.esm.js"),
-  {
-    ssr: false,
-    loading: () => (
-      <div className="w-full h-[300px] sm:h-[400px] md:h-[500px] mt-6 bg-gradient-to-br from-purple-500/10 to-blue-500/10 rounded-lg flex items-center justify-center">
-        <div className="text-muted-foreground">Loading 3D experience...</div>
-      </div>
-    ),
-  }
-);
+// Corrected Spline dynamic import
+const Spline = dynamic(() => import("@splinetool/react-spline"), {
+  ssr: false,
+  loading: () => (
+    <div className="w-full h-[300px] sm:h-[400px] md:h-[500px] mt-6 bg-gradient-to-br from-purple-500/10 to-blue-500/10 rounded-lg flex items-center justify-center">
+      <div className="text-muted-foreground">Loading 3D experience...</div>
+    </div>
+  ),
+});
 
 const Hero = () => {
   const [mounted, setMounted] = useState(false);
@@ -44,7 +37,6 @@ const Hero = () => {
   }, [isSignedIn, router]);
 
   const handleWatchDemo = useCallback(() => {
-    // Add your demo video functionality here
     console.log("Watch demo clicked");
   }, []);
 
@@ -62,7 +54,6 @@ const Hero = () => {
         <div className="absolute inset-0 bg-background/80 backdrop-blur-2xl" />
       </div>
 
-    
       {/* Hero Content */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
