@@ -307,7 +307,7 @@ const HackathonShoutoutPopup = () => {
                 >
                   <Cloud className="h-5 w-5 text-blue-500" />
                   <span className="font-semibold text-indigo-700">
-                    Google Cloud Hackathon
+                   Hackathon
                   </span>
                   <Rocket className="h-5 w-5 text-orange-500" />
                 </motion.div>
