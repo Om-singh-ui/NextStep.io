@@ -13,14 +13,18 @@ const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 // ... your other functions (saveResume, getResume, improveWithAI) remain the same ...
 
 export async function generatePDF(content) {
+  console.log('🚀 PDF Generation Started');
+  console.log('Content length:', content?.length);
+  
   let browser;
   
   try {
-    // Configure Puppeteer for production with chromium
+    console.log('🔧 Configuring Puppeteer...');
     const isProduction = process.env.NODE_ENV === 'production';
-    
+    console.log('Environment:', isProduction ? 'Production' : 'Development');
+
     if (isProduction) {
-      // Production configuration
+      console.log('📦 Using production Chromium...');
       browser = await puppeteer.launch({
         args: chromium.args,
         defaultViewport: chromium.defaultViewport,
@@ -28,15 +32,18 @@ export async function generatePDF(content) {
         headless: chromium.headless,
       });
     } else {
-      // Development configuration
+      console.log('💻 Using development Puppeteer...');
       browser = await puppeteer.launch({
         headless: true,
         args: ['--no-sandbox', '--disable-setuid-sandbox']
       });
     }
+
+    console.log('✅ Browser launched successfully');
     
     const page = await browser.newPage();
-    
+    console.log('📄 Page created');
+
     // Enhanced content cleanup for markdown issues
     const cleanedContent = content
       // Remove markdown headers
@@ -55,7 +62,7 @@ export async function generatePDF(content) {
       .replace(/\*(.*?)\*/g, '<em>$1</em>');
     
     const htmlContent = `
-       <!DOCTYPE html>
+      <!DOCTYPE html>
       <html>
         <head>
           <meta charset="utf-8">
@@ -293,7 +300,7 @@ export async function generatePDF(content) {
           </style>
         </head>
         <body>
-          <div id="content">${cleanedContent}</div>
+         <div id="content">${cleanedContent}</div>
           
           <script>
             // Enhance the markdown content with professional resume structure
@@ -372,9 +379,11 @@ export async function generatePDF(content) {
       </html>
     `;
     
+    console.log('⏳ Setting page content...');
     await page.setContent(htmlContent, { waitUntil: 'networkidle0' });
-    
-    // Generate PDF with better margins
+    console.log('✅ Page content set');
+
+    console.log('🖨️ Generating PDF...');
     const pdfBuffer = await page.pdf({
       format: 'A4',
       printBackground: true,
@@ -386,27 +395,29 @@ export async function generatePDF(content) {
       },
       preferCSSPageSize: true
     });
+
+    console.log('✅ PDF generated, size:', pdfBuffer.length, 'bytes');
     
-    // Convert to base64 for serialization
     const pdfBase64 = Buffer.from(pdfBuffer).toString('base64');
-    
-    // Return serializable object
-    return JSON.stringify({
+    console.log('📊 Base64 conversion complete');
+
+    return {
       success: true,
       pdfData: pdfBase64,
       filename: 'resume.pdf'
-    });
+    };
     
   } catch (error) {
-    console.error('Error generating PDF:', error);
-    // Return serializable error object
-    return JSON.stringify({
+    console.error('❌ PDF Generation Error:', error);
+    console.error('Error stack:', error.stack);
+    return {
       success: false,
       error: 'Failed to generate PDF: ' + error.message
-    });
+    };
   } finally {
     if (browser) {
       await browser.close().catch(console.error);
+      console.log('🔚 Browser closed');
     }
   }
 }

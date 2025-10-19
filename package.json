@@ -29,6 +29,7 @@
     "@radix-ui/react-slot": "^1.2.3",
     "@radix-ui/react-switch": "^1.2.6",
     "@radix-ui/react-tabs": "^1.1.13",
+    "@react-pdf/renderer": "^4.3.1",
     "@sparticuz/chromium": "^138.0.2",
     "@sparticuz/chromium-min": "^138.0.2",
     "@splinetool/react-spline": "^4.1.0",

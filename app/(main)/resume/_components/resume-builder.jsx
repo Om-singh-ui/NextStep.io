@@ -17,7 +17,8 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
-import { saveResume, generatePDF } from "@/actions/resume";
+import { saveResume } from "@/actions/resume"; // removed server-side generatePDF import
+import { generateResumePDF } from "@/components/pdf-resume"; // <-- new client-side PDF generator
 import { EntryForm } from "./entry-form";
 import useFetch from "@/hooks/use-fetch";
 import { useUser } from "@clerk/nextjs";
@@ -128,17 +129,25 @@ export default function ResumeBuilder({ initialContent }) {
   };
 
   const handleGeneratePDF = async () => {
+    console.log('🖱️ Download PDF button clicked');
     setIsGenerating(true);
+    
     try {
-      // Call the server action
-      const result = await generatePDF(previewContent);
+      console.log('📤 Sending content to server...');
+      console.log('Content preview:', previewContent ? previewContent.substring(0, 100) : '(empty)');
       
-      // Parse the JSON response
-      const parsedResult = JSON.parse(result);
-      
-      if (parsedResult.success && parsedResult.pdfData) {
-        // Convert base64 to blob and download
-        const byteCharacters = atob(parsedResult.pdfData);
+      const result = await generateResumePDF(previewContent);
+      console.log('📥 Server response:', result);
+
+      if (!result) {
+        throw new Error('No response from server');
+      }
+
+      if (result.success && result.pdfData) {
+        console.log('🔧 Converting base64 to PDF blob...');
+        
+        // Convert base64 to blob
+        const byteCharacters = atob(result.pdfData);
         const byteNumbers = new Array(byteCharacters.length);
         for (let i = 0; i < byteCharacters.length; i++) {
           byteNumbers[i] = byteCharacters.charCodeAt(i);
@@ -146,24 +155,34 @@ export default function ResumeBuilder({ initialContent }) {
         const byteArray = new Uint8Array(byteNumbers);
         const blob = new Blob([byteArray], { type: 'application/pdf' });
         
+        console.log('📥 PDF blob created, size:', blob.size, 'bytes');
+        
+        // Create download link
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = parsedResult.filename || 'resume.pdf';
+        a.download = result.filename || 'resume.pdf';
         document.body.appendChild(a);
         a.click();
-        window.URL.revokeObjectURL(url);
-        document.body.removeChild(a);
         
+        // Clean up
+        setTimeout(() => {
+          document.body.removeChild(a);
+          window.URL.revokeObjectURL(url);
+        }, 100);
+        
+        console.log('✅ PDF download initiated');
         toast.success("PDF downloaded successfully!");
       } else {
-        toast.error(parsedResult.error || "Failed to generate PDF");
+        console.error('❌ Server returned error or missing data:', result.error || result);
+        toast.error(result.error || "Failed to generate PDF: server returned no PDF");
       }
     } catch (error) {
-      console.error("PDF generation error:", error);
-      toast.error("Failed to generate PDF");
+      console.error('💥 Client-side error generating PDF:', error);
+      toast.error("Failed to generate PDF: " + (error.message || error));
     } finally {
       setIsGenerating(false);
+      console.log('🏁 PDF generation process completed');
     }
   };
 
