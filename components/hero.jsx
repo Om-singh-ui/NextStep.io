@@ -55,8 +55,7 @@ const Hero = () => {
         <div className="absolute inset-0 bg-background/80 backdrop-blur-2xl" />
       </div>
 
-        <HackathonShoutoutPopup />
-
+    
       {/* Hero Content */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}

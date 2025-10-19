@@ -230,7 +230,8 @@ export default function Footer() {
                   <ul className="space-y-3 text-gray-700 dark:text-gray-400 pt-3">
                     <li>
                       <Link
-                        href="/docs"
+                        target="_blank"
+                        href="https://drive.google.com/drive/search?q=parent%3A1oqmFSf48p4sppJ9TECES8uyqCCJxuIiT"
                         className="flex items-center gap-2 hover:text-blue-500 transition-all duration-300 group py-1"
                         onMouseEnter={() => setIsHovered("docs")}
                         onMouseLeave={() => setIsHovered(null)}
@@ -241,7 +242,8 @@ export default function Footer() {
                     </li>
                     <li>
                       <Link
-                        href="/blog"
+                        target="_blank"
+                        href="https://medium.com/@omchouhan227"
                         className="flex items-center gap-2 hover:text-blue-500 transition-all duration-300 group py-1"
                         onMouseEnter={() => setIsHovered("blog")}
                         onMouseLeave={() => setIsHovered(null)}
@@ -284,7 +286,7 @@ export default function Footer() {
                     </span>
                   </Link>
                   <Link
-                    href="https://github.com"
+                    href="https://github.com/Om-singh-ui"
                     target="_blank"
                     className="hover:text-blue-500 transition-all duration-300 hover:scale-110 transform relative group"
                     onMouseEnter={() => setIsHovered("github")}
@@ -296,7 +298,7 @@ export default function Footer() {
                     </span>
                   </Link>
                   <Link
-                    href="https://linkedin.com"
+                    href="https://www.linkedin.com/in/om-singh-chouhan-1a761a323/"
                     target="_blank"
                     className="hover:text-blue-500 transition-all duration-300 hover:scale-110 transform relative group"
                     onMouseEnter={() => setIsHovered("linkedin")}
@@ -307,6 +309,24 @@ export default function Footer() {
                       Connect
                     </span>
                   </Link>
+                </div>
+                 {/* Open Source */}
+                <div className="space-y-4">
+                  <h4 className="font-semibold text-gray-900 dark:text-gray-200 text-lg group hover:text-blue-500 dark:hover:text-blue-400 transition-colors">
+                    Open Sourced
+                  </h4>
+                  <div className="flex items-center gap-3 text-gray-600 dark:text-gray-400">
+                    <Link
+                      href="https://github.com/Om-singh-ui/NextStep.io"
+                      target="_blank"
+                      className="flex items-center gap-2 border border-gray-300 dark:border-gray-700 rounded-full px-3 py-1.5 hover:border-blue-500 hover:text-blue-500 transition-all duration-300 hover:shadow-md"
+                    >
+                      <Github className="w-5 h-5" />
+                      <span className="text-xs bg-gray-100 dark:bg-gray-800 px-2 py-0.5 rounded-md font-semibold text-gray-800 dark:text-gray-200">
+                        ⭐ 1st
+                      </span>
+                    </Link>
+                  </div>
                 </div>
               </div>
             </>
@@ -388,7 +408,8 @@ export default function Footer() {
                 <ul className="space-y-3 text-gray-700 dark:text-gray-400">
                   <li>
                     <Link
-                      href="/docs"
+                      target="_blank"
+                      href="https://drive.google.com/drive/search?q=parent%3A1oqmFSf48p4sppJ9TECES8uyqCCJxuIiT     "
                       className="flex items-center gap-2 hover:text-blue-500 transition-all duration-300 group py-1"
                       onMouseEnter={() => setIsHovered("docs")}
                       onMouseLeave={() => setIsHovered(null)}
@@ -399,7 +420,8 @@ export default function Footer() {
                   </li>
                   <li>
                     <Link
-                      href="/blog"
+                      target="_blank"
+                      href="https://medium.com/@omchouhan227"
                       className="flex items-center gap-2 hover:text-blue-500 transition-all duration-300 group py-1"
                       onMouseEnter={() => setIsHovered("blog")}
                       onMouseLeave={() => setIsHovered(null)}
@@ -421,53 +443,75 @@ export default function Footer() {
                   </li>
                 </ul>
               </div>
-              {/* Social */}
-              <div className="space-y-4">
-                <h4 className="font-semibold text-gray-900 dark:text-gray-200 text-lg group hover:text-blue-500 dark:hover:text-blue-400 transition-colors">
-                  Connect
-                </h4>
-                <div className="flex gap-5 text-gray-600 dark:text-gray-400">
-                  <Link
-                    href="https://twitter.com"
-                    target="_blank"
-                    className="hover:text-blue-500 transition-all duration-300 hover:scale-110 transform relative group"
-                    onMouseEnter={() => setIsHovered("twitter")}
-                    onMouseLeave={() => setIsHovered(null)}
-                  >
-                    <Twitter className="w-6 h-6 group-hover:rotate-12 transition-transform" />
-                    <span className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 text-xs bg-gray-800 text-white px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">
-                      Follow us
-                    </span>
-                  </Link>
-                  <Link
-                    href="https://github.com"
-                    target="_blank"
-                    className="hover:text-blue-500 transition-all duration-300 hover:scale-110 transform relative group"
-                    onMouseEnter={() => setIsHovered("github")}
-                    onMouseLeave={() => setIsHovered(null)}
-                  >
-                    <Github className="w-6 h-6 group-hover:rotate-12 transition-transform" />
-                    <span className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 text-xs bg-gray-800 text-white px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">
-                      Star us
-                    </span>
-                  </Link>
-                  <Link
-                    href="https://linkedin.com"
-                    target="_blank"
-                    className="hover:text-blue-500 transition-all duration-300 hover:scale-110 transform relative group"
-                    onMouseEnter={() => setIsHovered("linkedin")}
-                    onMouseLeave={() => setIsHovered(null)}
-                  >
-                    <Linkedin className="w-6 h-6 group-hover:rotate-12 transition-transform" />
-                    <span className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 text-xs bg-gray-800 text-white px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">
-                      Connect
-                    </span>
-                  </Link>
+              {/* Social & Open Source Section */}
+              <div className="space-y-8">
+                {/* Connect */}
+                <div className="space-y-4">
+                  <h4 className="font-semibold text-gray-900 dark:text-gray-200 text-lg group hover:text-blue-500 dark:hover:text-blue-400 transition-colors">
+                    Connect
+                  </h4>
+                  <div className="flex gap-5 text-gray-600 dark:text-gray-400">
+                    {/* Twitter */}
+                    <Link
+                      href="https://twitter.com"
+                      target="_blank"
+                      className="hover:text-blue-500 transition-all duration-300 hover:scale-110 transform relative group"
+                    >
+                      <Twitter className="w-6 h-6 group-hover:rotate-12 transition-transform" />
+                      <span className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 text-xs bg-gray-800 text-white px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">
+                        Follow us
+                      </span>
+                    </Link>
+
+                    {/* GitHub */}
+                    <Link
+                      href="https://github.com/Om-singh-ui"
+                      target="_blank"
+                      className="hover:text-blue-500 transition-all duration-300 hover:scale-110 transform relative group"
+                    >
+                      <Github className="w-6 h-6 group-hover:rotate-12 transition-transform" />
+                      <span className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 text-xs bg-gray-800 text-white px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">
+                        Star us
+                      </span>
+                    </Link>
+
+                    {/* LinkedIn */}
+                    <Link
+                      href="https://www.linkedin.com/in/om-singh-chouhan-1a761a323/"
+                      target="_blank"
+                      className="hover:text-blue-500 transition-all duration-300 hover:scale-110 transform relative group"
+                    >
+                      <Linkedin className="w-6 h-6 group-hover:rotate-12 transition-transform" />
+                      <span className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 text-xs bg-gray-800 text-white px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">
+                        Connect
+                      </span>
+                    </Link>
+                  </div>
+                </div>
+
+                {/* Open Source */}
+                <div className="space-y-4">
+                  <h4 className="font-semibold text-gray-900 dark:text-gray-200 text-lg group hover:text-blue-500 dark:hover:text-blue-400 transition-colors">
+                    Open Sourced
+                  </h4>
+                  <div className="flex items-center gap-3 text-gray-600 dark:text-gray-400">
+                    <Link
+                      href="https://github.com/Om-singh-ui/NextStep.io"
+                      target="_blank"
+                      className="flex items-center gap-2 border border-gray-300 dark:border-gray-700 rounded-full px-3 py-1.5 hover:border-blue-500 hover:text-blue-500 transition-all duration-300 hover:shadow-md"
+                    >
+                      <Github className="w-5 h-5" />
+                      <span className="text-xs bg-gray-100 dark:bg-gray-800 px-2 py-0.5 rounded-md font-semibold text-gray-800 dark:text-gray-200">
+                        ⭐ 1st
+                      </span>
+                    </Link>
+                  </div>
                 </div>
               </div>
             </>)
           )}
         </div>
+
 
         {/* Bottom bar */}
         <div className="relative border-t border-gray-200 dark:border-white/10 py-4 sm:py-6">
