@@ -130,12 +130,15 @@ export default function ResumeBuilder({ initialContent }) {
   const handleGeneratePDF = async () => {
     setIsGenerating(true);
     try {
-      // Call the server action and handle the base64 response
+      // Call the server action
       const result = await generatePDF(previewContent);
       
-      if (result.success && result.pdfData) {
+      // Parse the JSON response
+      const parsedResult = JSON.parse(result);
+      
+      if (parsedResult.success && parsedResult.pdfData) {
         // Convert base64 to blob and download
-        const byteCharacters = atob(result.pdfData);
+        const byteCharacters = atob(parsedResult.pdfData);
         const byteNumbers = new Array(byteCharacters.length);
         for (let i = 0; i < byteCharacters.length; i++) {
           byteNumbers[i] = byteCharacters.charCodeAt(i);
@@ -146,7 +149,7 @@ export default function ResumeBuilder({ initialContent }) {
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = result.filename || 'resume.pdf';
+        a.download = parsedResult.filename || 'resume.pdf';
         document.body.appendChild(a);
         a.click();
         window.URL.revokeObjectURL(url);
@@ -154,7 +157,7 @@ export default function ResumeBuilder({ initialContent }) {
         
         toast.success("PDF downloaded successfully!");
       } else {
-        toast.error(result.error || "Failed to generate PDF");
+        toast.error(parsedResult.error || "Failed to generate PDF");
       }
     } catch (error) {
       console.error("PDF generation error:", error);
@@ -185,8 +188,7 @@ export default function ResumeBuilder({ initialContent }) {
       </div>
     );
   }
-
-  return (
+ return (
     <div data-color-mode="light" className="space-y-4">
       <div className="flex flex-col md:flex-row justify-between items-center gap-2">
         <h1 className="font-bold gradient-title text-5xl md:text-6xl">

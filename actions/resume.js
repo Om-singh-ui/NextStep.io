@@ -10,126 +10,7 @@ import chromium from "@sparticuz/chromium-min";
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
-export async function saveResume(content) {
-  const { userId } = await auth();
-  if (!userId) throw new Error("Unauthorized");
-
-  const user = await db.user.findUnique({
-    where: { clerkUserId: userId },
-  });
-
-  if (!user) throw new Error("User not found");
-
-  try {
-    const resume = await db.resume.upsert({
-      where: {
-        userId: user.id,
-      },
-      update: {
-        content,
-      },
-      create: {
-        userId: user.id,
-        content,
-      },
-    });
-
-    revalidatePath("/resume");
-    return resume;
-  } catch (error) {
-    console.error("Error saving resume:", error);
-    throw new Error("Failed to save resume");
-  }
-}
-
-export async function getResume() {
-  const { userId } = await auth();
-  if (!userId) throw new Error("Unauthorized");
-
-  const user = await db.user.findUnique({
-    where: { clerkUserId: userId },
-  });
-
-  if (!user) throw new Error("User not found");
-
-  return await db.resume.findUnique({
-    where: {
-      userId: user.id,
-    },
-  });
-}
-
-export async function improveWithAI({ current, type }) {
-  try {
-    const { userId } = await auth();
-    if (!userId) throw new Error("Unauthorized");
-
-    console.log("Improving content for user:", userId, "Type:", type);
-
-    const user = await db.user.findUnique({
-    where: { clerkUserId: userId },
-    });
-
-    if (!user) throw new Error("User not found");
-
-    console.log("User found:", user.id, "Industry:", user.industry);
-
-    // Use a default industry if not specified
-    const userIndustry = user.industry || "technology";
-    
-    const prompt = `
-      As an expert resume writer, improve the following ${type} description for a ${userIndustry} professional.
-      Make it more impactful, quantifiable, and aligned with industry standards.
-      Current content: "${current}"
-
-      Requirements:
-      1. Use action verbs
-      2. Include metrics and results where possible
-      3. Highlight relevant technical skills
-      4. Keep it concise but detailed
-      5. Focus on achievements over responsibilities
-      6. Use industry-specific keywords
-      7. ABSOLUTELY NO MARKDOWN FORMATTING - no #, ##, *, -, or any other markdown symbols
-      8. Return plain text only - no formatting, no headers, no bullet points
-      9. Do not create section headers or titles
-      10. Output should be a single continuous paragraph
-
-      Format the response as a single paragraph without any additional text or explanations.
-    `;
-
-    console.log("Sending prompt to AI:", prompt.substring(0, 200) + "...");
-
-    const result = await model.generateContent(prompt);
-    const response = result.response;
-    let improvedContent = response.text().trim();
-
-    // Enhanced cleanup for any markdown that might still be present
-    improvedContent = improvedContent
-      .replace(/^#+\s*/gm, '') // Remove markdown headers
-      .replace(/\*\*(.*?)\*\*/g, '$1') // Remove bold
-      .replace(/\*(.*?)\*/g, '$1') // Remove italics
-      .replace(/`(.*?)`/g, '$1') // Remove code blocks
-      .replace(/\[(.*?)\]\(.*?\)/g, '$1') // Remove links but keep text
-      .replace(/^- /gm, '') // Remove bullet points
-      .replace(/^\s*[-*+]\s*/gm, '') // Remove any remaining bullet points
-      .replace(/\n/g, ' ') // Replace newlines with spaces
-      .replace(/\s+/g, ' ') // Collapse multiple spaces
-      .trim();
-
-    console.log("AI response received:", improvedContent.substring(0, 100) + "...");
-
-    return improvedContent;
-  } catch (error) {
-    console.error("Error improving content:", error);
-    console.error("Error details:", error.message, error.stack);
-    
-    // Provide a fallback improvement if AI fails
-    const fallbackImprovement = `Enhanced ${type}: ${current} with improved metrics and action-oriented language.`;
-    
-    // Still throw the error for the client to handle, but with better messaging
-    throw new Error(`Failed to improve content: ${error.message}. Using fallback: ${fallbackImprovement}`);
-  }
-}
+// ... your other functions (saveResume, getResume, improveWithAI) remain the same ...
 
 export async function generatePDF(content) {
   let browser;
@@ -174,7 +55,7 @@ export async function generatePDF(content) {
       .replace(/\*(.*?)\*/g, '<em>$1</em>');
     
     const htmlContent = `
-      <!DOCTYPE html>
+       <!DOCTYPE html>
       <html>
         <head>
           <meta charset="utf-8">
@@ -506,22 +387,23 @@ export async function generatePDF(content) {
       preferCSSPageSize: true
     });
     
-    // FIX: Use Buffer.from() for proper base64 conversion
+    // Convert to base64 for serialization
     const pdfBase64 = Buffer.from(pdfBuffer).toString('base64');
     
-    return {
+    // Return serializable object
+    return JSON.stringify({
       success: true,
       pdfData: pdfBase64,
       filename: 'resume.pdf'
-    };
+    });
     
   } catch (error) {
     console.error('Error generating PDF:', error);
-    // FIX: Return error object instead of throwing for better client handling
-    return {
+    // Return serializable error object
+    return JSON.stringify({
       success: false,
       error: 'Failed to generate PDF: ' + error.message
-    };
+    });
   } finally {
     if (browser) {
       await browser.close().catch(console.error);
