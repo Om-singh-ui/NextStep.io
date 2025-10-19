@@ -5,6 +5,7 @@ import { auth } from "@clerk/nextjs/server";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { revalidatePath } from "next/cache";
 import puppeteer from "puppeteer";
+import chromium from "@sparticuz/chromium-min";
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
@@ -131,12 +132,27 @@ export async function improveWithAI({ current, type }) {
 }
 
 export async function generatePDF(content) {
+  let browser;
+  
   try {
-    // Launch a headless browser
-    const browser = await puppeteer.launch({
-      headless: true,
-      args: ['--no-sandbox', '--disable-setuid-sandbox']
-    });
+    // Configure Puppeteer for production with chromium
+    const isProduction = process.env.NODE_ENV === 'production';
+    
+    if (isProduction) {
+      // Production configuration
+      browser = await puppeteer.launch({
+        args: chromium.args,
+        defaultViewport: chromium.defaultViewport,
+        executablePath: await chromium.executablePath(),
+        headless: chromium.headless,
+      });
+    } else {
+      // Development configuration
+      browser = await puppeteer.launch({
+        headless: true,
+        args: ['--no-sandbox', '--disable-setuid-sandbox']
+      });
+    }
     
     const page = await browser.newPage();
     
@@ -157,7 +173,6 @@ export async function generatePDF(content) {
       .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
       .replace(/\*(.*?)\*/g, '<em>$1</em>');
     
-    // Set the HTML content with professional styling
     const htmlContent = `
       <!DOCTYPE html>
       <html>
@@ -491,11 +506,13 @@ export async function generatePDF(content) {
       preferCSSPageSize: true
     });
     
-    await browser.close();
-    
     return pdfBuffer;
   } catch (error) {
     console.error('Error generating PDF:', error);
     throw new Error('Failed to generate PDF');
+  } finally {
+    if (browser) {
+      await browser.close().catch(console.error);
+    }
   }
 }
