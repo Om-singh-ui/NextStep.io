@@ -9,15 +9,6 @@ import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import HackathonShoutoutPopup from "./HackathonShoutoutPopup";
 
-// Corrected Spline dynamic import
-const Spline = dynamic(() => import("@splinetool/react-spline"), {
-  ssr: false,
-  loading: () => (
-    <div className="w-full h-[300px] sm:h-[400px] md:h-[500px] mt-6 bg-gradient-to-br from-purple-500/10 to-blue-500/10 rounded-lg flex items-center justify-center">
-      <div className="text-muted-foreground">Loading 3D experience...</div>
-    </div>
-  ),
-});
 
 const Hero = () => {
   const [mounted, setMounted] = useState(false);
@@ -190,11 +181,6 @@ const Hero = () => {
           <span className="text-primary font-semibold">NextStep.io</span>{" "}
           transforms ambition into achievement. Your next big move starts here.
         </motion.p>
-
-        {/* 3D Spline */}
-        <div className="w-full h-[300px] sm:h-[400px] md:h-[500px] mt-6">
-          <Spline scene="https://prod.spline.design/OJwaOly6ZDOqlmaT/scene.splinecode" />
-        </div>
 
         {/* CTA Buttons */}
         <motion.div
