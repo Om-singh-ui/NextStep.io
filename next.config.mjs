@@ -1,7 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  reactStrictMode: true, // optional but recommended
-  turbopack: false,
+  reactStrictMode: true,
   webpack: (config, { isServer }) => {
     return config;
   },
