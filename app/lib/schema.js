@@ -27,3 +27,22 @@ export const resumeSchema = z.object({
   education: z.array(entrySchema).default([]),
   projects: z.array(entrySchema).default([]),
 });
+
+// ADD THESE MISSING SCHEMAS:
+export const onboardingSchema = z.object({
+  fullName: z.string().min(1, "Full name is required"),
+  email: z.string().email("Invalid email address"),
+  currentRole: z.string().optional(),
+  experienceLevel: z.enum(["entry", "mid", "senior", "executive"]).optional(),
+  careerGoals: z.string().optional(),
+  skills: z.array(z.string()).optional(),
+});
+
+export const coverLetterSchema = z.object({
+  jobDescription: z.string().min(1, "Job description is required"),
+  resumeContent: z.string().min(1, "Resume content is required"),
+  companyName: z.string().optional(),
+  jobTitle: z.string().optional(),
+  tone: z.enum(["professional", "enthusiastic", "formal", "casual"]).default("professional"),
+  customInstructions: z.string().optional(),
+});
