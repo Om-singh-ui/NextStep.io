@@ -18,9 +18,10 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { generateCoverLetter } from "@/actions/cover-letter";
 import useFetch from "@/hooks/use-fetch";
-import { coverLetterSchema } from "@/app/lib/schema";
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
+// USE THE IMPORTED SCHEMA NOW:
+import { coverLetterSchema } from "@/app/lib/schema";
 
 export default function CoverLetterGenerator() {
   const router = useRouter();
@@ -47,7 +48,7 @@ export default function CoverLetterGenerator() {
       router.push(`/ai-cover-letter/${generatedLetter.id}`);
       reset();
     }
-  }, [generatedLetter]);
+  }, [generatedLetter, router, reset]);
 
   const onSubmit = async (data) => {
     try {
@@ -113,6 +114,21 @@ export default function CoverLetterGenerator() {
               {errors.jobDescription && (
                 <p className="text-sm text-red-500">
                   {errors.jobDescription.message}
+                </p>
+              )}
+            </div>
+
+            <div className="space-y-3">
+              <Label htmlFor="resumeContent" className="text-base font-semibold">Your Resume Content</Label>
+              <Textarea
+                id="resumeContent"
+                placeholder="Paste your resume content here"
+                className="h-32 rounded-xl border-border/50 focus:border-blue-500/40 transition-all duration-300"
+                {...register("resumeContent")}
+              />
+              {errors.resumeContent && (
+                <p className="text-sm text-red-500">
+                  {errors.resumeContent.message}
                 </p>
               )}
             </div>
