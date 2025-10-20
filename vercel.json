@@ -1,11 +1,23 @@
 {
   "version": 2,
-  "buildCommand": "npm run build",
-  "outputDirectory": ".next",
-  "installCommand": "npm install --prefer-offline --no-audit --no-fund",
+  "builds": [
+    {
+      "src": "package.json",
+      "use": "@vercel/next"
+    }
+  ],
   "functions": {
-    "app/**/*.js": {
-      "maxDuration": 30
+    "app/api/resume/route.js": {
+      "maxDuration": 30,
+      "memory": 1024
+    },
+    "app/resume/**/*.js": {
+      "maxDuration": 30,
+      "memory": 1024
+    },
+    "app/ai-cover-letter/[id]/**/*.js": {
+      "maxDuration": 30,
+      "memory": 1024
     }
   }
 }
