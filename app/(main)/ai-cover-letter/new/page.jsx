@@ -2,6 +2,19 @@ import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import CoverLetterGenerator from "../_components/cover-letter-generator";
+import { Suspense } from "react";
+
+// Fallback component while CoverLetterGenerator loads
+function CoverLetterGeneratorFallback() {
+  return (
+    <div className="flex items-center justify-center min-h-[400px]">
+      <div className="text-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
+        <p className="text-muted-foreground">Loading cover letter generator...</p>
+      </div>
+    </div>
+  );
+}
 
 export default function NewCoverLetterPage() {
   return (
@@ -61,7 +74,11 @@ export default function NewCoverLetterPage() {
           </p>
         </div>
       </div>
-      <CoverLetterGenerator />
+      
+      {/* Wrap in Suspense to handle async operations and prevent prerendering issues */}
+      <Suspense fallback={<CoverLetterGeneratorFallback />}>
+        <CoverLetterGenerator />
+      </Suspense>
     </div>
   );
 }
