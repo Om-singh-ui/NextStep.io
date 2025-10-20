@@ -2,11 +2,10 @@
   "version": 2,
   "buildCommand": "npm run build",
   "outputDirectory": ".next",
-  "installCommand": "npm install",
+  "installCommand": "npm install --prefer-offline --no-audit --no-fund",
   "functions": {
-    "app/api/**/*.js": {
+    "app/**/*.js": {
       "maxDuration": 30
     }
-  },
-  "regions": ["iad1"]
+  }
 }
