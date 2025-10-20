@@ -44,7 +44,7 @@ flowchart LR
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/NextStep.io.git
+git clone https://github.com/Om-singh-ui/NextStep.io.git
 
 # Navigate to the project directory
 cd NextStep.io
