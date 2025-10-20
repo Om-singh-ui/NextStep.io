@@ -1,0 +1,9 @@
+{
+  "version": 2,
+  "functions": {
+    "app/api/resume/route.js": {
+      "maxDuration": 60,
+      "memory": 2048
+    }
+  }
+}
