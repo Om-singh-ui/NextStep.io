@@ -42,7 +42,7 @@ import { resumeSchema } from "@/app/lib/schema";
 import { resumeTemplates } from "@/data/resume-templates";
 import { useUser } from "@clerk/nextjs";
 import useFetch from "@/hooks/use-fetch";
-import { createResume, improveWithAI } from "@/actions/resume";
+import { saveResume, improveWithAI } from "@/actions/resume";
 
 const builderTabs = [
   { value: "content", label: "Content", icon: Edit },
@@ -94,7 +94,7 @@ export default function EnhancedResumeBuilder({ initialContent }) {
     },
   });
 
-  const { loading: isSaving, fn: saveResumeFn } = useFetch(createResume);
+  const { loading: isSaving, fn: saveResumeFn } = useFetch(saveResume);
   const { loading: isImproving, fn: improveWithAIFn } = useFetch(improveWithAI);
 
   // Define getCombinedContent function before any useEffect that uses it
