@@ -1,0 +1,9 @@
+version: 2
+updates:
+  - package-ecosystem: "npm"
+    directory: "NextStep.io/package.json"  
+    schedule:
+      interval: "weekly"  
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: "chore(deps):"
