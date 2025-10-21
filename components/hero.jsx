@@ -26,7 +26,7 @@ const Hero = () => {
       router.push("/sign-in");
     }
   }, [isSignedIn, router]);
-// Handle "Watch Demo" button click
+// Handle "Watch Demo" button clickk
   const handleWatchDemo = useCallback(() => {
     console.log("Watch demo clicked");
     window.open("https://youtu.be/6ONtoRnoYH4?si=IRGAe0akF2j1aDcd", "_blank", "noopener,noreferrer");
