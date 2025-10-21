@@ -29,7 +29,7 @@ const Hero = () => {
 // Handle "Watch Demo" button clickk
   const handleWatchDemo = useCallback(() => {
     console.log("Watch demo clicked");
-    window.open("https://youtu.be/6ONtoRnoYH4?si=IRGAe0akF2j1aDcd", "_blank", "noopener,noreferrer");
+    window.open("https://www.youtube.com/watch?v=PDk4G1Ck6A0&t=11s", "_blank", "noopener,noreferrer");
   }, []);
 
   return (

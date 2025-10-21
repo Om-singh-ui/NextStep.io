@@ -15,8 +15,6 @@ import {
   Eye,
   Loader2,
   Edit,
-  Moon,
-  Sun,
   Smartphone,
   Monitor
 } from "lucide-react";
@@ -43,6 +41,7 @@ import { resumeTemplates } from "@/data/resume-templates";
 import { useUser } from "@clerk/nextjs";
 import useFetch from "@/hooks/use-fetch";
 import { saveResume, improveWithAI } from "@/actions/resume";
+import { useTheme } from "@/components/theme-provider"; // Import theme provider
 
 const builderTabs = [
   { value: "content", label: "Content", icon: Edit },
@@ -61,10 +60,13 @@ export default function EnhancedResumeBuilder({ initialContent }) {
   const [enabledSections, setEnabledSections] = useState([]);
   const [resumeScore, setResumeScore] = useState(65);
   const [activeView, setActiveView] = useState("form");
-  const [darkMode, setDarkMode] = useState(false);
   const [previewDevice, setPreviewDevice] = useState("desktop");
   const [isMounted, setIsMounted] = useState(false);
   const { user } = useUser();
+
+  // Use theme from theme provider
+  const { theme } = useTheme();
+  const darkMode = theme === "dark";
 
   const {
     control,
@@ -381,14 +383,6 @@ export default function EnhancedResumeBuilder({ initialContent }) {
             <p className="text-blue-100 text-sm">Fill in your professional details</p>
           </div>
           <div className="flex items-center gap-2">
-            <Button
-              variant="outline"
-              onClick={() => setDarkMode(!darkMode)}
-              className="bg-white/20 hover:bg-white/30 text-white border-white/30"
-              size="sm"
-            >
-              {darkMode ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
-            </Button>
             <Button
               variant="outline"
               onClick={() => setActiveView("preview")}
@@ -791,7 +785,7 @@ export default function EnhancedResumeBuilder({ initialContent }) {
                   />
                 </motion.div>
               )}
-            </AnimatePresence>;
+            </AnimatePresence>
 
             {/* Template Quick Select */}
             <Card className={`border-0 shadow-xl transition-colors ${
