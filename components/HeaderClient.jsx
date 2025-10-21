@@ -18,11 +18,88 @@ import {
   GraduationCap,
   LogIn,
   UserPlus,
-  FileText, Mail, Mic,
+  FileText, Mail, Mic, Github,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "./theme-toggle";
 import { useUser, SignInButton, SignUpButton, UserButton } from "@clerk/nextjs";
+import { motion, AnimatePresence } from "framer-motion";
+
+// GitHub Star Component (Client-Side Only)
+function GithubStarCount() {
+  const [count, setCount] = useState(1); // Start with 1 as fallback
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchStars = async () => {
+      try {
+        setError(null);
+        
+        // Direct GitHub API call - no API route needed
+        const response = await fetch('https://api.github.com/repos/Om-singh-ui/NextStep.io', {
+          headers: {
+            'Accept': 'application/vnd.github.v3+json',
+            // Optional: Add your token here if you have one
+            // 'Authorization': `token ${process.env.NEXT_PUBLIC_GITHUB_TOKEN}`
+          },
+        });
+
+        if (!response.ok) {
+          // If rate limited or other error, just use the fallback count
+          console.log('GitHub API not available, using fallback');
+          setLoading(false);
+          return;
+        }
+
+        const data = await response.json();
+        setCount(data.stargazers_count || 1);
+        setLoading(false);
+        
+      } catch (err) {
+        console.log('GitHub fetch failed, using fallback:', err.message);
+        setError(err.message);
+        setLoading(false);
+        // Keep the current count (1 or previously fetched value)
+      }
+    };
+
+    fetchStars();
+
+    // Optional: Refresh every 5 minutes
+    const interval = setInterval(fetchStars, 300000);
+    
+    return () => clearInterval(interval);
+  }, []);
+
+  return (
+    <div className="flex items-center gap-2">
+      <AnimatePresence mode="wait">
+        {loading ? (
+          <motion.span
+            key="loading"
+            initial={{ opacity: 0, y: -4 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 4 }}
+            className="text-xs bg-gradient-to-r from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-700 px-2 py-1 rounded-full font-semibold text-gray-800 dark:text-gray-200 min-w-[40px] text-center border border-gray-300/50"
+          >
+            ...
+          </motion.span>
+        ) : (
+          <motion.span
+            key={count}
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+            className="text-xs bg-gradient-to-r from-emerald-100 to-cyan-100 dark:from-emerald-900 dark:to-cyan-900 px-2 py-1 rounded-full font-semibold text-emerald-800 dark:text-emerald-200 border border-emerald-200 dark:border-emerald-800 shadow-sm"
+          >
+            ⭐ {Intl.NumberFormat().format(count)}
+          </motion.span>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
 
 export default function HeaderClient() {
   const { isSignedIn } = useUser();
@@ -177,6 +254,18 @@ export default function HeaderClient() {
           </Link>
 
           <div className="flex items-center gap-4">
+            {/* GitHub Star Count - Desktop */}
+            <div className="hidden md:flex">
+              <Link 
+                href="https://github.com/Om-singh-ui/NextStep.io" 
+                target="_blank"
+                className="flex items-center gap-2 px-3 py-1 rounded-full border border-gray-300/50 hover:border-blue-300/50 transition-all duration-300 hover:shadow-[0_0_15px_rgba(37,99,235,0.2)]"
+              >
+                <Github className="h-4 w-4 text-gray-600 dark:text-gray-400" />
+                <GithubStarCount />
+              </Link>
+            </div>
+
             {/* Desktop Nav */}
             <nav className="hidden md:flex items-center space-x-2">
               {/* Features Dropdown */}
@@ -492,6 +581,18 @@ export default function HeaderClient() {
                  px-4 py-5 sm:px-3 sm:py-4 flex flex-col space-y-3
                  transition-all duration-500 ease-in-out animate-in slide-in-from-top-2"
             >
+              {/* GitHub Star Count - Mobile */}
+              <div className="flex justify-center pb-2 border-b border-gray-200/50">
+                <Link 
+                  href="https://github.com/Om-singh-ui/NextStep.io" 
+                  target="_blank"
+                  className="flex items-center gap-2 px-3 py-1 rounded-full border border-gray-300/50 hover:border-blue-300/50 transition-all duration-300"
+                >
+                  <Github className="h-4 w-4 text-gray-600 dark:text-gray-400" />
+                  <GithubStarCount />
+                </Link>
+              </div>
+
               {/* Features Dropdown */}
               <div className="relative group">
                 <Button
