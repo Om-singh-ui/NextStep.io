@@ -26,9 +26,10 @@ const Hero = () => {
       router.push("/sign-in");
     }
   }, [isSignedIn, router]);
-
+// Handle "Watch Demo" button click
   const handleWatchDemo = useCallback(() => {
     console.log("Watch demo clicked");
+    window.open("https://youtu.be/6ONtoRnoYH4?si=IRGAe0akF2j1aDcd", "_blank", "noopener,noreferrer");
   }, []);
 
   return (
