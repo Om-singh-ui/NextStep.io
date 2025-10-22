@@ -8,8 +8,12 @@
 
 <p align="center">
   Transform resumes and transcripts into actionable career insights, immersive 3D visualizations, and personalized growth paths.
-</p> ⚡ App Workflow
+</p> 
+<p align="center">
+<img width="1737" height="882" alt="Screenshot 2025-09-19 184220" src="https://github.com/user-attachments/assets/56b18e0e-07d3-4c85-8a77-a1c26b87f0c2" />
+</p>
 
+⚡ App Workflow
 ```mermaid
 flowchart LR
   %% Upload & Authentication
