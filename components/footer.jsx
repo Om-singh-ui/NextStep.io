@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { MessageCircleQuestion } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -25,6 +25,8 @@ import {
   ChevronUp,
 } from "lucide-react";
 
+import { useTheme } from "@/components/theme-provider"; // <- use shared theme
+
 // Simple GitHub Star Component (Client-Side Only) - Compact version
 function GithubStarCount() {
   const [count, setCount] = useState(1); // Start with 1 as fallback
@@ -35,19 +37,22 @@ function GithubStarCount() {
     const fetchStars = async () => {
       try {
         setError(null);
-        
+
         // Direct GitHub API call - no API route needed
-        const response = await fetch('https://api.github.com/repos/Om-singh-ui/NextStep.io', {
-          headers: {
-            'Accept': 'application/vnd.github.v3+json',
-            // Optional: Add your token here if you have one
-            // 'Authorization': `token ${process.env.NEXT_PUBLIC_GITHUB_TOKEN}`
-          },
-        });
+        const response = await fetch(
+          "https://api.github.com/repos/Om-singh-ui/NextStep.io",
+          {
+            headers: {
+              Accept: "application/vnd.github.v3+json",
+              // Optional: Add your token here if you have one
+              // 'Authorization': `token ${process.env.NEXT_PUBLIC_GITHUB_TOKEN}`
+            },
+          }
+        );
 
         if (!response.ok) {
           // If rate limited or other error, just use the fallback count
-          console.log('GitHub API not available, using fallback');
+          console.log("GitHub API not available, using fallback");
           setLoading(false);
           return;
         }
@@ -55,9 +60,8 @@ function GithubStarCount() {
         const data = await response.json();
         setCount(data.stargazers_count || 1);
         setLoading(false);
-        
       } catch (err) {
-        console.log('GitHub fetch failed, using fallback:', err.message);
+        console.log("GitHub fetch failed, using fallback:", err.message);
         setError(err.message);
         setLoading(false);
         // Keep the current count (1 or previously fetched value)
@@ -68,7 +72,7 @@ function GithubStarCount() {
 
     // Optional: Refresh every 5 minutes
     const interval = setInterval(fetchStars, 300000);
-    
+
     return () => clearInterval(interval);
   }, []);
 
@@ -90,7 +94,7 @@ function GithubStarCount() {
             key={count}
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+            transition={{ type: "spring", stiffness: 300, damping: 20 }}
             className="text-[10px] bg-gradient-to-r from-emerald-100 to-cyan-100 dark:from-emerald-900 dark:to-cyan-900 px-1.5 py-0.5 rounded-md font-semibold text-emerald-800 dark:text-emerald-200 border border-emerald-200 dark:border-emerald-800"
           >
             ⭐ {Intl.NumberFormat().format(count)}
@@ -103,52 +107,33 @@ function GithubStarCount() {
 
 export default function Footer() {
   const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
-  const [isDarkMode, setIsDarkMode] = useState(true);
   const [isHovered, setIsHovered] = useState(null);
   const [activeAccordion, setActiveAccordion] = useState(null);
   const [isMobile, setIsMobile] = useState(false);
 
+  // Use the shared theme context
+  const { theme, toggleTheme } = useTheme();
+
   useEffect(() => {
     setCurrentYear(new Date().getFullYear());
-
-    const savedTheme = typeof window !== "undefined" ? localStorage.getItem("theme") : null;
-    const systemPrefersDark = typeof window !== "undefined" && window.matchMedia
-      ? window.matchMedia("(prefers-color-scheme: dark)").matches
-      : false;
-
-    if (savedTheme === "light" || (!savedTheme && !systemPrefersDark)) {
-      setIsDarkMode(false);
-      if (typeof document !== "undefined") document.documentElement.classList.remove("dark");
-    } else {
-      setIsDarkMode(true);
-      if (typeof document !== "undefined") document.documentElement.classList.add("dark");
-    }
 
     const checkIsMobile = () => {
       if (typeof window !== "undefined") setIsMobile(window.innerWidth < 768);
     };
 
     checkIsMobile();
-    if (typeof window !== "undefined") window.addEventListener('resize', checkIsMobile);
+    if (typeof window !== "undefined")
+      window.addEventListener("resize", checkIsMobile);
 
     return () => {
-      if (typeof window !== "undefined") window.removeEventListener('resize', checkIsMobile);
+      if (typeof window !== "undefined")
+        window.removeEventListener("resize", checkIsMobile);
     };
   }, []);
 
-  const toggleTheme = () => {
-    if (isDarkMode) {
-      if (typeof document !== "undefined") document.documentElement.classList.remove("dark");
-      if (typeof window !== "undefined") localStorage.setItem("theme", "light");
-    } else {
-      if (typeof document !== "undefined") document.documentElement.classList.add("dark");
-      if (typeof window !== "undefined") localStorage.setItem("theme", "dark");
-    }
-    setIsDarkMode(!isDarkMode);
-  };
-
   const handleEmailClick = () => {
-    if (typeof window !== "undefined") window.location.href = "mailto:omchouhan227@gmail.com";
+    if (typeof window !== "undefined")
+      window.location.href = "mailto:omchouhan227@gmail.com";
   };
 
   const toggleAccordion = (index) => {
@@ -192,7 +177,13 @@ export default function Footer() {
             >
               <Mail className="w-5 h-5 group-hover:scale-110 transition-transform" />
               <span className="group-hover:underline">Contact Us</span>
-              <ArrowRight className={`w-4 h-4 transition-all duration-300 ${isHovered === "email" ? "translate-x-1 opacity-100" : "opacity-0 -translate-x-1"}`} />
+              <ArrowRight
+                className={`w-4 h-4 transition-all duration-300 ${
+                  isHovered === "email"
+                    ? "translate-x-1 opacity-100"
+                    : "opacity-0 -translate-x-1"
+                }`}
+              />
             </button>
           </div>
 
@@ -206,9 +197,17 @@ export default function Footer() {
                   className="flex items-center justify-between w-full text-left font-semibold text-gray-900 dark:text-gray-200 text-lg hover:text-blue-500 dark:hover:text-blue-400 transition-colors"
                 >
                   Quick Links
-                  {activeAccordion === 0 ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
+                  {activeAccordion === 0 ? (
+                    <ChevronUp className="w-5 h-5" />
+                  ) : (
+                    <ChevronDown className="w-5 h-5" />
+                  )}
                 </button>
-                <div className={`overflow-hidden transition-all duration-300 ${activeAccordion === 0 ? "max-h-40 opacity-100" : "max-h-0 opacity-0"}`}>
+                <div
+                  className={`overflow-hidden transition-all duration-300 ${
+                    activeAccordion === 0 ? "max-h-40 opacity-100" : "max-h-0 opacity-0"
+                  }`}
+                >
                   <ul className="space-y-3 text-gray-700 dark:text-gray-400 pt-3">
                     <li>
                       <Link href="/" className="flex items-center gap-2 hover:text-blue-500 transition-all duration-300 group py-1">
@@ -245,9 +244,17 @@ export default function Footer() {
                   className="flex items-center justify-between w-full text-left font-semibold text-gray-900 dark:text-gray-200 text-lg hover:text-blue-500 dark:hover:text-blue-400 transition-colors"
                 >
                   Resources
-                  {activeAccordion === 1 ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
+                  {activeAccordion === 1 ? (
+                    <ChevronUp className="w-5 h-5" />
+                  ) : (
+                    <ChevronDown className="w-5 h-5" />
+                  )}
                 </button>
-                <div className={`overflow-hidden transition-all duration-300 ${activeAccordion === 1 ? "max-h-40 opacity-100" : "max-h-0 opacity-0"}`}>
+                <div
+                  className={`overflow-hidden transition-all duration-300 ${
+                    activeAccordion === 1 ? "max-h-40 opacity-100" : "max-h-0 opacity-0"
+                  }`}
+                >
                   <ul className="space-y-3 text-gray-700 dark:text-gray-400 pt-3">
                     <li>
                       <Link target="_blank" href="https://drive.google.com/drive/search?q=parent%3A1oqmFSf48p4sppJ9TECES8uyqCCJxuIiT" className="flex items-center gap-2 hover:text-blue-500 transition-all duration-300 group py-1">
@@ -288,7 +295,7 @@ export default function Footer() {
                     <span className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 text-xs bg-gray-800 text-white px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">Connect</span>
                   </Link>
                 </div>
-                
+
                 {/* GitHub Stats */}
                 <div className="space-y-4">
                   <h4 className="font-semibold text-gray-900 dark:text-gray-200 text-lg group hover:text-blue-500 dark:hover:text-blue-400 transition-colors">Open Source</h4>
@@ -314,7 +321,7 @@ export default function Footer() {
                   <li><button onClick={() => document.getElementById("faq")?.scrollIntoView({ behavior: "smooth", block: "start" })} className="flex items-center gap-2 hover:text-blue-500 transition-all duration-300 group py-1"><MessageCircleQuestion className="w-5 h-5 group-hover:scale-110 transition-transform" /><span>FAQ</span></button></li>
                 </ul>
               </div>
-              
+
               {/* Resources */}
               <div className="space-y-4">
                 <h4 className="font-semibold text-gray-900 dark:text-gray-200 text-lg group hover:text-blue-500 dark:hover:text-blue-400 transition-colors">Resources</h4>
@@ -324,7 +331,7 @@ export default function Footer() {
                   <li><Link href="/support" className="flex items-center gap-2 hover:text-blue-500 transition-all duration-300 group py-1"><MessageCircle className="w-5 h-5 group-hover:scale-110 transition-transform" /><span>Support</span></Link></li>
                 </ul>
               </div>
-              
+
               {/* Social & GitHub Stats */}
               <div className="space-y-8">
                 <div className="space-y-4">
@@ -366,10 +373,20 @@ export default function Footer() {
               © {currentYear} NextStep.io — Crafted with precision
               <Sparkles className="w-4 h-4 text-blue-400 animate-pulse group-hover:rotate-180 transition-transform duration-500" />
             </div>
-            <button onClick={toggleTheme} className="p-2 sm:p-3 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r from-blue-500 to-emerald-500 hover:text-white transition-all duration-300 shadow-md hover:scale-110 group relative overflow-hidden">
+
+            {/* THEME BUTTON — now uses provider's toggleTheme */}
+            <button
+              onClick={toggleTheme}
+              className="p-2 sm:p-3 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r from-blue-500 to-emerald-500 hover:text-white transition-all duration-300 shadow-md hover:scale-110 group relative overflow-hidden"
+              aria-label="Toggle theme"
+            >
               <div className="absolute inset-0 bg-gradient-to-r from-blue-400 to-emerald-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
               <span className="relative z-10 flex items-center justify-center">
-                {isDarkMode ? <Sun className="w-4 h-4 sm:w-5 sm:h-5" /> : <Moon className="w-4 h-4 sm:w-5 sm:h-5" />}
+                {theme === "dark" ? (
+                  <Sun className="w-4 h-4 sm:w-5 sm:h-5" />
+                ) : (
+                  <Moon className="w-4 h-4 sm:w-5 sm:h-5" />
+                )}
               </span>
             </button>
           </div>
