@@ -29,7 +29,6 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 
 import { AdvancedTabs } from "./advanced-tabs";
-import { ThemeCustomizer } from "./theme-customizer";
 import { SectionManager } from "./section-manager";
 import { AISuggestions } from "./ai-suggestions";
 import { PreviewPanel } from "./preview-panel";
@@ -45,7 +44,6 @@ import { useTheme } from "@/components/theme-provider"; // Import theme provider
 
 const builderTabs = [
   { value: "content", label: "Content", icon: Edit },
-  { value: "design", label: "Design", icon: Palette },
   { value: "sections", label: "Sections", icon: GripVertical },
   { value: "ai", label: "AI Enhance", icon: Sparkles },
 ];
@@ -55,8 +53,6 @@ export default function EnhancedResumeBuilder({ initialContent }) {
   const [previewContent, setPreviewContent] = useState(initialContent || "");
   const [isGenerating, setIsGenerating] = useState(false);
   const [profileImage, setProfileImage] = useState(null);
-  const [currentTheme, setCurrentTheme] = useState(null);
-  const [currentFont, setCurrentFont] = useState(null);
   const [enabledSections, setEnabledSections] = useState([]);
   const [resumeScore, setResumeScore] = useState(65);
   const [activeView, setActiveView] = useState("form");
@@ -280,9 +276,7 @@ export default function EnhancedResumeBuilder({ initialContent }) {
       const blob = await generateResumePDF(
         previewContent,
         profileImage,
-        watch("personalInfo"),
-        currentTheme,
-        currentFont
+        watch("personalInfo")
       );
       
       const url = URL.createObjectURL(blob);
@@ -720,44 +714,6 @@ export default function EnhancedResumeBuilder({ initialContent }) {
             />
 
             <AnimatePresence mode="wait">
-              {activeBuilderTab === "design" && (
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -20 }}
-                  transition={{ duration: 0.2 }}
-                >
-                  <Card className={`border-0 shadow-xl ${darkMode ? "bg-gray-800 border-gray-700" : "bg-white"}`}>
-                    <CardHeader className={`bg-gradient-to-r border-b ${
-                      darkMode 
-                        ? "from-gray-700 to-blue-900/50 border-gray-700" 
-                        : "from-gray-50 to-blue-50/50 border-gray-200"
-                    }`}>
-                      <CardTitle className={`flex items-center gap-2 text-lg ${
-                        darkMode ? "text-white" : "text-gray-900"
-                      }`}>
-                        <Palette className="h-5 w-5" />
-                        Theme Customizer
-                      </CardTitle>
-                      <p className={`text-sm ${darkMode ? "text-gray-400" : "text-gray-600"}`}>
-                        Customize your resume's appearance
-                      </p>
-                    </CardHeader>
-                    <CardContent className="p-6 text-center py-12">
-                      <div className="w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                        <Palette className="h-8 w-8 text-white" />
-                      </div>
-                      <h3 className={`text-xl font-bold mb-2 ${darkMode ? "text-white" : "text-gray-900"}`}>
-                        Theme Customizer
-                      </h3>
-                      <p className={darkMode ? "text-gray-400" : "text-gray-600"}>
-                        Theme customization features coming soon!
-                      </p>
-                    </CardContent>
-                  </Card>
-                </motion.div>
-              )}
-
               {activeBuilderTab === "sections" && (
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
@@ -852,19 +808,16 @@ export default function EnhancedResumeBuilder({ initialContent }) {
                 >
                   <div className="text-center py-12">
                     <div className="w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                      {activeBuilderTab === "design" && <Palette className="h-8 w-8 text-white" />}
                       {activeBuilderTab === "sections" && <GripVertical className="h-8 w-8 text-white" />}
                       {activeBuilderTab === "ai" && <Sparkles className="h-8 w-8 text-white" />}
                     </div>
                     <h3 className={`text-xl font-bold mb-2 ${
                       darkMode ? "text-white" : "text-gray-900"
                     }`}>
-                      {activeBuilderTab === "design" && "Customize Design"}
                       {activeBuilderTab === "sections" && "Manage Sections"}
                       {activeBuilderTab === "ai" && "AI Enhancements"}
                     </h3>
                     <p className={darkMode ? "text-gray-400" : "text-gray-600"}>
-                      {activeBuilderTab === "design" && "Use the left panel to customize your resume's appearance with themes and fonts."}
                       {activeBuilderTab === "sections" && "Drag and drop to reorder sections, toggle visibility to create the perfect layout."}
                       {activeBuilderTab === "ai" && "Get smart suggestions to improve your resume content and increase your chances."}
                     </p>
