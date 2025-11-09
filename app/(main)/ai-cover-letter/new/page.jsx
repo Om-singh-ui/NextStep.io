@@ -20,7 +20,7 @@ export default function NewCoverLetterPage() {
   return (
     <div className="container mx-auto px-4 sm:px-5 md:px-6 py-10 sm:py-12 md:py-20">
       <div className="flex flex-col space-y-6 mb-8">
-        <Link href="/ai-cover-letter" legacyBehavior>
+        <Link href="/ai-cover-letter" passHref>
           <Button 
             variant="outline" 
             className="
@@ -35,6 +35,7 @@ export default function NewCoverLetterPage() {
               shadow-sm hover:shadow-[0_0_20px_rgba(59,130,246,0.6)]
               pl-3
             "
+            suppressHydrationWarning
           >
             {/* Icon */}
             <ArrowLeft className="h-4 w-4 transition-transform duration-300 group-hover:scale-110 group-hover:text-blue-400" />

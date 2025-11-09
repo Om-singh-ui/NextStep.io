@@ -1,5 +1,4 @@
 import * as React from "react"
-
 import { cn } from "@/lib/utils"
 
 function Input({
@@ -17,7 +16,10 @@ function Input({
         "aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive",
         className
       )}
-      {...props} />
+      {...props}
+      // Suppress hydration warning for attributes added by browser extensions
+      suppressHydrationWarning
+    />
   );
 }
 

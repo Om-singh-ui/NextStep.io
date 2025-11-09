@@ -174,6 +174,7 @@ export default function Footer() {
               onMouseEnter={() => setIsHovered("email")}
               onMouseLeave={() => setIsHovered(null)}
               className="inline-flex items-center gap-2 text-emerald-600 dark:text-emerald-400 text-sm hover:text-blue-500 transition-all duration-300 group relative"
+              suppressHydrationWarning
             >
               <Mail className="w-5 h-5 group-hover:scale-110 transition-transform" />
               <span className="group-hover:underline">Contact Us</span>
@@ -195,6 +196,7 @@ export default function Footer() {
                 <button
                   onClick={() => toggleAccordion(0)}
                   className="flex items-center justify-between w-full text-left font-semibold text-gray-900 dark:text-gray-200 text-lg hover:text-blue-500 dark:hover:text-blue-400 transition-colors"
+                  suppressHydrationWarning
                 >
                   Quick Links
                   {activeAccordion === 0 ? (
@@ -216,19 +218,31 @@ export default function Footer() {
                       </Link>
                     </li>
                     <li>
-                      <button onClick={() => document.getElementById("stats")?.scrollIntoView({ behavior: "smooth", block: "start" })} className="flex items-center gap-2 hover:text-blue-500 transition-all duration-300 group py-1">
+                      <button 
+                        onClick={() => document.getElementById("stats")?.scrollIntoView({ behavior: "smooth", block: "start" })} 
+                        className="flex items-center gap-2 hover:text-blue-500 transition-all duration-300 group py-1"
+                        suppressHydrationWarning
+                      >
                         <Info className="w-5 h-5 group-hover:scale-110 transition-transform" />
                         <span>About</span>
                       </button>
                     </li>
                     <li>
-                      <button onClick={() => document.getElementById("features")?.scrollIntoView({ behavior: "smooth", block: "start" })} className="flex items-center gap-2 hover:text-blue-500 transition-all duration-300 group py-1">
+                      <button 
+                        onClick={() => document.getElementById("features")?.scrollIntoView({ behavior: "smooth", block: "start" })} 
+                        className="flex items-center gap-2 hover:text-blue-500 transition-all duration-300 group py-1"
+                        suppressHydrationWarning
+                      >
                         <Star className="w-5 h-5 group-hover:scale-110 transition-transform" />
                         <span>Features</span>
                       </button>
                     </li>
                     <li>
-                      <button onClick={() => document.getElementById("faq")?.scrollIntoView({ behavior: "smooth", block: "start" })} className="flex items-center gap-2 hover:text-blue-500 transition-all duration-300 group py-1">
+                      <button 
+                        onClick={() => document.getElementById("faq")?.scrollIntoView({ behavior: "smooth", block: "start" })} 
+                        className="flex items-center gap-2 hover:text-blue-500 transition-all duration-300 group py-1"
+                        suppressHydrationWarning
+                      >
                         <MessageCircleQuestion className="w-5 h-5 group-hover:scale-110 transition-transform" />
                         <span>FAQ</span>
                       </button>
@@ -242,6 +256,7 @@ export default function Footer() {
                 <button
                   onClick={() => toggleAccordion(1)}
                   className="flex items-center justify-between w-full text-left font-semibold text-gray-900 dark:text-gray-200 text-lg hover:text-blue-500 dark:hover:text-blue-400 transition-colors"
+                  suppressHydrationWarning
                 >
                   Resources
                   {activeAccordion === 1 ? (
@@ -316,9 +331,36 @@ export default function Footer() {
                 <h4 className="font-semibold text-gray-900 dark:text-gray-200 text-lg group hover:text-blue-500 dark:hover:text-blue-400 transition-colors">Quick Links</h4>
                 <ul className="space-y-3 text-gray-700 dark:text-gray-400">
                   <li><Link href="/" className="flex items-center gap-2 hover:text-blue-500 transition-all duration-300 group py-1"><Home className="w-5 h-5 group-hover:scale-110 transition-transform" /><span>Home</span></Link></li>
-                  <li><button onClick={() => document.getElementById("stats")?.scrollIntoView({ behavior: "smooth", block: "start" })} className="flex items-center gap-2 hover:text-blue-500 transition-all duration-300 group py-1"><Info className="w-5 h-5 group-hover:scale-110 transition-transform" /><span>About</span></button></li>
-                  <li><button onClick={() => document.getElementById("features")?.scrollIntoView({ behavior: "smooth", block: "start" })} className="flex items-center gap-2 hover:text-blue-500 transition-all duration-300 group py-1"><Star className="w-5 h-5 group-hover:scale-110 transition-transform" /><span>Features</span></button></li>
-                  <li><button onClick={() => document.getElementById("faq")?.scrollIntoView({ behavior: "smooth", block: "start" })} className="flex items-center gap-2 hover:text-blue-500 transition-all duration-300 group py-1"><MessageCircleQuestion className="w-5 h-5 group-hover:scale-110 transition-transform" /><span>FAQ</span></button></li>
+                  <li>
+                    <button 
+                      onClick={() => document.getElementById("stats")?.scrollIntoView({ behavior: "smooth", block: "start" })} 
+                      className="flex items-center gap-2 hover:text-blue-500 transition-all duration-300 group py-1"
+                      suppressHydrationWarning
+                    >
+                      <Info className="w-5 h-5 group-hover:scale-110 transition-transform" />
+                      <span>About</span>
+                    </button>
+                  </li>
+                  <li>
+                    <button 
+                      onClick={() => document.getElementById("features")?.scrollIntoView({ behavior: "smooth", block: "start" })} 
+                      className="flex items-center gap-2 hover:text-blue-500 transition-all duration-300 group py-1"
+                      suppressHydrationWarning
+                    >
+                      <Star className="w-5 h-5 group-hover:scale-110 transition-transform" />
+                      <span>Features</span>
+                    </button>
+                  </li>
+                  <li>
+                    <button 
+                      onClick={() => document.getElementById("faq")?.scrollIntoView({ behavior: "smooth", block: "start" })} 
+                      className="flex items-center gap-2 hover:text-blue-500 transition-all duration-300 group py-1"
+                      suppressHydrationWarning
+                    >
+                      <MessageCircleQuestion className="w-5 h-5 group-hover:scale-110 transition-transform" />
+                      <span>FAQ</span>
+                    </button>
+                  </li>
                 </ul>
               </div>
 
@@ -379,6 +421,7 @@ export default function Footer() {
               onClick={toggleTheme}
               className="p-2 sm:p-3 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r from-blue-500 to-emerald-500 hover:text-white transition-all duration-300 shadow-md hover:scale-110 group relative overflow-hidden"
               aria-label="Toggle theme"
+              suppressHydrationWarning
             >
               <div className="absolute inset-0 bg-gradient-to-r from-blue-400 to-emerald-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
               <span className="relative z-10 flex items-center justify-center">

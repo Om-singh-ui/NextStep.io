@@ -8,7 +8,6 @@ import Footer from "@/components/footer";
 import HeroSection from "@/components/hero";
 import Chatbot from "@/components/chatbot";
 
-
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -28,7 +27,6 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        suppressHydrationWarning
         className={`${geistSans.variable} ${geistMono.variable} antialiased flex flex-col min-h-screen`}
       >
         <ClerkProvider
@@ -36,10 +34,17 @@ export default function RootLayout({ children }) {
             baseTheme: dark, 
           }}
         >
-          <ThemeProvider>
+          {/* ThemeProvider with forced dynamic to prevent static generation issues */}
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
             <Header />
             <Chatbot />
-            <main suppressHydrationWarning className="flex-grow">
+            {/* Remove suppressHydrationWarning from main - let children handle their own hydration */}
+            <main className="flex-grow">
               {children}
             </main>
             <Footer/>
