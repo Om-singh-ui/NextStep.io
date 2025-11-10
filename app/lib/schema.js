@@ -28,7 +28,6 @@ export const resumeSchema = z.object({
   projects: z.array(entrySchema).default([]),
 });
 
-// ADD THESE MISSING SCHEMAS:
 export const onboardingSchema = z.object({
   fullName: z.string().min(1, "Full name is required"),
   email: z.string().email("Invalid email address"),
@@ -38,11 +37,26 @@ export const onboardingSchema = z.object({
   skills: z.array(z.string()).optional(),
 });
 
+// FIXED: Updated coverLetterSchema to match component requirements
 export const coverLetterSchema = z.object({
-  jobDescription: z.string().min(1, "Job description is required"),
-  resumeContent: z.string().min(1, "Resume content is required"),
-  companyName: z.string().optional(),
-  jobTitle: z.string().optional(),
-  tone: z.enum(["professional", "enthusiastic", "formal", "casual"]).default("professional"),
-  customInstructions: z.string().optional(),
+  companyName: z.string()
+    .min(2, "Company name must be at least 2 characters")
+    .max(100, "Company name must be less than 100 characters")
+    .trim(),
+  
+  jobTitle: z.string()
+    .min(2, "Job title must be at least 2 characters")
+    .max(100, "Job title must be less than 100 characters")
+    .trim(),
+  
+  jobDescription: z.string()
+    .min(50, "Job description must be at least 50 characters")
+    .max(5000, "Job description must be less than 5000 characters")
+    .trim(),
+  
+  resumeContent: z.string()
+    .max(10000, "Resume content must be less than 10000 characters")
+    .optional()
+    .or(z.literal('')),
 });
+
