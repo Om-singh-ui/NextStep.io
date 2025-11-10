@@ -18,7 +18,8 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { generateCoverLetter } from "@/actions/cover-letter";
 import { useRouter } from "next/navigation";
-import { coverLetterSchema } from "@/lib/schema";
+// FIXED: Updated import path to match your file structure
+import { coverLetterSchema } from "@/app/lib/schema";
 
 export default function CoverLetterGenerator() {
   const router = useRouter();
@@ -46,7 +47,6 @@ export default function CoverLetterGenerator() {
   const resumeContentValue = watch("resumeContent");
 
   const handleBackToCoverLetters = () => {
-    // Navigate to the main cover letters list page
     router.push("/ai-cover-letter");
   };
 
@@ -60,7 +60,6 @@ export default function CoverLetterGenerator() {
       
       if (result?.id) {
         toast.success("🎉 Cover letter generated successfully!");
-        // Navigate to the generated cover letter detail page
         router.push(`/ai-cover-letter/${result.id}`);
       } else {
         throw new Error("No cover letter generated");
@@ -102,7 +101,7 @@ Frontend Developer with 4+ years of experience building scalable web application
 
 TECHNICAL SKILLS
 - Frontend: React, Next.js, TypeScript, JavaScript (ES6+)
-- Styling: Tailwind CSS, Styled Components, CSS3
+- Styling: Tailwallwind CSS, Styled Components, CSS3
 - State Management: Redux Toolkit, Zustand, Context API
 - Testing: Jest, React Testing Library, Cypress
 - Tools: Git, Webpack, Vite, npm/yarn
@@ -286,4 +285,4 @@ Bachelor of Computer Science | University of Technology | 2016 - 2020`);
       </Card>
     </div>
   );
-}
+}  
