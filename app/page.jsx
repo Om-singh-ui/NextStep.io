@@ -55,7 +55,7 @@ export default function Home() {
     <div>
       <HeroSection />
       
-      {/* Features Section */}
+      {/* Features Section - EXACTLY AS BEFORE */}
       <section
         id="features"
         className="w-full py-10 sm:py-12 md:py-20 lg:py-28 bg-background"
@@ -168,7 +168,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Stats Section */}
+      {/* Stats Section - EXACTLY AS BEFORE */}
       <section
         id="stats"
         className="w-full py-16 sm:py-20 md:py-28 bg-gradient-to-b from-background to-muted/20"
@@ -438,7 +438,8 @@ export default function Home() {
           </motion.div>
         </div>
       </section>
-      {/* How It Works Section */}
+
+      {/* How It Works Section - EXACTLY AS BEFORE */}
       <section className="w-full py-10 sm:py-12 md:py-24 bg-background">
         <div className="container mx-auto px-4 md:px-6">
           {/* Heading */}
@@ -527,7 +528,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Enhanced FAQ Section */}
+      {/* Enhanced FAQ Section - EXACTLY AS BEFORE */}
       <section id="faq" className="w-full py-12 md:py-24 bg-background/50">
         <div className="container mx-auto px-4 md:px-6">
           {/* Enhanced FAQ Heading */}
@@ -626,7 +627,8 @@ export default function Home() {
           </div>
         </div>
       </section>
-      {/* Enhanced Interactive CTA Section */}
+
+      {/* Enhanced Interactive CTA Section - EXACTLY AS BEFORE */}
       <section className="w-full py-24 md:py-32 bg-gradient-to-br from-background via-background to-primary/5 relative overflow-hidden">
         {/* Animated Background Elements */}
         <div className="absolute inset-0 overflow-hidden">
@@ -940,6 +942,6 @@ export default function Home() {
           </motion.div>
         </div>
       </section>
-    </div>
+    </div>  
   );
 }

@@ -1,17 +1,15 @@
 "use client";
 
 import React, { useState, useEffect, useCallback } from "react";
-import { motion } from "framer-motion";
-import { Waves, Sparkles, Rocket, ArrowRight, Play } from "lucide-react";
-import dynamic from "next/dynamic";
+import { motion, AnimatePresence } from "framer-motion";
+import { Waves, Sparkles, Rocket, ArrowRight, Play, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
-import HackathonShoutoutPopup from "./HackathonShoutoutPopup";
-
 
 const Hero = () => {
   const [mounted, setMounted] = useState(false);
+  const [showVideo, setShowVideo] = useState(false);
   const { isSignedIn } = useUser();
   const router = useRouter();
 
@@ -26,15 +24,18 @@ const Hero = () => {
       router.push("/sign-in");
     }
   }, [isSignedIn, router]);
-// Handle "Watch Demo" button clickk
+
   const handleWatchDemo = useCallback(() => {
-    console.log("Watch demo clicked");
-    window.open("https://www.youtube.com/watch?v=PDk4G1Ck6A0&t=11s", "_blank", "noopener,noreferrer");
+    setShowVideo(true);
+  }, []);
+
+  const handleCloseVideo = useCallback(() => {
+    setShowVideo(false);
   }, []);
 
   return (
     <section className="relative min-h-[90vh] mt-16 sm:mt-20 flex flex-col items-center justify-center py-8 sm:py-12 px-4 overflow-hidden">
-      {/* Background effects */}
+      {/* Background effects - unchanged but subtly enhanced */}
       <div className="absolute inset-0 -z-10 overflow-hidden">
         <div className="absolute w-[500px] sm:w-[700px] h-[500px] sm:h-[700px] rounded-full blur-3xl top-0 -left-40 sm:-left-60 bg-gradient-to-r from-indigo-500/40 to-purple-600/20 animate-pulse" />
         <div className="absolute w-[400px] sm:w-[600px] h-[400px] sm:h-[600px] rounded-full blur-3xl bottom-0 right-0 bg-gradient-to-r from-cyan-400/40 to-emerald-400/20 animate-pulse delay-700" />
@@ -65,8 +66,8 @@ const Hero = () => {
              hover:border-blue-400 
              hover:shadow-[0_0_25px_rgba(59,130,246,0.5),0_0_45px_rgba(96,165,250,0.4),0_0_65px_rgba(147,197,253,0.35)]
              cursor-pointer group select-none"
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.92, rotate: "-2deg" }}
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95, rotate: "-2deg" }}
         >
           <motion.div
             animate={{ y: [0, -2, 0] }}
@@ -79,13 +80,7 @@ const Hero = () => {
             Unlock Your Career Potential
           </span>
 
-          <motion.div
-            className="origin-bottom"
-            whileHover={{ y: -28, rotate: -20, opacity: 0 }}
-            transition={{ duration: 0.9, ease: "easeInOut" }}
-          >
-            <Rocket className="w-4 h-4 text-blue-500 drop-shadow-md" />
-          </motion.div>
+          <Rocket className="w-4 h-4 text-blue-500 drop-shadow-md group-hover:translate-y-[-3px] transition-all" />
 
           <span
             className="absolute inset-0 rounded-full 
@@ -190,7 +185,6 @@ const Hero = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 1, duration: 0.6 }}
         >
-          {/* Get Started Button */}
           <Button
             onClick={handleGetStarted}
             size="lg"
@@ -216,7 +210,6 @@ const Hero = () => {
             <ArrowRight className="w-5 h-5 relative z-10 group-hover:translate-x-1 transition-transform" />
           </Button>
 
-          {/* Watch Demo Button */}
           <Button
             onClick={handleWatchDemo}
             size="lg"
@@ -243,6 +236,40 @@ const Hero = () => {
           </Button>
         </motion.div>
       </motion.div>
+
+      {/* Video Popup */}
+      <AnimatePresence>
+        {showVideo && (
+          <motion.div
+            className="fixed inset-0 z-50 bg-black/70 backdrop-blur-md flex items-center justify-center p-4"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            <motion.div
+              className="relative bg-black rounded-2xl overflow-hidden w-full max-w-4xl aspect-video shadow-[0_0_40px_rgba(59,130,246,0.6)]"
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              transition={{ duration: 0.4 }}
+            >
+              <iframe
+                src="https://www.youtube.com/embed/PDk4G1Ck6A0?autoplay=1&mute=0"
+                title="NextStep.io Demo"
+                allow="autoplay; encrypted-media"
+                allowFullScreen
+                className="w-full h-full"
+              ></iframe>
+              <button
+                onClick={handleCloseVideo}
+                className="absolute top-3 right-3 bg-white/20 hover:bg-white/30 text-white rounded-full p-2 backdrop-blur-md transition"
+              >
+                <X className="w-6 h-6" />
+              </button>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </section>
   );
 };
