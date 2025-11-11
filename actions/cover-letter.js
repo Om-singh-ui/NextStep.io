@@ -326,3 +326,43 @@ export async function deleteCoverLetter(id) {
     throw new Error("Failed to delete cover letter");
   }
 }
+
+// ADD THIS MISSING FUNCTION
+export async function updateCoverLetter(id, updates) {
+  try {
+    const { userId } = await auth();
+    if (!userId) throw new Error("Unauthorized");
+
+    const user = await db.user.findUnique({
+      where: { clerkUserId: userId },
+      select: { id: true },
+    });
+
+    if (!user) throw new Error("User not found");
+
+    // Verify the cover letter belongs to the user
+    const existingCoverLetter = await db.coverLetter.findFirst({
+      where: { id, userId: user.id },
+    });
+
+    if (!existingCoverLetter) {
+      throw new Error("Cover letter not found");
+    }
+
+    // Update the cover letter
+    const updatedCoverLetter = await db.coverLetter.update({
+      where: { id },
+      data: updates,
+    });
+
+    return { success: true, data: updatedCoverLetter };
+  } catch (error) {
+    console.error("Error in updateCoverLetter:", error);
+    
+    if (error.message.includes("Unauthorized") || error.message.includes("not found")) {
+      throw error; // Re-throw auth/not found errors
+    }
+    
+    throw new Error("Failed to update cover letter");
+  }
+}
