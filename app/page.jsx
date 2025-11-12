@@ -17,12 +17,13 @@ import { motion } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";
 import { useState, useEffect } from "react";
 
+// Particle component for background animations
 const ClientParticle = ({ index }) => {
   const [position, setPosition] = useState({ top: "50%", left: "50%" });
   const [duration, setDuration] = useState(2);
 
   useEffect(() => {
-    // Only set random values on client side
+    // Generate random positions and durations on client side only
     setPosition({
       top: `${Math.random() * 40 + 30}%`,
       left: `${Math.random() * 40 + 30}%`,
@@ -54,20 +55,27 @@ export default function Home() {
   return (
     <div>
       <HeroSection />
-      
-      {/* Features Section - EXACTLY AS BEFORE */}
+
+      {/* Features Section with animated background and grid layout */}
       <section
         id="features"
-        className="w-full py-10 sm:py-12 md:py-20 lg:py-28 bg-background"
+        className="relative w-full py-16 sm:py-20 md:py-28 bg-background overflow-hidden"
       >
-        <div className="container mx-auto px-4 sm:px-5 md:px-6">
-          {/* Heading */}
-          <div className="text-center mb-10 sm:mb-14 md:mb-20">
+        {/* Background effects */}
+        <div className="absolute inset-0">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(59,130,246,0.12)_0%,transparent_70%)]" />
+          <div className="absolute inset-0 bg-grid-white/[0.04] dark:bg-grid-white/[0.08] bg-[size:40px_40px]" />
+        </div>
+
+        <div className="container relative mx-auto px-4 sm:px-5 md:px-6">
+          {/* Section header with animated title */}
+          <div className="text-center mb-14 md:mb-20 relative z-10">
             <motion.h2
               className="text-3xl sm:text-4xl md:text-6xl font-extrabold tracking-tight leading-snug sm:leading-tight"
               initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2, duration: 0.7 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.7 }}
             >
               <motion.span
                 className="inline-flex items-center gap-2 sm:gap-3 justify-center text-2xl sm:text-4xl md:text-6xl"
@@ -81,43 +89,45 @@ export default function Home() {
                 <span className="text-2xl sm:text-3xl">🚀</span>
                 <span
                   className="bg-gradient-to-r from-emerald-400 via-teal-300 to-cyan-500 
-                    bg-clip-text text-transparent font-extrabold 
-                    text-2xl sm:text-4xl md:text-5xl flex items-center gap-2"
+              bg-clip-text text-transparent font-extrabold 
+              text-2xl sm:text-4xl md:text-5xl flex items-center gap-2
+              animate-gradient-x"
                   style={{
                     backgroundSize: "200% 200%",
                     textShadow: `
-                      0 0 12px rgba(16, 185, 129, 0.7),
-                      0 0 22px rgba(45, 212, 191, 0.6),
-                      0 0 32px rgba(6, 182, 212, 0.5),
-                      0 0 45px rgba(59, 130, 246, 0.4)
-                    `,
+                0 0 15px rgba(6,182,212,0.6),
+                0 0 25px rgba(45,212,191,0.5),
+                0 0 40px rgba(59,130,246,0.4)
+              `,
                   }}
                 >
                   Advanced Features
-                  <span className="ml-2 sm:ml-3 animate-pulse text-white flex items-center gap-1">
+                  <span className="ml-3 animate-pulse text-white flex items-center gap-1">
                     Start Exploring
                   </span>
                 </span>
               </motion.span>
 
               <motion.span
-                className="block mt-2 sm:mt-3 md:mt-5 text-foreground 
-                  text-base sm:text-lg md:text-2xl font-semibold"
+                className="block mt-3 sm:mt-5 text-foreground 
+            text-base sm:text-lg md:text-2xl font-semibold"
                 initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.4, duration: 0.7 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.2, duration: 0.7 }}
               >
                 Transform Your Professional Trajectory
               </motion.span>
             </motion.h2>
 
-            {/* Subtitle */}
+            {/* Section description */}
             <motion.p
-              className="mt-4 sm:mt-6 text-muted-foreground max-w-2xl sm:max-w-3xl mx-auto 
-                text-sm sm:text-lg md:text-xl leading-relaxed"
+              className="mt-6 text-muted-foreground max-w-2xl sm:max-w-3xl mx-auto 
+          text-sm sm:text-lg md:text-xl leading-relaxed"
               initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.6, duration: 0.7 }}
+              whileInView={{ opacity: 1 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.3, duration: 0.7 }}
             >
               Leverage{" "}
               <span className="bg-gradient-to-r from-emerald-400 via-teal-300 to-cyan-500 bg-clip-text text-transparent font-semibold">
@@ -132,49 +142,78 @@ export default function Home() {
             </motion.p>
           </div>
 
-          {/* Feature Cards */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-7 max-w-6xl mx-auto">
-            {features.map((feature, index) => (
-              <Card
-                key={index}
-                className="group h-full border border-blue-400/40 bg-card/40 backdrop-blur-sm
-                  hover:border-blue-500 hover:shadow-[0_0_25px_rgba(59,130,246,0.55)] 
-                  hover:scale-[1.03] active:scale-[0.98]
-                  transition-all duration-500 ease-out rounded-2xl overflow-hidden"
+          {/* Features grid with animated cards */}
+          <div className="relative max-w-6xl mx-auto">
+            {/* Background dot pattern */}
+            <div className="absolute inset-0 pointer-events-none">
+              <svg
+                className="w-full h-full opacity-20 dark:opacity-30"
+                xmlns="http://www.w3.org/2000/svg"
               >
-                <CardContent className="p-5 sm:p-6 text-center flex flex-col items-center">
-                  {/* Icon */}
-                  <div
-                    className="p-3 sm:p-4 rounded-xl bg-gradient-to-tr from-blue-400/20 to-indigo-500/20 
-                      mb-3 sm:mb-4 group-hover:scale-110 group-hover:rotate-3 
-                      transition-all duration-500 ease-out"
+                <defs>
+                  <pattern
+                    id="dotPattern"
+                    x="0"
+                    y="0"
+                    width="32"
+                    height="32"
+                    patternUnits="userSpaceOnUse"
                   >
-                    {feature.icon}
-                  </div>
+                    <circle cx="1.5" cy="1.5" r="1.3" fill="rgba(59,130,246,0.4)" />
+                  </pattern>
+                </defs>
+                <rect width="100%" height="100%" fill="url(#dotPattern)" />
+              </svg>
+            </div>
 
-                  {/* Title */}
-                  <h3 className="text-base sm:text-lg font-semibold mb-1 sm:mb-2 text-foreground">
-                    {feature.title}
-                  </h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 relative z-10">
+              {features.map((feature, index) => (
+                <motion.div
+                  key={index}
+                  className="group relative border border-blue-400/30 dark:border-blue-500/30
+              bg-gradient-to-br from-white/70 to-white/30 dark:from-gray-900/60 dark:to-gray-800/40
+              backdrop-blur-md rounded-2xl overflow-hidden
+              hover:border-blue-400 hover:shadow-[0_0_25px_rgba(59,130,246,0.55)]
+              hover:scale-[1.04] active:scale-[0.98]
+              transition-all duration-500 ease-out"
+                  whileHover={{ y: -5 }}
+                >
+                  <CardContent className="relative z-10 p-6 flex flex-col items-center text-center h-full">
+                    {/* Feature icon */}
+                    <div
+                      className="p-4 rounded-xl bg-gradient-to-tr from-blue-400/20 to-indigo-500/20 
+                mb-4 group-hover:scale-110 group-hover:rotate-3 transition-all duration-500 ease-out"
+                    >
+                      {feature.icon}
+                    </div>
 
-                  {/* Description */}
-                  <p className="text-muted-foreground text-sm sm:text-base leading-relaxed">
-                    {feature.description}
-                  </p>
-                </CardContent>
-              </Card>
-            ))}
+                    {/* Feature title */}
+                    <h3 className="text-lg sm:text-xl font-semibold mb-2 text-foreground">
+                      {feature.title}
+                    </h3>
+
+                    {/* Feature description */}
+                    <p className="text-muted-foreground text-sm sm:text-base leading-relaxed">
+                      {feature.description}
+                    </p>
+                  </CardContent>
+
+                  {/* Hover glow effect */}
+                  <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition duration-700 bg-gradient-to-br from-blue-500/10 via-transparent to-cyan-500/10 blur-2xl" />
+                </motion.div>
+              ))}
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Stats Section - EXACTLY AS BEFORE */}
+      {/* Stats section with metrics and testimonials */}
       <section
         id="stats"
         className="w-full py-16 sm:py-20 md:py-28 bg-gradient-to-b from-background to-muted/20"
       >
         <div className="container mx-auto px-4 md:px-6">
-          {/* Enhanced Heading */}
+          {/* Section header */}
           <div className="text-center mb-20">
             <motion.h2
               className="text-4xl sm:text-5xl md:text-6xl font-bold mb-6"
@@ -200,7 +239,7 @@ export default function Home() {
             </motion.p>
           </div>
 
-          {/* Enhanced Stats Cards */}
+          {/* Stats cards grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto mb-24">
             {[
               {
@@ -244,13 +283,13 @@ export default function Home() {
                 transition={{ delay: 0.3 + i * 0.1, duration: 0.5 }}
                 whileHover={{ y: -8, scale: 1.02 }}
               >
-                {/* Animated gradient background on hover */}
+                {/* Hover gradient background */}
                 <div
                   className={`absolute inset-0 bg-gradient-to-br ${stat.color} opacity-0 
                         group-hover:opacity-10 transition-opacity duration-700 rounded-3xl`}
                 ></div>
 
-                {/* Floating icon with glow effect */}
+                {/* Animated icon container */}
                 <div className="relative mb-6">
                   <div
                     className={`absolute -inset-3 bg-gradient-to-br ${stat.color} 
@@ -266,7 +305,7 @@ export default function Home() {
                   </div>
                 </div>
 
-                {/* Value with gradient */}
+                {/* Stat value with gradient text */}
                 <h3
                   className={`text-4xl font-bold mb-3 bg-gradient-to-r ${stat.color} 
                        bg-clip-text text-transparent`}
@@ -274,12 +313,12 @@ export default function Home() {
                   {stat.value}
                 </h3>
 
-                {/* Label */}
+                {/* Stat label */}
                 <p className="text-foreground font-semibold text-center mb-2 text-lg">
                   {stat.label}
                 </p>
 
-                {/* Description */}
+                {/* Stat description */}
                 <p className="text-muted-foreground text-sm text-center">
                   {stat.description}
                 </p>
@@ -294,7 +333,7 @@ export default function Home() {
             ))}
           </div>
 
-          {/* Enhanced Trust Indicators */}
+          {/* Team testimonials section */}
           <motion.div
             className="text-center py-12"
             initial={{ opacity: 0 }}
@@ -321,6 +360,7 @@ export default function Home() {
               </motion.p>
             </div>
 
+            {/* Team member grid */}
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-8 mb-16">
               {[
                 {
@@ -374,12 +414,12 @@ export default function Home() {
                         group-hover:shadow-lg group-hover:border-primary/40
                         transition-all duration-300 mb-4 relative overflow-hidden`}
                   >
-                    {/* Gradient overlay on hover */}
+                    {/* Hover gradient effect */}
                     <div
                       className={`absolute inset-0 bg-gradient-to-br ${person.color} opacity-0 group-hover:opacity-10 transition-opacity duration-500`}
                     ></div>
 
-                    {/* Subtle glow effect */}
+                    {/* Background glow */}
                     <div
                       className={`absolute -inset-2 bg-gradient-to-br ${person.color} rounded-full opacity-0 group-hover:opacity-5 blur-md transition-opacity duration-500`}
                     ></div>
@@ -406,7 +446,7 @@ export default function Home() {
               ))}
             </div>
 
-            {/* Testimonial section */}
+            {/* Testimonial quote */}
             <motion.div
               className="mt-14 max-w-3xl mx-auto p-8 bg-muted/20 rounded-2xl border border-border/50"
               initial={{ opacity: 0, y: 20 }}
@@ -439,10 +479,10 @@ export default function Home() {
         </div>
       </section>
 
-      {/* How It Works Section - EXACTLY AS BEFORE */}
+      {/* How It Works process section */}
       <section className="w-full py-10 sm:py-12 md:py-24 bg-background">
         <div className="container mx-auto px-4 md:px-6">
-          {/* Heading */}
+          {/* Section header */}
           <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-12">
             <motion.h2
               className="text-2xl sm:text-3xl md:text-5xl font-extrabold mb-4"
@@ -498,7 +538,7 @@ export default function Home() {
             </motion.p>
           </div>
 
-          {/* Steps */}
+          {/* Process steps grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 max-w-6xl mx-auto">
             {howItWorks.map((item, index) => (
               <div
@@ -528,10 +568,10 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Enhanced FAQ Section - EXACTLY AS BEFORE */}
+      {/* FAQ section with accordion */}
       <section id="faq" className="w-full py-12 md:py-24 bg-background/50">
         <div className="container mx-auto px-4 md:px-6">
-          {/* Enhanced FAQ Heading */}
+          {/* FAQ header with animations */}
           <motion.div
             className="text-center max-w-4xl mx-auto mb-20"
             initial={{ opacity: 0, y: 20 }}
@@ -539,7 +579,7 @@ export default function Home() {
             transition={{ duration: 0.7 }}
           >
             <div className="relative inline-block mb-6">
-              {/* Soft glowing background circle */}
+              {/* Background glow effect */}
               <motion.div
                 className="absolute -inset-2 bg-gradient-to-r from-emerald-400
                blur-xl rounded-full opacity-40"
@@ -548,7 +588,7 @@ export default function Home() {
                 transition={{ delay: 0.2, duration: 0.8 }}
               ></motion.div>
 
-              {/* Heading */}
+              {/* Main title */}
               <h2
                 className="relative text-3xl sm:text-4xl md:text-5xl font-extrabold
                bg-gradient-to-r from-emerald-500 via-teal-400 to-cyan-500 
@@ -569,6 +609,7 @@ export default function Home() {
               </span>
             </motion.p>
 
+            {/* Animated dots indicator */}
             <motion.div
               className="flex justify-center mt-8 space-x-2"
               initial={{ opacity: 0 }}
@@ -594,7 +635,7 @@ export default function Home() {
             </motion.div>
           </motion.div>
 
-          {/* Accordion */}
+          {/* FAQ accordion */}
           <div className="max-w-3xl mx-auto">
             <Accordion type="single" collapsible className="w-full space-y-4">
               {faqs.map((faq, index) => (
@@ -628,9 +669,9 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Enhanced Interactive CTA Section - EXACTLY AS BEFORE */}
+      {/* Call-to-action section with complex animations */}
       <section className="w-full py-24 md:py-32 bg-gradient-to-br from-background via-background to-primary/5 relative overflow-hidden">
-        {/* Animated Background Elements */}
+        {/* Background animation elements */}
         <div className="absolute inset-0 overflow-hidden">
           <motion.div
             className="absolute -top-40 -right-40 w-80 h-80 bg-primary/10 rounded-full blur-3xl"
@@ -669,7 +710,7 @@ export default function Home() {
             }}
           ></motion.div>
 
-          {/* Animated grid pattern */}
+          {/* Grid pattern overlay */}
           <div className="absolute inset-0 opacity-10">
             <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
               <defs>
@@ -700,7 +741,7 @@ export default function Home() {
             viewport={{ once: true, margin: "-100px" }}
             transition={{ duration: 0.7 }}
           >
-            {/* Animated Badge */}
+            {/* Animated notification badge */}
             <motion.div
               className="inline-flex items-center justify-center px-4 py-2 rounded-full bg-primary/10 border border-primary/20 mb-8 cursor-pointer"
               initial={{ opacity: 0, scale: 0.8 }}
@@ -723,7 +764,7 @@ export default function Home() {
               </span>
             </motion.div>
 
-            {/* Main Heading with Typography Animation */}
+            {/* Main CTA heading */}
             <motion.h2
               className="text-4xl sm:text-5xl md:text-6xl font-bold mb-6"
               initial={{ opacity: 0, y: 20 }}
@@ -752,7 +793,7 @@ export default function Home() {
               </motion.span>
             </motion.h2>
 
-            {/* Animated Description */}
+            {/* Description text */}
             <motion.p
               className="text-muted-foreground text-lg md:text-xl max-w-2xl mx-auto mb-10 leading-relaxed"
               initial={{ opacity: 0 }}
@@ -774,7 +815,7 @@ export default function Home() {
               mentorship platform.
             </motion.p>
 
-            {/* Interactive Stats */}
+            {/* Stats indicators */}
             <motion.div
               className="flex flex-wrap justify-center gap-6 mb-12"
               initial={{ opacity: 0, y: 20 }}
@@ -812,7 +853,7 @@ export default function Home() {
               ))}
             </motion.div>
 
-            {/* Enhanced CTA Button with Complex Animation */}
+            {/* Main CTA button with animations */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -829,7 +870,7 @@ export default function Home() {
                 whileTap={{ scale: 0.98 }}
                 transition={{ type: "spring", stiffness: 400, damping: 17 }}
               >
-                {/* Animated background shine */}
+                {/* Button shine animation */}
                 <motion.div
                   className="absolute inset-0 overflow-hidden"
                   initial={{ x: "-100%" }}
@@ -839,7 +880,7 @@ export default function Home() {
                   <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent"></div>
                 </motion.div>
 
-                {/* Button content */}
+                {/* Button text content */}
                 <span className="relative flex items-center justify-center">
                   Begin Your Journey
                   <motion.svg
@@ -860,7 +901,7 @@ export default function Home() {
                   </motion.svg>
                 </span>
 
-                {/* Pulse ring effect */}
+                {/* Button pulse effect */}
                 <motion.div
                   className="absolute -inset-2 bg-primary/30 rounded-full"
                   initial={{ scale: 0.8, opacity: 0 }}
@@ -869,13 +910,13 @@ export default function Home() {
                 ></motion.div>
               </motion.button>
 
-              {/* Floating particles around button - Fixed version */}
+              {/* Background particles */}
               {[0, 1, 2, 3].map((i) => (
                 <ClientParticle key={i} index={i} />
               ))}
             </motion.div>
 
-            {/* Additional note with hover effect */}
+            {/* Footer note */}
             <motion.p
               className="text-sm text-muted-foreground mt-6 inline-block cursor-pointer"
               initial={{ opacity: 0 }}
@@ -916,7 +957,7 @@ export default function Home() {
               }}
             ></motion.div>
 
-            {/* Animated circles */}
+            {/* Animated border circles */}
             {[1, 2, 3].map((i) => (
               <motion.div
                 key={i}
@@ -942,6 +983,6 @@ export default function Home() {
           </motion.div>
         </div>
       </section>
-    </div>  
+    </div>
   );
 }
