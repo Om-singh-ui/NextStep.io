@@ -44,8 +44,6 @@ function GithubStarCount() {
           {
             headers: {
               Accept: "application/vnd.github.v3+json",
-              // Optional: Add your token here if you have one
-              // 'Authorization': `token ${process.env.NEXT_PUBLIC_GITHUB_TOKEN}`
             },
           }
         );
@@ -69,8 +67,6 @@ function GithubStarCount() {
     };
 
     fetchStars();
-
-    // Optional: Refresh every 5 minutes
     const interval = setInterval(fetchStars, 300000);
 
     return () => clearInterval(interval);
@@ -178,11 +174,10 @@ export default function Footer() {
               <Mail className="w-5 h-5 group-hover:scale-110 transition-transform" />
               <span className="group-hover:underline">Contact Us</span>
               <ArrowRight
-                className={`w-4 h-4 transition-all duration-300 ${
-                  isHovered === "email"
+                className={`w-4 h-4 transition-all duration-300 ${isHovered === "email"
                     ? "translate-x-1 opacity-100"
                     : "opacity-0 -translate-x-1"
-                }`}
+                  }`}
               />
             </button>
           </div>
@@ -204,9 +199,8 @@ export default function Footer() {
                   )}
                 </button>
                 <div
-                  className={`overflow-hidden transition-all duration-300 ${
-                    activeAccordion === 0 ? "max-h-40 opacity-100" : "max-h-0 opacity-0"
-                  }`}
+                  className={`overflow-hidden transition-all duration-300 ${activeAccordion === 0 ? "max-h-40 opacity-100" : "max-h-0 opacity-0"
+                    }`}
                 >
                   <ul className="space-y-3 text-gray-700 dark:text-gray-400 pt-3">
                     <li>
@@ -251,9 +245,8 @@ export default function Footer() {
                   )}
                 </button>
                 <div
-                  className={`overflow-hidden transition-all duration-300 ${
-                    activeAccordion === 1 ? "max-h-40 opacity-100" : "max-h-0 opacity-0"
-                  }`}
+                  className={`overflow-hidden transition-all duration-300 ${activeAccordion === 1 ? "max-h-40 opacity-100" : "max-h-0 opacity-0"
+                    }`}
                 >
                   <ul className="space-y-3 text-gray-700 dark:text-gray-400 pt-3">
                     <li>
@@ -296,11 +289,10 @@ export default function Footer() {
                   </Link>
                 </div>
 
-                {/* GitHub Stats */}
-                <div className="space-y-4">
+                <div className="space-y-4 ">
                   <h4 className="font-semibold text-gray-900 dark:text-gray-200 text-lg group hover:text-blue-500 dark:hover:text-blue-400 transition-colors">Open Source</h4>
                   <div className="flex items-center gap-3 text-gray-600 dark:text-gray-400">
-                    <Link href="https://github.com/Om-singh-ui/NextStep.io" target="_blank" className="flex items-center gap-2 border border-gray-300 dark:border-gray-700 rounded-full px-3 py-1.5 hover:border-blue-500 hover:text-blue-500 transition-all duration-300 hover:shadow-md flex-1">
+                    <Link href="https://github.com/Om-singh-ui/NextStep.io" target="_blank" className="flex items-center gap-2 border border-gray-300 dark:border-gray-700 rounded-full px-3 py-1.5 hover:border-blue-500 hover:text-blue-500 transition-all duration-300 hover:shadow-md flex-0.5">
                       <Github className="w-4 h-4" />
                       <GithubStarCount />
                     </Link>
@@ -355,10 +347,67 @@ export default function Footer() {
                 <div className="space-y-4">
                   <h4 className="font-semibold text-gray-900 dark:text-gray-200 text-lg group hover:text-blue-500 dark:hover:text-blue-400 transition-colors">Open Source</h4>
                   <div className="flex items-center gap-3 text-gray-600 dark:text-gray-400">
-                    <Link href="https://github.com/Om-singh-ui/NextStep.io" target="_blank" className="flex items-center gap-2 border border-gray-300 dark:border-gray-700 rounded-full px-3 py-1.5 hover:border-blue-500 hover:text-blue-500 transition-all duration-300 hover:shadow-md flex-1">
-                      <Github className="w-4 h-4" />
-                      <GithubStarCount />
-                    </Link>
+                    {/* GitHub Star Count with Enhanced Tooltip */}
+                    <div className="relative flex-0.5">
+                      <Link
+                        href="https://github.com/Om-singh-ui/NextStep.io"
+                        target="_blank"
+                        className="peer flex items-center gap-2 border border-gray-300 dark:border-gray-700 rounded-full px-3 py-1.5 hover:border-blue-500 hover:text-blue-500 transition-all duration-300 hover:shadow-md bg-gradient-to-r from-gray-50/80 to-gray-100/60 dark:from-gray-800/80 dark:to-gray-900/60 hover:from-blue-50/80 hover:to-purple-50/60 dark:hover:from-blue-900/20 dark:hover:to-purple-900/20 backdrop-blur-sm group"
+                      >
+
+                        <Github className="w-4 h-4 transition-transform duration-300 group-hover:scale-110" />
+                        <GithubStarCount />
+                        {/* Animated pointing arrow */}
+                        <div className="opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300 ease-out flex items-center">
+                          <svg className="w-3 h-3 text-blue-500 animate-bounce" fill="currentColor" viewBox="0 0 16 16">
+                            <path d="M8 0a8 8 0 1 1 0 16A8 8 0 0 1 8 0zM4.5 7.5a.5.5 0 0 0 0 1h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5H4.5z" />
+                          </svg>
+                        </div>
+                      </Link>
+
+                      {/* Enhanced Tooltip popup with delayed close */}
+                      <div className="absolute left-1/2 top-full mt-3 w-64 -translate-x-1/2 opacity-0 scale-95 peer-hover:opacity-100 peer-hover:scale-100 transition-all duration-300 ease-out z-20 pointer-events-none peer-hover:pointer-events-auto group/popup">
+                        <div className="relative bg-gradient-to-br from-white/90 to-blue-50/80 dark:from-gray-800/90 dark:to-blue-900/20 backdrop-blur-xl text-gray-800 dark:text-gray-200 text-sm rounded-2xl border border-blue-200/60 dark:border-blue-500/30 p-4 shadow-2xl shadow-blue-500/20 dark:shadow-blue-700/30 transition-all duration-500 hover:shadow-2xl hover:shadow-blue-500/30 dark:hover:shadow-blue-600/40 hover:border-blue-300/80 dark:hover:border-blue-400/50">
+                          {/* Animated border glow */}
+                          <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-blue-400/20 via-purple-400/20 to-pink-400/20 opacity-0 peer-hover:opacity-100 transition-opacity duration-700 blur-sm -z-10"></div>
+
+                          {/* Corner accents */}
+                          <div className="absolute top-0 left-0 w-3 h-3 border-t-2 border-l-2 border-blue-400/60 rounded-tl-2xl"></div>
+                          <div className="absolute top-0 right-0 w-3 h-3 border-t-2 border-r-2 border-purple-400/60 rounded-tr-2xl"></div>
+                          <div className="absolute bottom-0 left-0 w-3 h-3 border-b-2 border-l-2 border-purple-400/60 rounded-bl-2xl"></div>
+                          <div className="absolute bottom-0 right-0 w-3 h-3 border-b-2 border-r-2 border-blue-400/60 rounded-br-2xl"></div>
+
+                          {/* Content */}
+                          <div className="relative z-10">
+                            <div className="flex items-center gap-2 mb-2">
+                              <div className="w-2 h-2 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full animate-pulse"></div>
+                              <p className="font-bold bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400 bg-clip-text text-transparent">
+                                Open Source Project
+                              </p>
+                            </div>
+                            <p className="text-xs text-gray-600 dark:text-gray-300 leading-relaxed">
+                              NextStep.io is open source — explore, contribute, or star us on GitHub! Your support helps us grow. 🌟
+                            </p>
+
+                            {/* Interactive hint with click functionality */}
+                            <button
+                              onClick={() => window.open('https://github.com/Om-singh-ui/NextStep.io', '_blank')}
+                              className="flex items-center gap-1 mt-3 text-xs text-blue-600 dark:text-blue-400 opacity-80 hover:opacity-100 hover:text-blue-700 dark:hover:text-blue-300 transition-all duration-200 cursor-pointer group/button"
+                            >
+                              <span className="animate-bounce group-hover/button:scale-110 transition-transform">👉</span>
+                              <span className="group-hover/button:underline group-hover/button:font-medium transition-all">
+                                Click to visit repository
+                              </span>
+                            </button>
+                          </div>
+
+                          {/* Auto-close delay indicator */}
+                          <div className="absolute bottom-1 left-1/2 -translate-x-1/2 w-16 h-0.5 bg-gray-300/50 dark:bg-gray-600/50 rounded-full overflow-hidden">
+                            <div className="h-full bg-blue-500/60 dark:bg-blue-400/60 rounded-full transition-all duration-1000 ease-linear peer-hover:w-full group-hover/popup:w-0 group-hover/popup:transition-none"></div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>

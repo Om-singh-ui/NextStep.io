@@ -88,7 +88,7 @@ const Hero = () => {
       title: "Job Matching",
       description: "Smart connections with your ideal career opportunities",
       color: "from-orange-500 to-red-500",
-      image: "/job-match.png"
+      image: "/job.png"
     },
     {
       icon: Zap,
@@ -422,8 +422,8 @@ const Hero = () => {
                           key={index}
                           onClick={() => setCurrentImageIndex(index)}
                           className={`p-2 rounded-xl transition-all duration-300 ${index === currentImageIndex
-                              ? "bg-gradient-to-r from-pink-500 to-purple-500 scale-110"
-                              : "bg-white/5 hover:bg-white/10"
+                            ? "bg-gradient-to-r from-pink-500 to-purple-500 scale-110"
+                            : "bg-white/5 hover:bg-white/10"
                             }`}
                           aria-label={`View feature ${index + 1}`}
                         >
@@ -505,8 +505,8 @@ const Hero = () => {
                           key={feature.title}
                           onClick={() => setCurrentImageIndex(index)}
                           className={`relative p-4 rounded-2xl border-2 backdrop-blur-lg transition-all duration-300 text-left overflow-hidden ${isActive
-                              ? `border-transparent bg-gradient-to-r ${feature.color}/20 scale-105`
-                              : "border-white/10 bg-white/5 hover:border-white/20"
+                            ? `border-transparent bg-gradient-to-r ${feature.color}/20 scale-105`
+                            : "border-white/10 bg-white/5 hover:border-white/20"
                             }`}
                         >
                           <div className="flex items-center gap-3">
@@ -530,7 +530,7 @@ const Hero = () => {
                     transition={{ delay: 0.5 }}
                   >
                     <Button
-                      onClick={handleGetStarted}
+                      onClick={handleCloseVideo}
                       className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white py-4 rounded-2xl font-bold text-lg transition-all duration-300 hover:scale-105 border-0"
                     >
                       <Zap className="w-5 h-5 mr-3" aria-hidden="true" />
@@ -549,3 +549,4 @@ const Hero = () => {
 };
 
 export default React.memo(Hero);
+//handleCloseVideo

@@ -340,20 +340,40 @@ export default function Home() {
             animate={{ opacity: 1 }}
             transition={{ delay: 0.5, duration: 0.7 }}
           >
-            <div className="mb-14">
-              <motion.h3
-                className="text-3xl font-bold mb-4 bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent"
-                initial={{ opacity: 0, y: 10 }}
+            <div className="mb-14 text-center">
+              <motion.div
+                className="inline-block relative group cursor-pointer mb-4"
+                initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.6, duration: 0.5 }}
+                transition={{ delay: 0.8, duration: 0.6 }}
               >
-                Trusted by Visionaries
-              </motion.h3>
+                {/* Main heading with glow effect */}
+                <motion.h3
+                  className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-primary via-purple-600 to-blue-600 
+                bg-clip-text text-transparent bg-size-200 bg-pos-0
+                transition-all duration-500 group-hover:bg-pos-100
+                group-hover:drop-shadow-[0_0_30px_rgba(99,102,241,0.5)]
+                group-hover:scale-105"
+                  whileHover={{
+                    scale: 1.05,
+                    transition: { duration: 0.3 }
+                  }}
+                >
+                  Trusted by Visionaries
+                </motion.h3>
+
+                {/* Animated gradient shadow */}
+                <div className="absolute inset-0 bg-gradient-to-r from-primary/40 to-purple-600/40 
+                  blur-xl rounded-lg opacity-0 group-hover:opacity-60 
+                  transition-opacity duration-500 -z-10 scale-110" />
+              </motion.div>
+
               <motion.p
-                className="text-muted-foreground text-lg max-w-2xl mx-auto leading-relaxed"
+                className="text-muted-foreground text-lg max-w-2xl mx-auto leading-relaxed
+              group hover:text-foreground/80 transition-colors duration-300"
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.7, duration: 0.5 }}
+                transition={{ delay: 0.9, duration: 0.5 }}
               >
                 Join industry pioneers who are shaping the future of finance
                 with our platform
@@ -446,34 +466,54 @@ export default function Home() {
               ))}
             </div>
 
-            {/* Testimonial quote */}
+            {/* Enhanced testimonial quote */}
             <motion.div
-              className="mt-14 max-w-3xl mx-auto p-8 bg-muted/20 rounded-2xl border border-border/50"
+              className="mt-14 max-w-4xl mx-auto p-10 bg-gradient-to-br from-muted/30 to-muted/10 rounded-3xl border border-border/50 backdrop-blur-sm relative overflow-hidden"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 1.5, duration: 0.5 }}
+              transition={{ delay: 1.6, duration: 0.5 }}
             >
-              <div className="flex justify-center mb-5">
+              {/* Background decorative elements */}
+              <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/5 rounded-full -translate-y-16 translate-x-16"></div>
+              <div className="absolute bottom-0 left-0 w-24 h-24 bg-purple-500/5 rounded-full translate-y-12 -translate-x-12"></div>
+
+              <div className="flex justify-center mb-6">
                 <div className="flex space-x-1">
                   {[1, 2, 3, 4, 5].map((star) => (
-                    <span key={star} className="text-amber-500 text-xl">
+                    <motion.span
+                      key={star}
+                      className="text-amber-500 text-xl"
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1 }}
+                      transition={{ delay: 1.7 + star * 0.1, type: "spring", stiffness: 200 }}
+                    >
                       ★
-                    </span>
+                    </motion.span>
                   ))}
                 </div>
               </div>
-              <p className="text-foreground/80 italic text-center text-lg md:text-xl leading-relaxed">
-                NextStep.io has completely transformed how we approach career
+              <motion.p
+                className="text-foreground/80 italic text-center text-lg md:text-xl leading-relaxed mb-6"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 1.8, duration: 0.7 }}
+              >
+                "NextStep.io has completely transformed how we approach career
                 development. The AI-powered insights and personalized guidance
                 have helped our team members accelerate their growth and achieve
-                their professional goals faster than ever before.
-              </p>
-              <div className="flex items-center justify-center mt-6">
+                their professional goals faster than ever before."
+              </motion.p>
+              <motion.div
+                className="flex items-center justify-center mt-6"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 1.9, duration: 0.5 }}
+              >
                 <div className="w-2 h-2 rounded-full bg-primary mr-2"></div>
                 <span className="text-sm text-muted-foreground">
                   Based on 250+ reviews from industry professionals
                 </span>
-              </div>
+              </motion.div>
             </motion.div>
           </motion.div>
         </div>
