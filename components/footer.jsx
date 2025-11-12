@@ -175,8 +175,8 @@ export default function Footer() {
               <span className="group-hover:underline">Contact Us</span>
               <ArrowRight
                 className={`w-4 h-4 transition-all duration-300 ${isHovered === "email"
-                    ? "translate-x-1 opacity-100"
-                    : "opacity-0 -translate-x-1"
+                  ? "translate-x-1 opacity-100"
+                  : "opacity-0 -translate-x-1"
                   }`}
               />
             </button>
@@ -295,6 +295,17 @@ export default function Footer() {
                     <Link href="https://github.com/Om-singh-ui/NextStep.io" target="_blank" className="flex items-center gap-2 border border-gray-300 dark:border-gray-700 rounded-full px-3 py-1.5 hover:border-blue-500 hover:text-blue-500 transition-all duration-300 hover:shadow-md flex-0.5">
                       <Github className="w-4 h-4" />
                       <GithubStarCount />
+                      <div
+                        className="ml-2 opacity-0 translate-x-[-6px] group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300 ease-out pointer-events-none"
+                      >
+                        <svg
+                          className="w-4 h-4 text-blue-500 drop-shadow-[0_0_6px_rgba(59,130,246,0.7)]"
+                          fill="currentColor"
+                          viewBox="0 0 16 16"
+                        >
+                          <path d="M8 0a8 8 0 1 1 0 16A8 8 0 0 1 8 0zM4.5 7.5a.5.5 0 0 0 0 1h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5H4.5z" />
+                        </svg>
+                      </div>
                     </Link>
                   </div>
                 </div>
