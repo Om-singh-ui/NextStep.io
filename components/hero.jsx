@@ -549,4 +549,3 @@ const Hero = () => {
 };
 
 export default React.memo(Hero);
-//handleCloseVideo

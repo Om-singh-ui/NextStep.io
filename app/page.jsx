@@ -709,7 +709,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Call-to-action section with complex animations */}
+{/* Call-to-action section with complex animations */}
       <section className="w-full py-24 md:py-32 bg-gradient-to-br from-background via-background to-primary/5 relative overflow-hidden">
         {/* Background animation elements */}
         <div className="absolute inset-0 overflow-hidden">
@@ -909,6 +909,19 @@ export default function Home() {
                 }}
                 whileTap={{ scale: 0.98 }}
                 transition={{ type: "spring", stiffness: 400, damping: 17 }}
+                onClick={() => {
+                  // Scroll to top of the page
+                  window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                  });
+                  
+                  // Alternative: Scroll to hero section if it has an ID
+                  // const heroSection = document.getElementById('hero');
+                  // if (heroSection) {
+                  //   heroSection.scrollIntoView({ behavior: 'smooth' });
+                  // }
+                }}
               >
                 {/* Button shine animation */}
                 <motion.div
@@ -952,7 +965,24 @@ export default function Home() {
 
               {/* Background particles */}
               {[0, 1, 2, 3].map((i) => (
-                <ClientParticle key={i} index={i} />
+                <motion.div
+                  key={i}
+                  className="absolute w-2 h-2 bg-primary/40 rounded-full"
+                  style={{
+                    left: `${20 + i * 15}%`,
+                    top: `${10 + i * 20}%`,
+                  }}
+                  animate={{
+                    y: [0, -20, 0],
+                    opacity: [0, 1, 0],
+                    scale: [0, 1, 0],
+                  }}
+                  transition={{
+                    duration: 3,
+                    repeat: Infinity,
+                    delay: i * 0.5,
+                  }}
+                />
               ))}
             </motion.div>
 
@@ -964,6 +994,12 @@ export default function Home() {
               viewport={{ once: true }}
               transition={{ delay: 1, duration: 0.5 }}
               whileHover={{ color: "hsl(0, 0%, 100%)" }}
+              onClick={() => {
+                window.scrollTo({
+                  top: 0,
+                  behavior: 'smooth'
+                });
+              }}
             >
               No credit card required.{" "}
               <span className="underline">Start your free trial today.</span>

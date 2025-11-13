@@ -182,7 +182,6 @@ export default function Footer() {
             </button>
           </div>
 
-          {/* Accordion sections for mobile */}
           {isMobile ? (
             <>
               {/* Quick Links Accordion */}
@@ -271,7 +270,7 @@ export default function Footer() {
                 </div>
               </div>
 
-              {/* Connect Section */}
+              {/* Connect Section - FIXED: Arrow appears on container hover */}
               <div className="space-y-4">
                 <h4 className="font-semibold text-gray-900 dark:text-gray-200 text-lg group hover:text-blue-500 dark:hover:text-blue-400 transition-colors">Connect</h4>
                 <div className="flex gap-5 text-gray-600 dark:text-gray-400">
@@ -289,29 +288,32 @@ export default function Footer() {
                   </Link>
                 </div>
 
-                <div className="space-y-4 ">
+                <div className="space-y-4">
                   <h4 className="font-semibold text-gray-900 dark:text-gray-200 text-lg group hover:text-blue-500 dark:hover:text-blue-400 transition-colors">Open Source</h4>
                   <div className="flex items-center gap-3 text-gray-600 dark:text-gray-400">
-                    <Link href="https://github.com/Om-singh-ui/NextStep.io" target="_blank" className="flex items-center gap-2 border border-gray-300 dark:border-gray-700 rounded-full px-3 py-1.5 hover:border-blue-500 hover:text-blue-500 transition-all duration-300 hover:shadow-md flex-0.5">
-                      <Github className="w-4 h-4" />
-                      <GithubStarCount />
-                      <div
-                        className="ml-2 opacity-0 translate-x-[-6px] group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300 ease-out pointer-events-none"
+                    {/* FIXED: Arrow appears when hovering the entire GitHub container */}
+                    <div className="group/gh relative">
+                      <Link
+                        href="https://github.com/Om-singh-ui/NextStep.io"
+                        target="_blank"
+                        className="flex items-center gap-2 border border-gray-300 dark:border-gray-700 rounded-full px-3 py-1.5 hover:border-blue-500 hover:text-blue-500 transition-all duration-300 hover:shadow-md"
                       >
-                        <svg
-                          className="w-4 h-4 text-blue-500 drop-shadow-[0_0_6px_rgba(59,130,246,0.7)]"
-                          fill="currentColor"
-                          viewBox="0 0 16 16"
-                        >
-                          <path d="M8 0a8 8 0 1 1 0 16A8 8 0 0 1 8 0zM4.5 7.5a.5.5 0 0 0 0 1h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5H4.5z" />
-                        </svg>
-                      </div>
-                    </Link>
+                        <Github className="w-4 h-4" />
+                        <GithubStarCount />
+                        {/* Arrow appears on parent container hover */}
+                        <div className="opacity-0 -translate-x-2 group-hover/gh:opacity-100 group-hover/gh:translate-x-0 transition-all duration-300 ease-out flex items-center">
+                          <svg className="w-3 h-3 text-blue-500 animate-bounce" fill="currentColor" viewBox="0 0 16 16">
+                            <path d="M8 0a8 8 0 1 1 0 16A8 8 0 0 1 8 0zM4.5 7.5a.5.5 0 0 0 0 1h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5H4.5z" />
+                          </svg>
+                        </div>
+                      </Link>
+                    </div>
                   </div>
                 </div>
               </div>
             </>
           ) : (
+            
             /* Desktop layout */
             <>
               {/* Quick Links */}
@@ -365,7 +367,6 @@ export default function Footer() {
                         target="_blank"
                         className="peer flex items-center gap-2 border border-gray-300 dark:border-gray-700 rounded-full px-3 py-1.5 hover:border-blue-500 hover:text-blue-500 transition-all duration-300 hover:shadow-md bg-gradient-to-r from-gray-50/80 to-gray-100/60 dark:from-gray-800/80 dark:to-gray-900/60 hover:from-blue-50/80 hover:to-purple-50/60 dark:hover:from-blue-900/20 dark:hover:to-purple-900/20 backdrop-blur-sm group"
                       >
-
                         <Github className="w-4 h-4 transition-transform duration-300 group-hover:scale-110" />
                         <GithubStarCount />
                         {/* Animated pointing arrow */}
