@@ -49,6 +49,31 @@ const ClientParticle = ({ index }) => {
   );
 };
 
+// Reusable Background Component based on Hero section
+const HeroBackground = () => {
+  return (
+    <div className="absolute inset-0 -z-10 overflow-hidden">
+      <div
+        className="absolute w-[500px] sm:w-[700px] h-[500px] sm:h-[700px] rounded-full blur-3xl top-0 -left-40 sm:-left-60 bg-gradient-to-r from-indigo-500/40 to-purple-600/20 animate-pulse"
+        aria-hidden="true"
+      />
+      <div
+        className="absolute w-[400px] sm:w-[600px] h-[400px] sm:h-[600px] rounded-full blur-3xl bottom-0 right-0 bg-gradient-to-r from-cyan-400/40 to-emerald-400/20 animate-pulse delay-700"
+        aria-hidden="true"
+      />
+
+      <div className="absolute inset-0 opacity-25" aria-hidden="true">
+        <div
+          className="absolute inset-0 bg-[linear-gradient(to_right,#80808010_1px,transparent_1px),linear-gradient(to_bottom,#80808010_1px,transparent_1px)] bg-[size:24px_24px] sm:bg-[size:28px_28px] [mask-image:radial-gradient(ellipse_70%_70%_at_50%_50%,#000_90%,transparent_100%)]"
+          aria-hidden="true"
+        />
+      </div>
+
+      <div className="absolute inset-0 bg-background/80 backdrop-blur-2xl" aria-hidden="true" />
+    </div>
+  );
+};
+
 export default function Home() {
   const { theme, toggleTheme } = useTheme();
 
@@ -56,11 +81,13 @@ export default function Home() {
     <div>
       <HeroSection />
 
-      {/* Features Section with animated background and grid layout */}
+      {/* Features Section with Hero Background */}
       <section
         id="features"
         className="relative w-full py-16 sm:py-20 md:py-28 bg-background overflow-hidden"
       >
+        <HeroBackground />
+        
         {/* Background effects */}
         <div className="absolute inset-0">
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(59,130,246,0.12)_0%,transparent_70%)]" />
@@ -89,16 +116,16 @@ export default function Home() {
                 <span className="text-2xl sm:text-3xl">🚀</span>
                 <span
                   className="bg-gradient-to-r from-emerald-400 via-teal-300 to-cyan-500 
-              bg-clip-text text-transparent font-extrabold 
-              text-2xl sm:text-4xl md:text-5xl flex items-center gap-2
-              animate-gradient-x"
+                bg-clip-text text-transparent font-extrabold 
+                text-2xl sm:text-4xl md:text-5xl flex items-center gap-2
+                animate-gradient-x"
                   style={{
                     backgroundSize: "200% 200%",
                     textShadow: `
-                0 0 15px rgba(6,182,212,0.6),
-                0 0 25px rgba(45,212,191,0.5),
-                0 0 40px rgba(59,130,246,0.4)
-              `,
+                  0 0 15px rgba(6,182,212,0.6),
+                  0 0 25px rgba(45,212,191,0.5),
+                  0 0 40px rgba(59,130,246,0.4)
+                `,
                   }}
                 >
                   Advanced Features
@@ -110,7 +137,7 @@ export default function Home() {
 
               <motion.span
                 className="block mt-3 sm:mt-5 text-foreground 
-            text-base sm:text-lg md:text-2xl font-semibold"
+              text-base sm:text-lg md:text-2xl font-semibold"
                 initial={{ opacity: 0, y: 10 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
@@ -123,7 +150,7 @@ export default function Home() {
             {/* Section description */}
             <motion.p
               className="mt-6 text-muted-foreground max-w-2xl sm:max-w-3xl mx-auto 
-          text-sm sm:text-lg md:text-xl leading-relaxed"
+            text-sm sm:text-lg md:text-xl leading-relaxed"
               initial={{ opacity: 0 }}
               whileInView={{ opacity: 1 }}
               viewport={{ once: true }}
@@ -171,18 +198,18 @@ export default function Home() {
                 <motion.div
                   key={index}
                   className="group relative border border-blue-400/30 dark:border-blue-500/30
-              bg-gradient-to-br from-white/70 to-white/30 dark:from-gray-900/60 dark:to-gray-800/40
-              backdrop-blur-md rounded-2xl overflow-hidden
-              hover:border-blue-400 hover:shadow-[0_0_25px_rgba(59,130,246,0.55)]
-              hover:scale-[1.04] active:scale-[0.98]
-              transition-all duration-500 ease-out"
+                bg-gradient-to-br from-white/70 to-white/30 dark:from-gray-900/60 dark:to-gray-800/40
+                backdrop-blur-md rounded-2xl overflow-hidden
+                hover:border-blue-400 hover:shadow-[0_0_25px_rgba(59,130,246,0.55)]
+                hover:scale-[1.04] active:scale-[0.98]
+                transition-all duration-500 ease-out"
                   whileHover={{ y: -5 }}
                 >
                   <CardContent className="relative z-10 p-6 flex flex-col items-center text-center h-full">
                     {/* Feature icon */}
                     <div
                       className="p-4 rounded-xl bg-gradient-to-tr from-blue-400/20 to-indigo-500/20 
-                mb-4 group-hover:scale-110 group-hover:rotate-3 transition-all duration-500 ease-out"
+                  mb-4 group-hover:scale-110 group-hover:rotate-3 transition-all duration-500 ease-out"
                     >
                       {feature.icon}
                     </div>
@@ -207,33 +234,34 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Stats section with metrics and testimonials */}
+      {/* Stats section with Hero Background */}
       <section
         id="stats"
-        className="w-full py-16 sm:py-20 md:py-28 bg-gradient-to-b from-background to-muted/20"
+        className="relative w-full py-16 sm:py-20 md:py-28 bg-gradient-to-b from-background to-muted/20 overflow-hidden"
       >
+        <HeroBackground />
         <div className="container mx-auto px-4 md:px-6">
           {/* Section header */}
           <div className="text-center mb-20">
             <motion.h2
               className="
-    text-4xl sm:text-5xl md:text-6xl font-bold mb-6
-    leading-[1.15] tracking-tight
-    transition-all duration-500
-    group-hover:scale-[1.02]
-  "
+      text-4xl sm:text-5xl md:text-6xl font-bold mb-6
+      leading-[1.15] tracking-tight
+      transition-all duration-500
+      group-hover:scale-[1.02]
+    "
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.7 }}
             >
               <span
                 className="
-      bg-gradient-to-r from-blue-700 via-indigo-600 to-slate-700
-      bg-clip-text text-transparent
-      transition-all duration-700
-      group-hover:tracking-tight
-      group-hover:opacity-95
-    "
+        bg-gradient-to-r from-blue-700 via-indigo-600 to-slate-700
+        bg-clip-text text-transparent
+        transition-all duration-700
+        group-hover:tracking-tight
+        group-hover:opacity-95
+      "
               >
                 Trusted by Professionals
               </span>
@@ -241,12 +269,12 @@ export default function Home() {
               {/* Subtle depth shadow behind text (very clean) */}
               <span
                 className="
-      absolute inset-0 -z-10 mx-auto w-2/3 h-8
-      bg-gradient-to-r from-blue-600/20 via-indigo-600/15 to-slate-600/20
-      blur-2xl opacity-0
-      group-hover:opacity-40
-      transition-opacity duration-700
-    "
+        absolute inset-0 -z-10 mx-auto w-2/3 h-8
+        bg-gradient-to-r from-blue-600/20 via-indigo-600/15 to-slate-600/20
+        blur-2xl opacity-0
+        group-hover:opacity-40
+        transition-opacity duration-700
+      "
               />
             </motion.h2>
             <motion.p
@@ -295,10 +323,10 @@ export default function Home() {
               <motion.div
                 key={i}
                 className="relative group flex flex-col items-center justify-center 
-                     p-8 rounded-3xl bg-gradient-to-br from-card to-card/80
-                     border border-border/50
-                     hover:shadow-2xl hover:border-primary/20
-                     transition-all duration-500 overflow-hidden"
+                      p-8 rounded-3xl bg-gradient-to-br from-card to-card/80
+                      border border-border/50
+                      hover:shadow-2xl hover:border-primary/20
+                      transition-all duration-500 overflow-hidden"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3 + i * 0.1, duration: 0.5 }}
@@ -307,20 +335,20 @@ export default function Home() {
                 {/* Hover gradient background */}
                 <div
                   className={`absolute inset-0 bg-gradient-to-br ${stat.color} opacity-0 
-                        group-hover:opacity-10 transition-opacity duration-700 rounded-3xl`}
+                          group-hover:opacity-10 transition-opacity duration-700 rounded-3xl`}
                 ></div>
 
                 {/* Animated icon container */}
                 <div className="relative mb-6">
                   <div
                     className={`absolute -inset-3 bg-gradient-to-br ${stat.color} 
-                          rounded-full opacity-0 group-hover:opacity-20 
-                          blur-xl transition-all duration-700`}
+                            rounded-full opacity-0 group-hover:opacity-20 
+                            blur-xl transition-all duration-700`}
                   ></div>
                   <div
                     className={`relative text-4xl bg-gradient-to-br from-background to-muted/50 
-                          p-4 rounded-2xl shadow-sm group-hover:shadow-md 
-                          transition-all duration-500`}
+                            p-4 rounded-2xl shadow-sm group-hover:shadow-md 
+                            transition-all duration-500`}
                   >
                     {stat.icon}
                   </div>
@@ -329,7 +357,7 @@ export default function Home() {
                 {/* Stat value with gradient text */}
                 <h3
                   className={`text-4xl font-bold mb-3 bg-gradient-to-r ${stat.color} 
-                       bg-clip-text text-transparent`}
+                        bg-clip-text text-transparent`}
                 >
                   {stat.value}
                 </h3>
@@ -347,8 +375,8 @@ export default function Home() {
                 {/* Animated underline */}
                 <div
                   className={`absolute bottom-0 left-1/2 w-0 h-1 bg-gradient-to-r ${stat.color} 
-                        group-hover:w-4/5 transition-all duration-700 transform -translate-x-1/2 
-                        rounded-full`}
+                          group-hover:w-4/5 transition-all duration-700 transform -translate-x-1/2 
+                          rounded-full`}
                 ></div>
               </motion.div>
             ))}
@@ -372,14 +400,14 @@ export default function Home() {
                 {/* Large Premium Gradient Heading */}
                 <motion.h3
                   className="
-        text-4xl sm:text-5xl md:text-6xl font-semibold
-        bg-gradient-to-r from-blue-700 via-indigo-600 to-slate-700
-        bg-clip-text text-transparent
-        leading-tight
-        transition-all duration-500
-        group-hover:scale-[1.03]
-        group-hover:tracking-tight
-      "
+          text-4xl sm:text-5xl md:text-6xl font-semibold
+          bg-gradient-to-r from-blue-700 via-indigo-600 to-slate-700
+          bg-clip-text text-transparent
+          leading-tight
+          transition-all duration-500
+          group-hover:scale-[1.03]
+          group-hover:tracking-tight
+        "
                   whileHover={{ scale: 1.03 }}
                 >
                   Trusted by Visionaries
@@ -388,37 +416,37 @@ export default function Home() {
                 {/* Proportional Bottom Glow */}
                 <div
                   className="
-        absolute bottom-0 left-1/2 -translate-x-1/2
-        w-[75%] h-7
-        bg-gradient-to-r from-blue-600/20 via-indigo-600/20 to-slate-600/20
-        blur-2xl 
-        rounded-full
-        opacity-0 group-hover:opacity-40
-        transition-opacity duration-500
-        -z-10
-      "
+          absolute bottom-0 left-1/2 -translate-x-1/2
+          w-[75%] h-7
+          bg-gradient-to-r from-blue-600/20 via-indigo-600/20 to-slate-600/20
+          blur-2xl 
+          rounded-full
+          opacity-0 group-hover:opacity-40
+          transition-opacity duration-500
+          -z-10
+        "
                 />
 
                 {/* Ultra-soft depth layer */}
                 <div
                   className="
-        absolute inset-0 
-        bg-gradient-to-b from-white/0 to-white/5
-        opacity-0 group-hover:opacity-20
-        transition-opacity duration-500
-        rounded-xl
-        -z-20
-      "
+          absolute inset-0 
+          bg-gradient-to-b from-white/0 to-white/5
+          opacity-0 group-hover:opacity-20
+          transition-opacity duration-500
+          rounded-xl
+          -z-20
+        "
                 />
               </motion.div>
 
               {/* Subtext */}
               <motion.p
                 className="
-      text-muted-foreground text-xl max-w-2xl mx-auto leading-relaxed
-      transition-colors duration-300
-      hover:text-foreground/80
-    "
+        text-muted-foreground text-xl max-w-2xl mx-auto leading-relaxed
+        transition-colors duration-300
+        hover:text-foreground/80
+      "
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.6, duration: 0.5 }}
@@ -477,9 +505,9 @@ export default function Home() {
                 >
                   <div
                     className={`w-18 h-18 rounded-full bg-gradient-to-br from-primary/10 to-primary/5 
-                        border border-primary/20 flex items-center justify-center 
-                        group-hover:shadow-lg group-hover:border-primary/40
-                        transition-all duration-300 mb-4 relative overflow-hidden`}
+                          border border-primary/20 flex items-center justify-center 
+                          group-hover:shadow-lg group-hover:border-primary/40
+                          transition-all duration-300 mb-4 relative overflow-hidden`}
                   >
                     {/* Hover gradient effect */}
                     <div
@@ -499,13 +527,13 @@ export default function Home() {
                   </div>
                   <span
                     className="text-sm font-medium text-foreground group-hover:text-primary 
-                        transition-colors duration-300 text-center leading-tight"
+                          transition-colors duration-300 text-center leading-tight"
                   >
                     {person.name}
                   </span>
                   <span
                     className="text-xs text-muted-foreground group-hover:text-foreground/80 
-                        transition-colors duration-300 mt-1 text-center"
+                          transition-colors duration-300 mt-1 text-center"
                   >
                     {person.role}
                   </span>
@@ -566,9 +594,10 @@ export default function Home() {
         </div>
       </section>
 
-      {/* CLEAN HOW IT WORKS – ZOOM BLUR VERSION */}
+      {/* How It Works Section with Hero Background */}
       <section className="relative w-full py-28 bg-background overflow-hidden">
-
+        <HeroBackground />
+        
         {/* SUBTLE BACKGROUND EFFECTS */}
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute top-1/4 left-1/4 w-[600px] h-[600px] bg-primary/10 dark:bg-primary/5 blur-[200px]" />
@@ -576,7 +605,6 @@ export default function Home() {
         </div>
 
         <div className="container mx-auto px-6 relative z-10">
-
           {/* REFINED HEADER */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -587,15 +615,15 @@ export default function Home() {
             {/* Enhanced Tag – Matching Futuristic Glow Style */}
             <motion.div
               className="
-    group relative inline-flex items-center gap-2 px-4 py-1.5 rounded-full
-    text-xs font-medium select-none cursor-pointer
-    border border-blue-500/40
-    bg-gradient-to-r from-indigo-500/10 via-blue-400/10 to-cyan-400/10
-    backdrop-blur-sm
-    transition-all duration-500 ease-out
-    hover:border-blue-400
-    hover:shadow-[0_0_25px_rgba(59,130,246,0.5),0_0_45px_rgba(96,165,250,0.4),0_0_65px_rgba(147,197,253,0.35)]
-  "
+      group relative inline-flex items-center gap-2 px-4 py-1.5 rounded-full
+      text-xs font-medium select-none cursor-pointer
+      border border-blue-500/40
+      bg-gradient-to-r from-indigo-500/10 via-blue-400/10 to-cyan-400/10
+      backdrop-blur-sm
+      transition-all duration-500 ease-out
+      hover:border-blue-400
+      hover:shadow-[0_0_25px_rgba(59,130,246,0.5),0_0_45px_rgba(96,165,250,0.4),0_0_65px_rgba(147,197,253,0.35)]
+    "
               initial={{ opacity: 0, scale: 0.9 }}
               whileInView={{ opacity: 1, scale: 1 }}
               whileHover={{ scale: 1.05 }}
@@ -618,22 +646,21 @@ export default function Home() {
 
               {/* Trailing Shimmer Dot */}
               <div className="
-      w-2 h-2 rounded-full bg-blue-500/70
-      group-hover:translate-y-[-3px]
-      transition-all duration-300
-    "
+        w-2 h-2 rounded-full bg-blue-500/70
+        group-hover:translate-y-[-3px]
+        transition-all duration-300
+      "
               />
 
               {/* Hover Glow Layer */}
               <span
                 className="
-      absolute inset-0 rounded-full opacity-0
-      bg-gradient-to-r from-blue-400/30 via-blue-500/30 to-cyan-400/30
-      group-hover:opacity-100 transition-opacity duration-700 blur-md
-    "
+        absolute inset-0 rounded-full opacity-0
+        bg-gradient-to-r from-blue-400/30 via-blue-500/30 to-cyan-400/30
+        group-hover:opacity-100 transition-opacity duration-700 blur-md
+      "
               />
             </motion.div>
-
 
             {/* Title */}
             <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight leading-tight mb-3">
@@ -657,12 +684,9 @@ export default function Home() {
             </motion.p>
           </motion.div>
 
-
           {/* CLEAN GRID LAYOUT */}
           <div className="space-y-16 relative max-w-5xl mx-auto">
-
             {howItWorks.map((item, index) => {
-
               // PREMIUM IMAGE CAROUSEL WITH ZOOM BLUR TRANSITION
               const ZoomBlurCarousel = ({ images }) => {
                 const [currentImage, setCurrentImage] = useState(0);
@@ -837,7 +861,6 @@ export default function Home() {
                   }}
                   className="relative flex flex-col lg:flex-row gap-8 lg:gap-12 group rounded-3xl p-8 bg-card/50 backdrop-blur-xl border border-primary/15 shadow-lg hover:border-primary/30 transition-all duration-500 group/main-card"
                 >
-
                   {/* ENHANCED COLORED SHADOW FOR MAIN CARD - INTENSIFIED BLUE */}
                   <div className="absolute inset-0 rounded-3xl border-2 border-transparent group-hover/main-card:border-blue-400/40 group-hover/main-card:shadow-[0_0_50px_rgba(59,130,246,0.5)] group-hover/main-card:shadow-blue-500/30 transition-all duration-500 pointer-events-none z-0" />
 
@@ -925,13 +948,13 @@ export default function Home() {
                 </motion.div>
               );
             })}
-
           </div>
         </div>
       </section>
 
-      {/* FAQ section with accordion */}
-      <section id="faq" className="w-full py-12 md:py-24 bg-background/50">
+      {/* FAQ section with Hero Background */}
+      <section id="faq" className="relative w-full py-12 md:py-24 bg-background/50 overflow-hidden">
+        <HeroBackground />
         <div className="container mx-auto px-4 md:px-6">
           {/* FAQ header with animations */}
           <motion.div
@@ -941,11 +964,10 @@ export default function Home() {
             transition={{ duration: 0.7 }}
           >
             <div className="relative inline-block mb-8">
-
               {/* Background glow updated to CTA color tone */}
               <motion.div
                 className="absolute -inset-4 bg-gradient-to-r from-primary/60 via-cyan-400/60 to-primary/60
-               blur-2xl rounded-full opacity-30"
+                blur-2xl rounded-full opacity-30"
                 initial={{ scale: 0.85, opacity: 0 }}
                 whileInView={{ scale: 1, opacity: 0.3 }}
                 viewport={{ once: true }}
@@ -955,9 +977,9 @@ export default function Home() {
               {/* Title updated with CTA gradient color */}
               <motion.h2
                 className="relative text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight
-               bg-gradient-to-r from-foreground via-primary to-cyan-400
-               bg-clip-text text-transparent whitespace-nowrap
-               drop-shadow-[0_0_14px_rgba(56,189,248,0.28)]"
+                bg-gradient-to-r from-foreground via-primary to-cyan-400
+                bg-clip-text text-transparent whitespace-nowrap
+                drop-shadow-[0_0_14px_rgba(56,189,248,0.28)]"
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
@@ -969,7 +991,7 @@ export default function Home() {
               {/* CTA-like sheen swipe */}
               <motion.div
                 className="absolute inset-0 bg-gradient-to-r from-transparent via-white/25 to-transparent 
-               rounded-full pointer-events-none"
+                rounded-full pointer-events-none"
                 initial={{ x: "150%", opacity: 0 }}
                 whileInView={{ x: "-150%", opacity: 1 }}
                 viewport={{ once: true }}
@@ -987,7 +1009,7 @@ export default function Home() {
               Everything you need to know about our{" "}
               <motion.span
                 className="bg-gradient-to-r from-primary/90 to-cyan-500/90 
-               bg-clip-text text-transparent font-semibold"
+                bg-clip-text text-transparent font-semibold"
                 initial={{ scale: 0.8, opacity: 0 }}
                 whileInView={{ scale: 1, opacity: 1 }}
                 transition={{
@@ -1000,26 +1022,31 @@ export default function Home() {
               </motion.span>
             </motion.p>
 
-            {/* Animated dots indicator */}
+            {/* Enhanced Animated Dots Indicator */}
             <motion.div
-              className="flex justify-center mt-8 space-x-2"
+              className="flex justify-center mt-10 space-x-3"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ delay: 0.9, duration: 0.5 }}
+              transition={{ delay: 0.8, duration: 0.6 }}
             >
-              {[
-                { id: 0, gradient: "from-red-500 to-red-700" },
-                { id: 1, gradient: "from-green-500 to-green-700" },
-                { id: 2, gradient: "from-blue-500 to-blue-700" },
-              ].map((dot) => (
+              {[0, 1, 2].map((id) => (
                 <motion.div
-                  key={dot.id}
-                  className={`w-2 h-2 rounded-full bg-gradient-to-r ${dot.gradient}`}
-                  animate={{ scale: [1, 1.3, 1] }}
+                  key={id}
+                  className={`
+          w-3 h-3 rounded-full 
+          bg-white/80
+          shadow-[0_0_12px_rgba(255,255,255,0.7)]
+          backdrop-blur-sm
+        `}
+                  animate={{
+                    scale: [1, 1.25, 1],
+                    opacity: [0.7, 1, 0.7]
+                  }}
                   transition={{
-                    duration: 1.5,
+                    duration: 1.4,
                     repeat: Infinity,
-                    delay: dot.id * 0.3,
+                    delay: id * 0.25,
+                    ease: "easeInOut",
                   }}
                 ></motion.div>
               ))}
@@ -1037,7 +1064,7 @@ export default function Home() {
                 >
                   <AccordionTrigger
                     className="flex justify-between items-center px-5 py-4 text-left text-foreground font-medium text-base sm:text-lg cursor-pointer
-                         bg-card/30 hover:bg-gradient-to-r hover:from-emerald-200/10 hover:to-cyan-300/10 transition-all duration-300"
+                          bg-card/30 hover:bg-gradient-to-r hover:from-emerald-200/10 hover:to-cyan-300/10 transition-all duration-300"
                   >
                     {faq.question}
                     <motion.span
@@ -1049,7 +1076,7 @@ export default function Home() {
                   </AccordionTrigger>
                   <AccordionContent
                     className="px-5 py-4 text-muted-foreground text-sm sm:text-base leading-relaxed
-                         border-t border-border/20 bg-card/10 overflow-hidden transition-all duration-300"
+                          border-t border-border/20 bg-card/10 overflow-hidden transition-all duration-300"
                   >
                     {faq.answer}
                   </AccordionContent>
@@ -1060,7 +1087,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Call-to-action section with complex animations */}
+      {/* Call-to-action section - KEEP ORIGINAL DARK/LIGHT BACKGROUND */}
       <section className="w-full py-24 md:py-32 bg-gradient-to-br from-background via-background to-primary/5 relative overflow-hidden">
         {/* Background animation elements */}
         <div className="absolute inset-0 overflow-hidden">
@@ -1266,12 +1293,6 @@ export default function Home() {
                     top: 0,
                     behavior: 'smooth'
                   });
-
-                  // Alternative: Scroll to hero section if it has an ID
-                  // const heroSection = document.getElementById('hero');
-                  // if (heroSection) {
-                  //   heroSection.scrollIntoView({ behavior: 'smooth' });
-                  // }
                 }}
               >
                 {/* Button shine animation */}
@@ -1412,4 +1433,4 @@ export default function Home() {
       </section>
     </div>
   );
-}   
+}
