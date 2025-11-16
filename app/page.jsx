@@ -3,7 +3,7 @@
 import HeroSection from "@/components/hero";
 import { useTheme } from "@/components/theme-provider";
 import { Button } from "@/components/ui/button";
-import { Sun, Moon, Sparkles, ArrowRight } from "lucide-react";
+import { Sun, Moon, Sparkles, ArrowRight, ArrowLeft } from "lucide-react";
 import { features } from "@/data/features";
 import { howItWorks } from "@/data/howItWorks";
 import { faqs } from "@/data/faqs";
@@ -13,7 +13,7 @@ import {
   AccordionTrigger,
   AccordionContent,
 } from "@/components/ui/accordion";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";
 import { useState, useEffect } from "react";
 
@@ -216,17 +216,38 @@ export default function Home() {
           {/* Section header */}
           <div className="text-center mb-20">
             <motion.h2
-              className="text-4xl sm:text-5xl md:text-6xl font-bold mb-6"
+              className="
+    text-4xl sm:text-5xl md:text-6xl font-bold mb-6
+    leading-[1.15] tracking-tight
+    transition-all duration-500
+    group-hover:scale-[1.02]
+  "
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.7 }}
             >
               <span
-                className="bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 
-                      bg-clip-text text-transparent"
+                className="
+      bg-gradient-to-r from-blue-700 via-indigo-600 to-slate-700
+      bg-clip-text text-transparent
+      transition-all duration-700
+      group-hover:tracking-tight
+      group-hover:opacity-95
+    "
               >
                 Trusted by Professionals
               </span>
+
+              {/* Subtle depth shadow behind text (very clean) */}
+              <span
+                className="
+      absolute inset-0 -z-10 mx-auto w-2/3 h-8
+      bg-gradient-to-r from-blue-600/20 via-indigo-600/15 to-slate-600/20
+      blur-2xl opacity-0
+      group-hover:opacity-40
+      transition-opacity duration-700
+    "
+              />
             </motion.h2>
             <motion.p
               className="text-muted-foreground text-xl max-w-3xl mx-auto leading-relaxed"
@@ -340,43 +361,69 @@ export default function Home() {
             animate={{ opacity: 1 }}
             transition={{ delay: 0.5, duration: 0.7 }}
           >
-            <div className="mb-14 text-center">
+
+            <div className="mb-16 text-center">
               <motion.div
-                className="inline-block relative group cursor-pointer mb-4"
-                initial={{ opacity: 0, y: 20 }}
+                className="inline-block relative group cursor-pointer mb-5"
+                initial={{ opacity: 0, y: 24 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.8, duration: 0.6 }}
+                transition={{ delay: 0.4, duration: 0.6 }}
               >
-                {/* Main heading with glow effect */}
+                {/* Large Premium Gradient Heading */}
                 <motion.h3
-                  className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-primary via-purple-600 to-blue-600 
-                bg-clip-text text-transparent bg-size-200 bg-pos-0
-                transition-all duration-500 group-hover:bg-pos-100
-                group-hover:drop-shadow-[0_0_30px_rgba(99,102,241,0.5)]
-                group-hover:scale-105"
-                  whileHover={{
-                    scale: 1.05,
-                    transition: { duration: 0.3 }
-                  }}
+                  className="
+        text-4xl sm:text-5xl md:text-6xl font-semibold
+        bg-gradient-to-r from-blue-700 via-indigo-600 to-slate-700
+        bg-clip-text text-transparent
+        leading-tight
+        transition-all duration-500
+        group-hover:scale-[1.03]
+        group-hover:tracking-tight
+      "
+                  whileHover={{ scale: 1.03 }}
                 >
                   Trusted by Visionaries
                 </motion.h3>
 
-                {/* Animated gradient shadow */}
-                <div className="absolute inset-0 bg-gradient-to-r from-primary/40 to-purple-600/40 
-                  blur-xl rounded-lg opacity-0 group-hover:opacity-60 
-                  transition-opacity duration-500 -z-10 scale-110" />
+                {/* Proportional Bottom Glow */}
+                <div
+                  className="
+        absolute bottom-0 left-1/2 -translate-x-1/2
+        w-[75%] h-7
+        bg-gradient-to-r from-blue-600/20 via-indigo-600/20 to-slate-600/20
+        blur-2xl 
+        rounded-full
+        opacity-0 group-hover:opacity-40
+        transition-opacity duration-500
+        -z-10
+      "
+                />
+
+                {/* Ultra-soft depth layer */}
+                <div
+                  className="
+        absolute inset-0 
+        bg-gradient-to-b from-white/0 to-white/5
+        opacity-0 group-hover:opacity-20
+        transition-opacity duration-500
+        rounded-xl
+        -z-20
+      "
+                />
               </motion.div>
 
+              {/* Subtext */}
               <motion.p
-                className="text-muted-foreground text-lg max-w-2xl mx-auto leading-relaxed
-              group hover:text-foreground/80 transition-colors duration-300"
+                className="
+      text-muted-foreground text-xl max-w-2xl mx-auto leading-relaxed
+      transition-colors duration-300
+      hover:text-foreground/80
+    "
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.9, duration: 0.5 }}
+                transition={{ delay: 0.6, duration: 0.5 }}
               >
-                Join industry pioneers who are shaping the future of finance
-                with our platform
+                Join industry leaders building the future with our intelligent platform.
               </motion.p>
             </div>
 
@@ -519,91 +566,366 @@ export default function Home() {
         </div>
       </section>
 
-      {/* How It Works process section */}
-      <section className="w-full py-10 sm:py-12 md:py-24 bg-background">
-        <div className="container mx-auto px-4 md:px-6">
-          {/* Section header */}
-          <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-12">
-            <motion.h2
-              className="text-2xl sm:text-3xl md:text-5xl font-extrabold mb-4"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2, duration: 0.7 }}
-            >
-              <motion.span
-                className="inline-flex items-center gap-2 justify-center text-2xl sm:text-3xl md:text-5xl 
-                 bg-gradient-to-r from-emerald-400 via-teal-300 to-cyan-500 
-                 bg-clip-text text-transparent font-extrabold drop-shadow-[0_0_12px_rgba(16,185,129,0.7)]"
-                animate={{
-                  scale: [1, 1.05, 1],
-                  opacity: [0.9, 1, 0.9],
-                }}
-                transition={{
-                  duration: 4,
-                  repeat: Infinity,
-                  ease: "easeInOut",
-                }}
-              >
-                How It Works?
-                <motion.span
-                  className="inline-block ml-2"
-                  animate={{
-                    scale: [1, 1.3, 1],
-                    opacity: [0.7, 1, 0.7],
-                    rotate: [0, 15, 0],
-                  }}
-                  transition={{
-                    duration: 3,
-                    repeat: Infinity,
-                    repeatType: "reverse",
-                  }}
-                >
-                  <Sparkles className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 text-yellow-400 drop-shadow-md inline" />
-                </motion.span>
-              </motion.span>
-            </motion.h2>
-            <motion.p
-              className="text-muted-foreground text-sm sm:text-base md:text-lg mt-2"
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.4, duration: 0.7 }}
-            >
-              Four simple steps to accelerate your career growth with AI-driven{" "}
-              <span
-                className="font-semibold bg-gradient-to-r from-emerald-400 via-teal-300 to-cyan-500 
-                   bg-clip-text text-transparent"
-              >
-                NextStep.io
-              </span>
-            </motion.p>
-          </div>
+      {/* CLEAN HOW IT WORKS – ZOOM BLUR VERSION */}
+      <section className="relative w-full py-28 bg-background overflow-hidden">
 
-          {/* Process steps grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 max-w-6xl mx-auto">
-            {howItWorks.map((item, index) => (
-              <div
-                key={index}
-                className="flex flex-col items-center text-center space-y-4 
-                     p-6 rounded-2xl border border-blue-400/40 bg-card/40 backdrop-blur-sm
-                     hover:border-blue-500 hover:shadow-[0_0_20px_rgba(59,130,246,0.5)] 
-                     hover:scale-[1.03] active:scale-[0.98] 
-                     transition-all duration-500 ease-out"
-              >
-                <div
-                  className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-primary/10 flex items-center justify-center
-                       text-primary text-2xl sm:text-3xl 
-                       group-hover:scale-110 transition-transform duration-500"
+        {/* SUBTLE BACKGROUND EFFECTS */}
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute top-1/4 left-1/4 w-[600px] h-[600px] bg-primary/10 dark:bg-primary/5 blur-[200px]" />
+          <div className="absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-blue-400/10 dark:bg-blue-300/5 blur-[150px]" />
+        </div>
+
+        <div className="container mx-auto px-6 relative z-10">
+
+          {/* REFINED HEADER */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, ease: "easeOut" }}
+            className="text-center max-w-2xl mx-auto mb-16"
+          >
+            {/* Enhanced Tag – Matching Futuristic Glow Style */}
+            <motion.div
+              className="
+    group relative inline-flex items-center gap-2 px-4 py-1.5 rounded-full
+    text-xs font-medium select-none cursor-pointer
+    border border-blue-500/40
+    bg-gradient-to-r from-indigo-500/10 via-blue-400/10 to-cyan-400/10
+    backdrop-blur-sm
+    transition-all duration-500 ease-out
+    hover:border-blue-400
+    hover:shadow-[0_0_25px_rgba(59,130,246,0.5),0_0_45px_rgba(96,165,250,0.4),0_0_65px_rgba(147,197,253,0.35)]
+  "
+              initial={{ opacity: 0, scale: 0.9 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              transition={{ delay: 0.1, duration: 0.45 }}
+              role="button"
+              tabIndex={0}
+            >
+              {/* Bouncing Dot Icon */}
+              <motion.div
+                animate={{ y: [0, -2, 0] }}
+                transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+                className="w-2 h-2 rounded-full bg-blue-400 group-hover:bg-blue-500 transition-all"
+              />
+
+              {/* Text */}
+              <span className="text-foreground/90 dark:text-foreground z-10">
+                AI-Powered Growth
+              </span>
+
+              {/* Trailing Shimmer Dot */}
+              <div className="
+      w-2 h-2 rounded-full bg-blue-500/70
+      group-hover:translate-y-[-3px]
+      transition-all duration-300
+    "
+              />
+
+              {/* Hover Glow Layer */}
+              <span
+                className="
+      absolute inset-0 rounded-full opacity-0
+      bg-gradient-to-r from-blue-400/30 via-blue-500/30 to-cyan-400/30
+      group-hover:opacity-100 transition-opacity duration-700 blur-md
+    "
+              />
+            </motion.div>
+
+
+            {/* Title */}
+            <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight leading-tight mb-3">
+              <span className="bg-gradient-to-r from-primary via-blue-500 to-primary bg-clip-text text-transparent">
+                Accelerate Your Career
+              </span>
+              <br />
+              <span className="bg-gradient-to-r from-blue-400 to-primary bg-clip-text text-transparent">
+                With Smarter Guidance
+              </span>
+            </h2>
+
+            {/* Subtitle */}
+            <motion.p
+              className="text-muted-foreground text-base md:text-lg leading-relaxed max-w-xl mx-auto"
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              transition={{ delay: 0.25, duration: 0.55 }}
+            >
+              Get clear, AI-driven steps to grow faster and unlock your best opportunities.
+            </motion.p>
+          </motion.div>
+
+
+          {/* CLEAN GRID LAYOUT */}
+          <div className="space-y-16 relative max-w-5xl mx-auto">
+
+            {howItWorks.map((item, index) => {
+
+              // PREMIUM IMAGE CAROUSEL WITH ZOOM BLUR TRANSITION
+              const ZoomBlurCarousel = ({ images }) => {
+                const [currentImage, setCurrentImage] = useState(0);
+                const [isAnimating, setIsAnimating] = useState(false);
+
+                useEffect(() => {
+                  if (images.length <= 1) return;
+                  const timer = setInterval(() => {
+                    handleNext();
+                  }, 4000);
+                  return () => clearInterval(timer);
+                }, [images]);
+
+                const handlePrevious = () => {
+                  if (isAnimating) return;
+                  setIsAnimating(true);
+                  setCurrentImage(prev => (prev - 1 + images.length) % images.length);
+                  setTimeout(() => setIsAnimating(false), 700);
+                };
+
+                const handleNext = () => {
+                  if (isAnimating) return;
+                  setIsAnimating(true);
+                  setCurrentImage(prev => (prev + 1) % images.length);
+                  setTimeout(() => setIsAnimating(false), 700);
+                };
+
+                const goToImage = (index) => {
+                  if (isAnimating || index === currentImage) return;
+                  setIsAnimating(true);
+                  setCurrentImage(index);
+                  setTimeout(() => setIsAnimating(false), 700);
+                };
+
+                // ZOOM BLUR TRANSITION VARIANT
+                const zoomBlurVariants = {
+                  enter: {
+                    scale: 1.3,
+                    opacity: 0,
+                    filter: "blur(12px)",
+                  },
+                  center: {
+                    scale: 1,
+                    opacity: 1,
+                    filter: "blur(0px)",
+                  },
+                  exit: {
+                    scale: 0.7,
+                    opacity: 0,
+                    filter: "blur(12px)",
+                  }
+                };
+
+                return (
+                  <div className="relative w-full lg:w-[440px] h-[280px] lg:h-[320px] rounded-2xl border border-primary/20 shadow-xl group-hover:border-primary/40 overflow-hidden bg-gray-50 dark:bg-gray-800 transition-all duration-500 group/image-container">
+                    {/* IMAGE CONTAINER */}
+                    <div className="relative w-full h-full overflow-hidden">
+                      <AnimatePresence mode="wait">
+                        <motion.img
+                          key={currentImage}
+                          src={images[currentImage]}
+                          alt={item.title}
+                          variants={zoomBlurVariants}
+                          initial="enter"
+                          animate="center"
+                          exit="exit"
+                          transition={{
+                            duration: 0.7,
+                            ease: [0.4, 0, 0.2, 1]
+                          }}
+                          className="absolute inset-0 w-full h-full object-cover"
+                        />
+                      </AnimatePresence>
+
+                      {/* GRADIENT OVERLAY */}
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-black/15 to-transparent" />
+
+                      {/* STEP BADGE */}
+                      <motion.div
+                        className="absolute top-3 left-3 px-2 py-1 rounded-lg bg-black/60 backdrop-blur-md text-white text-xs font-medium border border-white/20"
+                        initial={{ opacity: 0, scale: 0.8 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ delay: 0.3 }}
+                      >
+                        Step {item.step}
+                      </motion.div>
+                    </div>
+
+                    {/* NAVIGATION CONTROLS */}
+                    {images.length > 1 && (
+                      <>
+                        {/* ARROW BUTTONS */}
+                        <motion.button
+                          onClick={handlePrevious}
+                          className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/50 backdrop-blur-lg text-white rounded-xl p-2 hover:bg-black/70 transition-all duration-300 border border-white/20 shadow-lg group/arrow z-20"
+                          whileHover={{ scale: 1.15, x: -3 }}
+                          whileTap={{ scale: 0.9 }}
+                        >
+                          <motion.div
+                            animate={{ x: [0, -2, 0] }}
+                            transition={{ duration: 2, repeat: Infinity }}
+                          >
+                            <ArrowLeft className="w-4 h-4 group-hover/arrow:scale-110 transition-transform" />
+                          </motion.div>
+                        </motion.button>
+
+                        <motion.button
+                          onClick={handleNext}
+                          className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/50 backdrop-blur-lg text-white rounded-xl p-2 hover:bg-black/70 transition-all duration-300 border border-white/20 shadow-lg group/arrow z-20"
+                          whileHover={{ scale: 1.15, x: 3 }}
+                          whileTap={{ scale: 0.9 }}
+                        >
+                          <motion.div
+                            animate={{ x: [0, 2, 0] }}
+                            transition={{ duration: 2, repeat: Infinity }}
+                          >
+                            <ArrowRight className="w-4 h-4 group-hover/arrow:scale-110 transition-transform" />
+                          </motion.div>
+                        </motion.button>
+
+                        {/* PAGINATION DOTS */}
+                        <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5 backdrop-blur-lg bg-black/40 rounded-xl px-3 py-2 border border-white/20 shadow-lg z-20">
+                          {images.map((_, idx) => (
+                            <motion.button
+                              key={idx}
+                              onClick={() => goToImage(idx)}
+                              className={`relative w-2 h-2 rounded-full transition-all duration-300 ${idx === currentImage
+                                ? 'bg-white'
+                                : 'bg-white/50 hover:bg-white/70'
+                                }`}
+                              whileHover={{ scale: 1.3 }}
+                              whileTap={{ scale: 0.8 }}
+                            >
+                              {idx === currentImage && (
+                                <motion.div
+                                  className="absolute inset-0 rounded-full bg-white"
+                                  layoutId="activeDot"
+                                  transition={{ type: "spring", stiffness: 500, damping: 30 }}
+                                />
+                              )}
+                            </motion.button>
+                          ))}
+                        </div>
+
+                        {/* IMAGE COUNTER */}
+                        <div className="absolute bottom-3 right-3 px-2 py-1 rounded-lg bg-black/40 backdrop-blur-sm text-white/80 text-xs font-medium border border-white/20 z-20">
+                          {currentImage + 1}/{images.length}
+                        </div>
+                      </>
+                    )}
+
+                    {/* ENHANCED COLORED BORDER SHADOW - INTENSIFIED BLUE */}
+                    <div className="absolute inset-0 rounded-2xl border-2 border-transparent group-hover/image-container:border-blue-400/50 group-hover/image-container:shadow-[0_0_40px_rgba(59,130,246,0.6)] group-hover/image-container:shadow-blue-500/40 transition-all duration-500 pointer-events-none z-10" />
+
+                    {/* ADDITIONAL GLOW EFFECT */}
+                    <div className="absolute inset-0 rounded-2xl border border-transparent group-hover/image-container:shadow-[0_0_60px_rgba(96,165,250,0.4)] group-hover/image-container:shadow-blue-400/30 transition-all duration-700 pointer-events-none z-5" />
+                  </div>
+                );
+              };
+
+              const images = Array.isArray(item.image) ? item.image : [item.image];
+
+              return (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, y: 40 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{
+                    duration: 0.7,
+                    delay: index * 0.15,
+                    ease: "easeOut"
+                  }}
+                  className="relative flex flex-col lg:flex-row gap-8 lg:gap-12 group rounded-3xl p-8 bg-card/50 backdrop-blur-xl border border-primary/15 shadow-lg hover:border-primary/30 transition-all duration-500 group/main-card"
                 >
-                  {item.icon}
-                </div>
-                <h3 className="font-semibold text-lg sm:text-xl">
-                  {item.title}
-                </h3>
-                <p className="text-muted-foreground text-sm sm:text-base">
-                  {item.description}
-                </p>
-              </div>
-            ))}
+
+                  {/* ENHANCED COLORED SHADOW FOR MAIN CARD - INTENSIFIED BLUE */}
+                  <div className="absolute inset-0 rounded-3xl border-2 border-transparent group-hover/main-card:border-blue-400/40 group-hover/main-card:shadow-[0_0_50px_rgba(59,130,246,0.5)] group-hover/main-card:shadow-blue-500/30 transition-all duration-500 pointer-events-none z-0" />
+
+                  {/* ADDITIONAL OUTER GLOW FOR MAIN CARD */}
+                  <div className="absolute inset-0 rounded-3xl border border-transparent group-hover/main-card:shadow-[0_0_80px_rgba(96,165,250,0.3)] group-hover/main-card:shadow-blue-400/20 transition-all duration-700 pointer-events-none z-0" />
+
+                  {/* STEP NUMBER */}
+                  <motion.div
+                    className="absolute -left-4 -top-4 lg:-left-5 lg:-top-5 w-12 h-12 lg:w-14 lg:h-14 rounded-2xl bg-gradient-to-br from-primary to-blue-400 text-white text-xl font-bold flex items-center justify-center shadow-lg border-2 border-white/30 z-30"
+                    animate={{
+                      y: [0, -4, 0],
+                      scale: [1, 1.05, 1]
+                    }}
+                    transition={{
+                      duration: 3,
+                      repeat: Infinity,
+                      ease: "easeInOut"
+                    }}
+                    whileHover={{
+                      scale: 1.1,
+                      transition: { duration: 0.3 }
+                    }}
+                  >
+                    {item.step}
+                  </motion.div>
+
+                  {/* IMAGE CONTAINER */}
+                  <div className="w-full lg:w-1/2 flex items-center justify-center relative z-10">
+                    <ZoomBlurCarousel images={images} />
+                  </div>
+
+                  {/* TEXT CONTENT */}
+                  <div className="flex flex-col justify-center w-full lg:w-1/2 space-y-4 relative z-10">
+                    <motion.div
+                      className="w-fit p-3 rounded-xl bg-background/80 border border-primary/20 shadow-md group-hover:border-primary/30 group-hover:shadow-lg transition-all duration-300 text-primary group/icon"
+                      whileHover={{
+                        scale: 1.05,
+                        transition: { duration: 0.2 }
+                      }}
+                    >
+                      {/* ICON GLOW EFFECT */}
+                      <div className="relative">
+                        {item.icon}
+                        <div className="absolute inset-0 rounded-xl border border-transparent group-hover/icon:shadow-[0_0_20px_rgba(59,130,246,0.4)] group-hover/icon:shadow-blue-500/30 transition-all duration-300 pointer-events-none" />
+                      </div>
+                    </motion.div>
+
+                    <motion.h3
+                      className="text-2xl font-bold tracking-tight text-foreground"
+                      initial={{ opacity: 0, x: 20 }}
+                      whileInView={{ opacity: 1, x: 0 }}
+                      transition={{ delay: 0.2, duration: 0.5 }}
+                    >
+                      {item.title}
+                    </motion.h3>
+
+                    <motion.p
+                      className="text-muted-foreground leading-relaxed text-base"
+                      initial={{ opacity: 0, x: 20 }}
+                      whileInView={{ opacity: 1, x: 0 }}
+                      transition={{ delay: 0.3, duration: 0.5 }}
+                    >
+                      {item.description}
+                    </motion.p>
+
+                    <motion.div
+                      className="flex items-center gap-2 text-primary text-sm font-medium pt-2 cursor-pointer group/cta relative"
+                      initial={{ opacity: 0, x: 20 }}
+                      whileInView={{ opacity: 1, x: 0 }}
+                      transition={{ delay: 0.4, duration: 0.5 }}
+                      whileHover={{ x: 4 }}
+                    >
+                      <span className="relative z-10">Learn more</span>
+                      <motion.div
+                        animate={{ x: [0, 3, 0] }}
+                        transition={{ duration: 1.5, repeat: Infinity }}
+                        className="relative z-10"
+                      >
+                        <ArrowRight className="w-4 h-4 group-hover/cta:scale-110 transition-transform" />
+                      </motion.div>
+                      {/* CTA GLOW EFFECT */}
+                      <div className="absolute inset-0 rounded-lg group-hover/cta:bg-blue-500/10 group-hover/cta:shadow-[0_0_15px_rgba(59,130,246,0.3)] transition-all duration-300 pointer-events-none" />
+                    </motion.div>
+                  </div>
+                </motion.div>
+              );
+            })}
+
           </div>
         </div>
       </section>
@@ -618,35 +940,64 @@ export default function Home() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7 }}
           >
-            <div className="relative inline-block mb-6">
-              {/* Background glow effect */}
-              <motion.div
-                className="absolute -inset-2 bg-gradient-to-r from-emerald-400
-               blur-xl rounded-full opacity-40"
-                initial={{ scale: 0.9, opacity: 0 }}
-                animate={{ scale: 1, opacity: 0.4 }}
-                transition={{ delay: 0.2, duration: 0.8 }}
-              ></motion.div>
+            <div className="relative inline-block mb-8">
 
-              {/* Main title */}
-              <h2
-                className="relative text-3xl sm:text-4xl md:text-5xl font-extrabold
-               bg-gradient-to-r from-emerald-500 via-teal-400 to-cyan-500 
-               bg-clip-text text-transparent drop-shadow-md whitespace-nowrap"
+              {/* Background glow updated to CTA color tone */}
+              <motion.div
+                className="absolute -inset-4 bg-gradient-to-r from-primary/60 via-cyan-400/60 to-primary/60
+               blur-2xl rounded-full opacity-30"
+                initial={{ scale: 0.85, opacity: 0 }}
+                whileInView={{ scale: 1, opacity: 0.3 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
+              />
+
+              {/* Title updated with CTA gradient color */}
+              <motion.h2
+                className="relative text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight
+               bg-gradient-to-r from-foreground via-primary to-cyan-400
+               bg-clip-text text-transparent whitespace-nowrap
+               drop-shadow-[0_0_14px_rgba(56,189,248,0.28)]"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.7, delay: 0.2, ease: [0.21, 0.47, 0.32, 0.98] }}
               >
-                Frequently Asked Questions?
-              </h2>
+                Frequently Asked Questions
+              </motion.h2>
+
+              {/* CTA-like sheen swipe */}
+              <motion.div
+                className="absolute inset-0 bg-gradient-to-r from-transparent via-white/25 to-transparent 
+               rounded-full pointer-events-none"
+                initial={{ x: "150%", opacity: 0 }}
+                whileInView={{ x: "-150%", opacity: 1 }}
+                viewport={{ once: true }}
+                transition={{ duration: 1.2, delay: 0.45, ease: "easeOut" }}
+              />
             </div>
+
             <motion.p
               className="text-muted-foreground text-lg sm:text-xl md:text-2xl max-w-2xl mx-auto leading-relaxed"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.7, duration: 0.5 }}
+              initial={{ opacity: 0, y: 10 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8, delay: 0.55, ease: [0.16, 1, 0.3, 1] }}
             >
               Everything you need to know about our{" "}
-              <span className="bg-gradient-to-r from-emerald-400/80 to-cyan-500/80 bg-clip-text text-transparent font-semibold">
+              <motion.span
+                className="bg-gradient-to-r from-primary/90 to-cyan-500/90 
+               bg-clip-text text-transparent font-semibold"
+                initial={{ scale: 0.8, opacity: 0 }}
+                whileInView={{ scale: 1, opacity: 1 }}
+                transition={{
+                  type: "spring",
+                  stiffness: 130,
+                  delay: 0.8,
+                }}
+              >
                 AI-powered platform
-              </span>
+              </motion.span>
             </motion.p>
 
             {/* Animated dots indicator */}
@@ -709,7 +1060,7 @@ export default function Home() {
         </div>
       </section>
 
-{/* Call-to-action section with complex animations */}
+      {/* Call-to-action section with complex animations */}
       <section className="w-full py-24 md:py-32 bg-gradient-to-br from-background via-background to-primary/5 relative overflow-hidden">
         {/* Background animation elements */}
         <div className="absolute inset-0 overflow-hidden">
@@ -915,7 +1266,7 @@ export default function Home() {
                     top: 0,
                     behavior: 'smooth'
                   });
-                  
+
                   // Alternative: Scroll to hero section if it has an ID
                   // const heroSection = document.getElementById('hero');
                   // if (heroSection) {
@@ -1061,4 +1412,4 @@ export default function Home() {
       </section>
     </div>
   );
-}
+}   
