@@ -1398,7 +1398,7 @@ export default function Home() {
                 scale: [1, 1.1, 1],
               }}
               transition={{
-                duration: 10,
+                duration: 10, 
                 repeat: Infinity,
                 ease: "easeInOut",
                 delay: 1,
