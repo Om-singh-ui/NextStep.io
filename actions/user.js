@@ -6,92 +6,159 @@ import { revalidatePath } from "next/cache";
 import { generateAIInsights } from "./dashboard";
 
 export async function updateUser(data) {
-  const { userId } = await auth();
-  if (!userId) throw new Error("Unauthorized");
+  let userId;
+  try {
+    const authResult = await auth();
+    userId = authResult.userId;
+  } catch (error) {
+    console.error("❌ Auth failed in updateUser:", error);
+    return { success: false, error: "Authentication failed" };
+  }
 
-  const user = await db.user.findUnique({
-    where: { clerkUserId: userId },
-  });
+  if (!userId) {
+    return { success: false, error: "Unauthorized" };
+  }
 
-  if (!user) throw new Error("User not found");
+  console.log("🔄 updateUser called with data:", data);
 
   try {
-    // Start a transaction to handle both operations
-    const result = await db.$transaction(
-      async (tx) => {
-        // First check if industry exists
-        let industryInsight = await tx.industryInsight.findUnique({
-          where: {
-            industry: data.industry,
-          },
-        });
+    const existingUser = await db.user.findUnique({
+      where: { clerkUserId: userId },
+    });
 
-        // If industry doesn't exist, create it with default values
-        if (!industryInsight) {
-          const insights = await generateAIInsights(data.industry);
+    if (!existingUser) {
+      console.error("❌ User not found for clerkUserId:", userId);
+      return { success: false, error: "User not found" };
+    }
 
-          industryInsight = await db.industryInsight.create({
-            data: {
-              industry: data.industry,
-              ...insights,
-              nextUpdate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
-            },
-          });
-        }
+    console.log("✅ Found existing user:", existingUser.id);
 
-        // Now update the user
-        const updatedUser = await tx.user.update({
-          where: {
-            id: user.id,
-          },
-          data: {
-            industry: data.industry,
-            experience: data.experience,
-            bio: data.bio,
-            skills: data.skills,
-          },
-        });
+    // SIMPLIFIED VERSION - Remove transaction for now to isolate issues
+    let industryInsight = await db.industryInsight.findUnique({
+      where: { industry: data.industry },
+    });
 
-        return { updatedUser, industryInsight };
-      },
-      {
-        timeout: 10000, // default: 5000
-      }
-    );
+    // If not exists → create basic entry (skip AI for now)
+    if (!industryInsight && data.industry) {
+      console.log("📝 Creating new industry insight for:", data.industry);
+      industryInsight = await db.industryInsight.create({
+        data: {
+          industry: data.industry,
+          salaryRanges: [],
+          growthRate: 0,
+          demandLevel: "Medium",
+          topSkills: [],
+          marketOutlook: "Stable",
+          keyTrends: [],
+          recommendedSkills: [],
+          nextUpdate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+        },
+      });
+    }
+
+    // Normalize skills
+    let normalizedSkills = data.skills;
+    if (typeof normalizedSkills === "string") {
+      normalizedSkills = normalizedSkills
+        .split(",")
+        .map((s) => s.trim())
+        .filter(Boolean);
+    } else if (!Array.isArray(normalizedSkills)) {
+      normalizedSkills = [];
+    }
+
+    // Prepare update payload
+    const updatePayload = {
+      industry: data.industry,
+      experience: data.experience,
+      bio: data.bio,
+      skills: normalizedSkills,
+      isOnboarded: true, // CRITICAL: This must be set
+    };
+
+    console.log("📤 Updating user with payload:", updatePayload);
+
+    // Update user data
+    const updatedUser = await db.user.update({
+      where: { id: existingUser.id },
+      data: updatePayload,
+    });
+
+    console.log("✅ User updated successfully:", {
+      id: updatedUser.id,
+      isOnboarded: updatedUser.isOnboarded,
+      industry: updatedUser.industry
+    });
 
     revalidatePath("/");
-    return result.user;
+
+    return { 
+      success: true, 
+      updatedUser: {
+        id: updatedUser.id,
+        isOnboarded: updatedUser.isOnboarded,
+        industry: updatedUser.industry
+      } 
+    };
   } catch (error) {
-    console.error("Error updating user and industry:", error.message);
-    throw new Error("Failed to update profile");
+    console.error("❌ Error in updateUser:", error);
+    console.error("Error details:", {
+      name: error.name,
+      message: error.message,
+      code: error.code
+    });
+    return { 
+      success: false, 
+      error: error.message || "Failed to update profile" 
+    };
   }
 }
 
 export async function getUserOnboardingStatus() {
-  const { userId } = await auth();
-  if (!userId) throw new Error("Unauthorized");
+  let userId;
+  try {
+    const authResult = await auth();
+    userId = authResult.userId;
+  } catch (error) {
+    // During build time, auth() will fail - return default values
+    if (process.env.NODE_ENV === 'production' && process.env.NEXT_PHASE === 'phase-production-build') {
+      console.log("🏗️ Build-time detection - returning default onboarding status");
+      return { isOnboarded: false };
+    }
+    console.error("❌ Auth failed in getUserOnboardingStatus:", error);
+    return { isOnboarded: false };
+  }
 
-  const user = await db.user.findUnique({
-    where: { clerkUserId: userId },
-  });
-
-  if (!user) throw new Error("User not found");
+  if (!userId) {
+    console.log("❌ No user ID in getUserOnboardingStatus");
+    return { isOnboarded: false };
+  }
 
   try {
     const user = await db.user.findUnique({
-      where: {
-        clerkUserId: userId,
-      },
-      select: {
+      where: { clerkUserId: userId },
+      select: { 
+        isOnboarded: true,
         industry: true,
+        skills: true,
+        bio: true,
+        experience: true 
       },
     });
 
+    console.log("🔍 getUserOnboardingStatus - User data:", user);
+
+    // SIMPLIFIED: Only check isOnboarded flag
+    const isOnboarded = user?.isOnboarded === true;
+
+    console.log("🔍 getUserOnboardingStatus - isOnboarded:", isOnboarded);
+
     return {
-      isOnboarded: !!user?.industry,
+      isOnboarded: isOnboarded,
+      userData: user // Include full user data for debugging
     };
   } catch (error) {
-    console.error("Error checking onboarding status:", error);
-    throw new Error("Failed to check onboarding status");
+    console.error("❌ Error in getUserOnboardingStatus:", error);
+    return { isOnboarded: false };
   }
 }

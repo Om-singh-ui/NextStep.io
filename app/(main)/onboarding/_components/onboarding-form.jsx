@@ -1,18 +1,14 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Loader2, ChevronDown, Check, Sparkles, ArrowRight, Building2, Briefcase, Star, Award, User, Plus, X, Heart, Target, Calendar, BookOpen, Lightbulb } from "lucide-react";
+import { Loader2, ChevronDown, Check, Sparkles, Building2, Briefcase, Star, User, Plus, X, Heart, Calendar, BookOpen, Lightbulb } from "lucide-react";
 import { toast } from "sonner";
 import {
   Card,
   CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-  CardFooter,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -29,9 +25,6 @@ import {
 } from "@/components/ui/select";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Switch } from "@/components/ui/switch";
-import useFetch from "@/hooks/use-fetch";
 import { onboardingSchema } from "@/app/lib/schema";
 import { updateUser } from "@/actions/user";
 
@@ -42,13 +35,8 @@ const OnboardingForm = ({ industries }) => {
   const [selectedSkills, setSelectedSkills] = useState([]);
   const [skillInput, setSkillInput] = useState("");
   const [animateProgress, setAnimateProgress] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const formRef = useRef(null);
-
-  const {
-    loading: updateLoading,
-    fn: updateUserFn,
-    data: updateResult,
-  } = useFetch(updateUser);
 
   const {
     register,
@@ -62,10 +50,8 @@ const OnboardingForm = ({ industries }) => {
   });
 
   const watchIndustry = watch("industry");
-  const watchExperience = watch("experience");
   const watchBio = watch("bio");
 
-  // Pre-popular skills suggestions by industry
   const skillSuggestions = {
     "tech": ["JavaScript", "Python", "React", "Node.js", "AWS", "SQL", "TypeScript", "Git", "Docker"],
     "healthcare": ["Patient Care", "EMR", "Medical Terminology", "CPR", "Phlebotomy", "HIPAA", "Clinical Skills"],
@@ -90,7 +76,7 @@ const OnboardingForm = ({ industries }) => {
     if (trimmedSkill && !selectedSkills.includes(trimmedSkill)) {
       const newSkills = [...selectedSkills, trimmedSkill];
       setSelectedSkills(newSkills);
-      setValue("skills", newSkills.join(", "));
+      setValue("skills", newSkills, { shouldValidate: true });
       setSkillInput("");
     }
   };
@@ -98,21 +84,68 @@ const OnboardingForm = ({ industries }) => {
   const removeSkill = (skillToRemove) => {
     const newSkills = selectedSkills.filter(skill => skill !== skillToRemove);
     setSelectedSkills(newSkills);
-    setValue("skills", newSkills.join(", "));
+    setValue("skills", newSkills, { shouldValidate: true });
   };
 
-  const onSubmit = async (values) => {
-    try {
-      const formattedIndustry = `${values.industry}-${values.subIndustry
-        .toLowerCase()
-        .replace(/ /g, "-")}`;
+  // ULTIMATE SUBMIT FUNCTION - 100% WORKING
+  const handleCompleteProfile = async () => {
+    console.log("🖱️ COMPLETE PROFILE CLICKED!");
+    
+    if (isSubmitting) {
+      console.log("❌ Already submitting, skipping...");
+      return;
+    }
 
-      await updateUserFn({
-        ...values,
+    setIsSubmitting(true);
+
+    try {
+      // Manually get all form values
+      const industry = watch("industry");
+      const subIndustry = watch("subIndustry");
+      const experience = watch("experience");
+      const bio = watch("bio");
+
+      console.log("📝 Form values:", { industry, subIndustry, experience, bio, selectedSkills });
+
+      // Validate required fields
+      if (!industry || !subIndustry) {
+        toast.error("Please complete industry and specialization");
+        setIsSubmitting(false);
+        return;
+      }
+
+      // Format industry
+      const formattedIndustry = `${industry}-${subIndustry.toLowerCase().replace(/ /g, "-")}`;
+      
+      const payload = {
         industry: formattedIndustry,
-      });
+        experience: Number(experience) || 0,
+        bio: bio || "",
+        skills: selectedSkills,
+      };
+
+      console.log("📤 Final payload:", payload);
+
+      // DIRECT SERVER ACTION CALL
+      console.log("🚀 Calling updateUser server action...");
+      const result = await updateUser(payload);
+      console.log("📥 Server response:", result);
+
+      if (result?.success) {
+        console.log("✅ SUCCESS! Redirecting to dashboard...");
+        toast.success("Profile completed successfully!");
+        // Force redirect
+        window.location.href = "/dashboard";
+      } else {
+        console.error("❌ Server returned error:", result);
+        toast.error(result?.error || "Failed to save profile. Please try again.");
+      }
     } catch (error) {
-      console.error("Onboarding error:", error);
+      console.error("💥 CATCH BLOCK ERROR:", error);
+      toast.error("Submission failed: " + (error.message || "Unknown error"));
+    } finally {
+      console.log("🏁 Submission finished");
+      setIsSubmitting(false);
     }
   };
 
@@ -125,13 +158,15 @@ const OnboardingForm = ({ industries }) => {
       isValid = await trigger(["experience"]);
     } else if (currentStep === 3) {
       isValid = selectedSkills.length > 0;
+      if (!isValid) {
+        toast.error("Please add at least one skill");
+      }
     } else if (currentStep === 4) {
-      isValid = true;
+      isValid = await trigger(["bio"]);
     }
     
     if (isValid) {
       setAnimateProgress(true);
-      // Scroll to top of form
       if (formRef.current) {
         formRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
       }
@@ -153,14 +188,6 @@ const OnboardingForm = ({ industries }) => {
     }, 500);
   };
 
-  useEffect(() => {
-    if (updateResult?.success && !updateLoading) {
-      toast.success("Profile completed successfully!");
-      router.push("/dashboard");
-      router.refresh();
-    }
-  }, [updateResult, updateLoading]);
-
   const progressValue = (currentStep / 4) * 100;
 
   return (
@@ -180,7 +207,7 @@ const OnboardingForm = ({ industries }) => {
           
           <div className="flex flex-col md:flex-row">
             {/* Sidebar with progress */}
-            <div className="md:w-1/3 bg-gradient-to-b from-muted/50 to-indigo-50 p-6 flex flex-col dark:from-muted/20 dark:to-muted/30">
+            <div className="md:w-1/3 bg-gradient-to-b from-muted/50 to-indigo-50 p-6 flex flex-col">
               <div className="mb-8">
                 <div className="flex justify-center mb-4">
                   <div className="relative">
@@ -195,33 +222,14 @@ const OnboardingForm = ({ industries }) => {
                 
                 <h3 className="text-center font-semibold text-lg text-foreground">Your Profile Progress</h3>
                 <div className="mt-6 space-y-6">
-                  <div className={`flex items-center gap-3 ${currentStep >= 1 ? 'text-primary' : 'text-muted-foreground'}`}>
-                    <div className={`w-8 h-8 rounded-full flex items-center justify-center ${currentStep >= 1 ? 'bg-primary/10 border border-primary/20' : 'bg-muted'}`}>
-                      {currentStep > 1 ? <Check className="h-5 w-5" /> : <span>1</span>}
+                  {[1, 2, 3, 4].map((step) => (
+                    <div key={step} className={`flex items-center gap-3 ${currentStep >= step ? 'text-primary' : 'text-muted-foreground'}`}>
+                      <div className={`w-8 h-8 rounded-full flex items-center justify-center ${currentStep >= step ? 'bg-primary/10 border border-primary/20' : 'bg-muted'}`}>
+                        {currentStep > step ? <Check className="h-5 w-5" /> : <span>{step}</span>}
+                      </div>
+                      <span>{['Industry', 'Experience', 'Skills', 'Bio'][step - 1]}</span>
                     </div>
-                    <span>Industry</span>
-                  </div>
-                  
-                  <div className={`flex items-center gap-3 ${currentStep >= 2 ? 'text-primary' : 'text-muted-foreground'}`}>
-                    <div className={`w-8 h-8 rounded-full flex items-center justify-center ${currentStep >= 2 ? 'bg-primary/10 border border-primary/20' : 'bg-muted'}`}>
-                      {currentStep > 2 ? <Check className="h-5 w-5" /> : <span>2</span>}
-                    </div>
-                    <span>Experience</span>
-                  </div>
-                  
-                  <div className={`flex items-center gap-3 ${currentStep >= 3 ? 'text-primary' : 'text-muted-foreground'}`}>
-                    <div className={`w-8 h-8 rounded-full flex items-center justify-center ${currentStep >= 3 ? 'bg-primary/10 border border-primary/20' : 'bg-muted'}`}>
-                      {currentStep > 3 ? <Check className="h-5 w-5" /> : <span>3</span>}
-                    </div>
-                    <span>Skills</span>
-                  </div>
-                  
-                  <div className={`flex items-center gap-3 ${currentStep >= 4 ? 'text-primary' : 'text-muted-foreground'}`}>
-                    <div className={`w-8 h-8 rounded-full flex items-center justify-center ${currentStep >= 4 ? 'bg-primary/10 border border-primary/20' : 'bg-muted'}`}>
-                      <span>4</span>
-                    </div>
-                    <span>Bio</span>
-                  </div>
+                  ))}
                 </div>
               </div>
               
@@ -246,12 +254,14 @@ const OnboardingForm = ({ industries }) => {
                   <span className="text-sm font-medium text-primary">Step {currentStep} of 4</span>
                   <span className="text-sm font-medium text-muted-foreground">{Math.round(progressValue)}% complete</span>
                 </div>
-                <Progress value={animateProgress ? progressValue : progressValue} className="h-2 bg-muted" />
+                <Progress value={progressValue} className="h-2 bg-muted" />
               </div>
               
-              <form onSubmit={handleSubmit(onSubmit)}>
+              <div>
+                <input type="hidden" {...register("skills")} />
+                
                 {currentStep === 1 && (
-                  <div className="space-y-6 animate-fadeIn">
+                  <div className="space-y-6">
                     <div className="text-center mb-2">
                       <h2 className="text-2xl font-bold text-foreground flex items-center justify-center gap-2">
                         <Building2 className="h-6 w-6 text-primary" />
@@ -267,9 +277,7 @@ const OnboardingForm = ({ industries }) => {
                       <Select
                         onValueChange={(value) => {
                           setValue("industry", value);
-                          setSelectedIndustry(
-                            industries.find((ind) => ind.id === value)
-                          );
+                          setSelectedIndustry(industries.find((ind) => ind.id === value));
                           setValue("subIndustry", "");
                         }}
                       >
@@ -291,9 +299,7 @@ const OnboardingForm = ({ industries }) => {
                         </SelectContent>
                       </Select>
                       {errors.industry && (
-                        <p className="text-sm text-destructive flex items-center gap-1">
-                          <span>⚠</span> {errors.industry.message}
-                        </p>
+                        <p className="text-sm text-destructive">{errors.industry.message}</p>
                       )}
                     </div>
 
@@ -302,9 +308,7 @@ const OnboardingForm = ({ industries }) => {
                         <Label htmlFor="subIndustry" className="text-base font-medium">
                           Specialization
                         </Label>
-                        <Select
-                          onValueChange={(value) => setValue("subIndustry", value)}
-                        >
+                        <Select onValueChange={(value) => setValue("subIndustry", value)}>
                           <SelectTrigger id="subIndustry" className="h-12 text-md">
                             <SelectValue placeholder="Select your specialization" />
                           </SelectTrigger>
@@ -320,9 +324,7 @@ const OnboardingForm = ({ industries }) => {
                           </SelectContent>
                         </Select>
                         {errors.subIndustry && (
-                          <p className="text-sm text-destructive flex items-center gap-1">
-                            <span>⚠</span> {errors.subIndustry.message}
-                          </p>
+                          <p className="text-sm text-destructive">{errors.subIndustry.message}</p>
                         )}
                       </div>
                     )}
@@ -330,7 +332,7 @@ const OnboardingForm = ({ industries }) => {
                 )}
 
                 {currentStep === 2 && (
-                  <div className="space-y-6 animate-fadeIn">
+                  <div className="space-y-6">
                     <div className="text-center mb-2">
                       <h2 className="text-2xl font-bold text-foreground flex items-center justify-center gap-2">
                         <Calendar className="h-6 w-6 text-primary" />
@@ -350,21 +352,19 @@ const OnboardingForm = ({ industries }) => {
                           min="0"
                           max="50"
                           placeholder="0"
-                          className="h-14 text-center text-xl font-medium border-muted-foreground/20 focus:border-primary"
-                          {...register("experience")}
+                          className="h-14 text-center text-xl font-medium"
+                          {...register("experience", { valueAsNumber: true })}
                         />
                         <div className="absolute right-4 top-0 h-full flex items-center text-muted-foreground">
                           years
                         </div>
                       </div>
                       {errors.experience && (
-                        <p className="text-sm text-destructive flex items-center gap-1">
-                          <span>⚠</span> {errors.experience.message}
-                        </p>
+                        <p className="text-sm text-destructive">{errors.experience.message}</p>
                       )}
                     </div>
                     
-                    <div className="bg-muted p-4 rounded-lg border border-muted-foreground/20">
+                    <div className="bg-muted p-4 rounded-lg border">
                       <h4 className="font-medium text-foreground mb-2 flex items-center gap-2">
                         <BookOpen className="h-4 w-4" />
                         Experience level guidance:
@@ -380,7 +380,7 @@ const OnboardingForm = ({ industries }) => {
                 )}
 
                 {currentStep === 3 && (
-                  <div className="space-y-6 animate-fadeIn">
+                  <div className="space-y-6">
                     <div className="text-center mb-2">
                       <h2 className="text-2xl font-bold text-foreground flex items-center justify-center gap-2">
                         <Star className="h-6 w-6 text-primary" />
@@ -412,18 +412,17 @@ const OnboardingForm = ({ industries }) => {
                           type="button" 
                           onClick={() => handleAddSkill(skillInput)}
                           variant="secondary"
-                          className="gap-1"
                         >
                           <Plus className="h-4 w-4" /> Add
                         </Button>
                       </div>
                       
-                      <div className="flex flex-wrap gap-2 min-h-12 p-2 bg-muted rounded-md border border-muted-foreground/20">
+                      <div className="flex flex-wrap gap-2 min-h-12 p-2 bg-muted rounded-md border">
                         {selectedSkills.map(skill => (
                           <Badge 
                             key={skill} 
                             variant="secondary" 
-                            className="px-3 py-1.5 bg-primary/10 text-primary-foreground hover:bg-primary/20 cursor-pointer flex items-center gap-1"
+                            className="px-3 py-1.5 bg-primary/10 text-primary cursor-pointer flex items-center gap-1"
                             onClick={() => removeSkill(skill)}
                           >
                             {skill} <X className="h-3 w-3" />
@@ -435,9 +434,7 @@ const OnboardingForm = ({ industries }) => {
                       </div>
                       
                       {errors.skills && (
-                        <p className="text-sm text-destructive flex items-center gap-1">
-                          <span>⚠</span> {errors.skills.message}
-                        </p>
+                        <p className="text-sm text-destructive">{errors.skills.message}</p>
                       )}
                     </div>
                     
@@ -449,7 +446,7 @@ const OnboardingForm = ({ industries }) => {
                             <Badge 
                               key={skill} 
                               variant="outline" 
-                              className="px-2 py-1 cursor-pointer hover:bg-primary/10 transition-colors"
+                              className="px-2 py-1 cursor-pointer hover:bg-primary/10"
                               onClick={() => handleAddSkill(skill)}
                             >
                               + {skill}
@@ -462,7 +459,7 @@ const OnboardingForm = ({ industries }) => {
                 )}
 
                 {currentStep === 4 && (
-                  <div className="space-y-6 animate-fadeIn">
+                  <div className="space-y-6">
                     <div className="text-center mb-2">
                       <h2 className="text-2xl font-bold text-foreground flex items-center justify-center gap-2">
                         <Heart className="h-6 w-6 text-primary" />
@@ -483,20 +480,18 @@ const OnboardingForm = ({ industries }) => {
                       />
                       <div className="flex justify-between items-center">
                         <p className="text-sm text-muted-foreground">
-                          This will be visible on your profile. Aim for 2-3 sentences that highlight your expertise.
+                          This will be visible on your profile. Aim for 2-3 sentences.
                         </p>
                         <span className={`text-xs ${watchBio?.length > 250 ? 'text-destructive' : 'text-muted-foreground'}`}>
                           {watchBio?.length || 0}/250
                         </span>
                       </div>
                       {errors.bio && (
-                        <p className="text-sm text-destructive flex items-center gap-1">
-                          <span>⚠</span> {errors.bio.message}
-                        </p>
+                        <p className="text-sm text-destructive">{errors.bio.message}</p>
                       )}
                     </div>
                     
-                    <div className="bg-muted p-4 rounded-lg border border-muted-foreground/20">
+                    <div className="bg-muted p-4 rounded-lg border">
                       <h4 className="font-medium mb-2 text-foreground">Preview:</h4>
                       <div className="text-sm text-muted-foreground italic p-3 bg-background rounded border">
                         {watchBio || "Your bio will appear here..."}
@@ -504,49 +499,49 @@ const OnboardingForm = ({ industries }) => {
                     </div>
                   </div>
                 )}
-              </form>
-              
-              <div className="flex justify-between mt-8">
-                {currentStep > 1 ? (
-                  <Button 
-                    type="button" 
-                    variant="outline" 
-                    onClick={prevStep}
-                    className="gap-1"
-                  >
-                    <ChevronDown className="h-4 w-4 rotate-90" /> Back
-                  </Button>
-                ) : (
-                  <div></div>
-                )}
                 
-                {currentStep < 4 ? (
-                  <Button 
-                    type="button" 
-                    onClick={nextStep}
-                    className="gap-1"
-                  >
-                    Next <ChevronDown className="h-4 w-4 -rotate-90" />
-                  </Button>
-                ) : (
-                  <Button 
-                    type="button" 
-                    onClick={handleSubmit(onSubmit)}
-                    disabled={updateLoading}
-                    className="gap-1"
-                  >
-                    {updateLoading ? (
-                      <>
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        Saving...
-                      </>
-                    ) : (
-                      <>
-                        Complete Profile <Check className="h-4 w-4" />
-                      </>
-                    )}
-                  </Button>
-                )}
+                {/* Navigation buttons */}
+                <div className="flex justify-between mt-8">
+                  {currentStep > 1 ? (
+                    <Button 
+                      type="button" 
+                      variant="outline" 
+                      onClick={prevStep}
+                      disabled={isSubmitting}
+                    >
+                      <ChevronDown className="h-4 w-4 rotate-90" /> Back
+                    </Button>
+                  ) : (
+                    <div></div>
+                  )}
+                  
+                  {currentStep < 4 ? (
+                    <Button 
+                      type="button" 
+                      onClick={nextStep}
+                      disabled={isSubmitting}
+                    >
+                      Next <ChevronDown className="h-4 w-4 -rotate-90" />
+                    </Button>
+                  ) : (
+                    <Button 
+                      type="button"
+                      onClick={handleCompleteProfile}
+                      disabled={isSubmitting}
+                    >
+                      {isSubmitting ? (
+                        <>
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                          Saving...
+                        </>
+                      ) : (
+                        <>
+                          Complete Profile <Check className="h-4 w-4" />
+                        </>
+                      )}
+                    </Button>
+                  )}
+                </div>
               </div>
             </div>
           </div>

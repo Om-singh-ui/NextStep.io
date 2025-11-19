@@ -14,11 +14,12 @@ model User {
   name            String?
   imageUrl        String?
   industry        String?
+  isOnboarded     Boolean          @default(false)
   createdAt       DateTime         @default(now())
   updatedAt       DateTime         @updatedAt
   bio             String?
   experience      Int?
-  skills          String[]
+  skills          Json
   Assessment      Assessment[]
   coverLetter     CoverLetter[]
   resume          Resume?
@@ -54,13 +55,13 @@ model CoverLetter {
 model IndustryInsight {
   id                String   @id @default(cuid())
   industry          String   @unique
-  salaryRanges      Json[]
+  salaryRanges      Json
   growthRate        Float
   demandLevel       String
-  topSkills         String[]
+  topSkills         Json
   marketOutlook     String
-  keyTrends         String[]
-  recommendedSkills String[]
+  keyTrends         Json
+  recommendedSkills Json
   lastUpdated       DateTime @default(now())
   nextUpdate        DateTime
   users             User[]
@@ -72,7 +73,7 @@ model Assessment {
   id             String   @id
   userId         String
   quizScore      Float
-  questions      Json[]
+  questions      Json
   category       String
   improvementTip String?
   createdAt      DateTime @default(now())

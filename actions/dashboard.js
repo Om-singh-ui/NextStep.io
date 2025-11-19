@@ -28,41 +28,111 @@ export const generateAIInsights = async (industry) => {
           Include at least 5 skills and trends.
         `;
 
-  const result = await model.generateContent(prompt);
-  const response = result.response;
-  const text = response.text();
-  const cleanedText = text.replace(/```(?:json)?\n?/g, "").trim();
+  try {
+    const result = await model.generateContent(prompt);
+    const response = result.response;
+    const text = response.text();
+    const cleanedText = text.replace(/```(?:json)?\n?/g, "").trim();
 
-  return JSON.parse(cleanedText);
+    return JSON.parse(cleanedText);
+  } catch (error) {
+    console.error("❌ Error in generateAIInsights:", error);
+    // Return fallback data if AI fails
+    return {
+      salaryRanges: [],
+      growthRate: 0,
+      demandLevel: "Medium",
+      topSkills: [],
+      marketOutlook: "Neutral",
+      keyTrends: [],
+      recommendedSkills: []
+    };
+  }
 };
 
 export async function getIndustryInsights() {
-  const { userId } = await auth();
-  if (!userId) throw new Error("Unauthorized");
+  let userId;
+  try {
+    const authResult = await auth();
+    userId = authResult.userId;
+  } catch (error) {
+    // During build time, return empty insights
+    if (process.env.NODE_ENV === 'production' && process.env.NEXT_PHASE === 'phase-production-build') {
+      console.log("🏗️ Build-time detection - returning empty insights");
+      return null;
+    }
+    console.error("❌ Auth failed in getIndustryInsights:", error);
+    return null;
+  }
 
-  const user = await db.user.findUnique({
-    where: { clerkUserId: userId },
-    include: {
-      industryInsight: true,
-    },
-  });
+  if (!userId) {
+    console.log("❌ No user ID in getIndustryInsights");
+    return null;
+  }
 
-  if (!user) throw new Error("User not found");
-
-  // If no insights exist, generate them
-  if (!user.industryInsight) {
-    const insights = await generateAIInsights(user.industry);
-
-    const industryInsight = await db.industryInsight.create({
-      data: {
-        industry: user.industry,
-        ...insights,
-        nextUpdate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+  try {
+    const user = await db.user.findUnique({
+      where: { clerkUserId: userId },
+      include: {
+        industryInsight: true,
       },
     });
 
-    return industryInsight;
-  }
+    if (!user) {
+      console.log("❌ User not found in getIndustryInsights");
+      return null;
+    }
 
-  return user.industryInsight;
+    // If no insights exist and user has industry, generate them
+    if (!user.industryInsight && user.industry) {
+      console.log("🔄 Generating new AI insights for industry:", user.industry);
+      const insights = await generateAIInsights(user.industry);
+
+      const industryInsight = await db.industryInsight.create({
+        data: {
+          industry: user.industry,
+          ...insights,
+          nextUpdate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+        },
+      });
+
+      return industryInsight;
+    }
+
+    return user.industryInsight;
+  } catch (error) {
+    console.error("❌ Error in getIndustryInsights:", error);
+    return null;
+  }
+}
+
+// Add a static version for public/fallback insights
+export async function getPublicIndustryInsights(industry) {
+  try {
+    // Get generic insights without user authentication
+    const insights = await db.industryInsight.findFirst({
+      where: { industry },
+      orderBy: { updatedAt: 'desc' }
+    });
+
+    if (insights) {
+      return insights;
+    }
+
+    // Return basic fallback data
+    return {
+      industry: industry,
+      salaryRanges: [],
+      growthRate: 5,
+      demandLevel: "Medium",
+      topSkills: ["Communication", "Problem Solving", "Teamwork"],
+      marketOutlook: "Neutral",
+      keyTrends: ["Digital Transformation", "Remote Work"],
+      recommendedSkills: ["AI Literacy", "Data Analysis"],
+      nextUpdate: new Date()
+    };
+  } catch (error) {
+    console.error("❌ Error in getPublicIndustryInsights:", error);
+    return null;
+  }
 }

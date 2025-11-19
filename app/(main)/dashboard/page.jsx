@@ -3,20 +3,36 @@ import DashboardView from "./_component/dashboard-view";
 import { getUserOnboardingStatus } from "@/actions/user";
 import { redirect } from "next/navigation";
 
-export default async function DashboardPage() {
-  const { isOnboarded } = await getUserOnboardingStatus();
+// REMOVED: export const dynamic = 'force-dynamic';
+// The page can now be statically generated when possible
 
-  // If not onboarded, redirect to onboarding page
-  // Skip this check if already on the onboarding page
+export default async function DashboardPage() {
+  let onboarding;
+
+  try {
+    onboarding = await getUserOnboardingStatus();
+  } catch (error) {
+    console.error("❌ Onboarding check failed:", error);
+    redirect("/sign-in");
+  }
+
+  const { isOnboarded } = onboarding;
+
   if (!isOnboarded) {
     redirect("/onboarding");
   }
 
-  const insights = await getIndustryInsights();
+  let insights = null;
+
+  try {
+    insights = await getIndustryInsights();
+  } catch (error) {
+    console.error("❌ Failed to load insights:", error);
+  }
 
   return (
     <div className="container mx-auto">
-      <DashboardView insights={insights} />
+      <DashboardView insights={insights || {}} />
     </div>
   );
 }

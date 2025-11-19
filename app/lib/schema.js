@@ -4,7 +4,7 @@ import { z } from 'zod';
 export const personalInfoSchema = z.object({
   name: z.string().min(1, "Name is required"),
   title: z.string().optional(),
-  email: z.string().email("Invalid email address").optional().or(z.literal('')),
+  email: z.string().email(" Invalid email address").optional().or(z.literal('')),
   mobile: z.string().optional(),
   linkedin: z.string().url("Invalid URL").optional().or(z.literal('')),
   twitter: z.string().url("Invalid URL").optional().or(z.literal('')),
