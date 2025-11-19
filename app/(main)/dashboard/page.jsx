@@ -3,16 +3,16 @@ import DashboardView from "./_component/dashboard-view";
 import { getUserOnboardingStatus } from "@/actions/user";
 import { redirect } from "next/navigation";
 
-export default async function DashboardPage() {
+// REMOVED: export const dynamic = 'force-dynamic';
+// The page can now be statically generated when possible
 
+export default async function DashboardPage() {
   let onboarding;
 
   try {
     onboarding = await getUserOnboardingStatus();
   } catch (error) {
     console.error("❌ Onboarding check failed:", error);
-
-    // Clerk may throw when user is not logged in
     redirect("/sign-in");
   }
 

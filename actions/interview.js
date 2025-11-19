@@ -43,14 +43,26 @@ const DIFFICULTY_LEVELS = {
 };
 
 export async function generateQuiz(count = 10) {
+  let userId;
+  try {
+    const authResult = await auth();
+    userId = authResult.userId;
+  } catch (error) {
+    // During build time, return fallback questions
+    if (process.env.NODE_ENV === 'production' && process.env.NEXT_PHASE === 'phase-production-build') {
+      console.log("🏗️ Build-time detection - returning fallback questions");
+      return getEnhancedFallbackQuestions("Technology", count);
+    }
+    console.error("❌ Auth failed in generateQuiz:", error);
+    throw new Error("Please sign in to generate a quiz");
+  }
+
+  if (!userId) {
+    throw new Error("Please sign in to generate a quiz");
+  }
+
   try {
     console.log("🎯 Generating dynamic quiz...");
-
-    // 1. Authentication
-    const { userId } = await auth();
-    if (!userId) {
-      throw new Error("Please sign in to generate a quiz");
-    }
 
     // 2. Get or simulate user profile data
     const userProfile = await getUserProfile(userId);
@@ -345,14 +357,21 @@ function generateDynamicQuestions(field, count) {
 }
 
 export async function saveQuizResult(quizData) {
+  let userId;
+  try {
+    const authResult = await auth();
+    userId = authResult.userId;
+  } catch (error) {
+    console.error("❌ Auth failed in saveQuizResult:", error);
+    throw new Error("Please sign in to save results");
+  }
+
+  if (!userId) {
+    throw new Error("Please sign in to save results");
+  }
+
   try {
     console.log("💾 Saving quiz results...");
-
-    // 1. Authentication
-    const { userId } = await auth();
-    if (!userId) {
-      throw new Error("Please sign in to save results");
-    }
 
     // 2. Validate data
     if (!quizData || !quizData.questions || !quizData.answers) {
@@ -461,10 +480,25 @@ async function generateImprovementTip(questions, answers, userId) {
 }
 
 export async function getAssessments() {
+  let userId;
   try {
-    const { userId } = await auth();
-    if (!userId) throw new Error("Unauthorized");
+    const authResult = await auth();
+    userId = authResult.userId;
+  } catch (error) {
+    // During build time, return empty array
+    if (process.env.NODE_ENV === 'production' && process.env.NEXT_PHASE === 'phase-production-build') {
+      console.log("🏗️ Build-time detection - returning empty assessments");
+      return [];
+    }
+    console.error("❌ Auth failed in getAssessments:", error);
+    return [];
+  }
 
+  if (!userId) {
+    return [];
+  }
+
+  try {
     // Return temporary assessments for this user
     const userAssessments = Array.from(quizStorage.values())
       .filter(assessment => assessment.userId === userId)

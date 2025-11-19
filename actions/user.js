@@ -6,8 +6,18 @@ import { revalidatePath } from "next/cache";
 import { generateAIInsights } from "./dashboard";
 
 export async function updateUser(data) {
-  const { userId } = await auth();
-  if (!userId) throw new Error("Unauthorized");
+  let userId;
+  try {
+    const authResult = await auth();
+    userId = authResult.userId;
+  } catch (error) {
+    console.error("❌ Auth failed in updateUser:", error);
+    return { success: false, error: "Authentication failed" };
+  }
+
+  if (!userId) {
+    return { success: false, error: "Unauthorized" };
+  }
 
   console.log("🔄 updateUser called with data:", data);
 
@@ -18,7 +28,7 @@ export async function updateUser(data) {
 
     if (!existingUser) {
       console.error("❌ User not found for clerkUserId:", userId);
-      throw new Error("User not found");
+      return { success: false, error: "User not found" };
     }
 
     console.log("✅ Found existing user:", existingUser.id);
@@ -105,7 +115,20 @@ export async function updateUser(data) {
 }
 
 export async function getUserOnboardingStatus() {
-  const { userId } = await auth();
+  let userId;
+  try {
+    const authResult = await auth();
+    userId = authResult.userId;
+  } catch (error) {
+    // During build time, auth() will fail - return default values
+    if (process.env.NODE_ENV === 'production' && process.env.NEXT_PHASE === 'phase-production-build') {
+      console.log("🏗️ Build-time detection - returning default onboarding status");
+      return { isOnboarded: false };
+    }
+    console.error("❌ Auth failed in getUserOnboardingStatus:", error);
+    return { isOnboarded: false };
+  }
+
   if (!userId) {
     console.log("❌ No user ID in getUserOnboardingStatus");
     return { isOnboarded: false };
