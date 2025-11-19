@@ -5,14 +5,25 @@ import { getUserOnboardingStatus } from "@/actions/user";
 import { checkUser } from "@/lib/checkUser";
 
 export default async function OnboardingPage() {
-  // Ensure user exists in DB + fire welcome email event if first time
-  await checkUser();
+  try {
+    // Ensure user exists in DB + fire welcome email event if first time
+    await checkUser();
 
-  // Check if user is already onboarded
-  const { isOnboarded } = await getUserOnboardingStatus();
+    // Check if user is already onboarded
+    const { isOnboarded } = await getUserOnboardingStatus();
 
-  if (isOnboarded) {
-    redirect("/dashboard");
+    if (isOnboarded) {
+      redirect("/dashboard");
+    }
+  } catch (error) {
+    console.error("❌ Onboarding page error:", error);
+    // Don't redirect on build errors, let the page render
+    if (process.env.NODE_ENV === 'production' && process.env.NEXT_PHASE === 'phase-production-build') {
+      console.log("🏗️ Build-time - continuing with onboarding form");
+    } else {
+      // Only redirect on runtime auth errors
+      redirect("/sign-in");
+    }
   }
 
   return (
