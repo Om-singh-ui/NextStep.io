@@ -3,27 +3,27 @@ import { industries } from "@/data/industries";
 import OnboardingForm from "./_components/onboarding-form";
 import { getUserOnboardingStatus } from "@/actions/user";
 import { checkUser } from "@/lib/checkUser";
+import { currentUser } from "@clerk/nextjs/server";
 
 export default async function OnboardingPage() {
+  const user = await currentUser();
+  if (!user) {
+    redirect("/sign-in"); // redirect unauthenticated users immediately
+  }
+
+  let isOnboarded = false;
+
   try {
-    // Ensure user exists in DB + fire welcome email event if first time
     await checkUser();
-
-    // Check if user is already onboarded
-    const { isOnboarded } = await getUserOnboardingStatus();
-
-    if (isOnboarded) {
-      redirect("/dashboard");
-    }
+    const status = await getUserOnboardingStatus();
+    isOnboarded = status.isOnboarded;
   } catch (error) {
     console.error("❌ Onboarding page error:", error);
-    // Don't redirect on build errors, let the page render
-    if (process.env.NODE_ENV === 'production' && process.env.NEXT_PHASE === 'phase-production-build') {
-      console.log("🏗️ Build-time - continuing with onboarding form");
-    } else {
-      // Only redirect on runtime auth errors
-      redirect("/sign-in");
-    }
+    // optionally show fallback UI or log, but don't redirect here
+  }
+  // dashnoard redirect---->osc 
+  if (isOnboarded) {
+    redirect("/dashboard"); // outside try/catch
   }
 
   return (
