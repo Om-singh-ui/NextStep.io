@@ -149,36 +149,209 @@ export default function Footer() {
 
         {/* Main content */}
         <div className="relative px-4 py-8 sm:px-10 sm:py-14 grid grid-cols-1 md:grid-cols-4 gap-8 sm:gap-12 text-base">
-          {/* Brand - Always visible */}
-          <div className="space-y-5">
+
+          {/* Enhanced Brand Section */}
+          <div className="space-y-6 select-none">
             <div className="flex items-center gap-3 group">
-              <div className="relative">
-                <div className="w-4 h-4 bg-emerald-400 rounded-full animate-ping absolute group-hover:animate-none group-hover:scale-125 transition-transform" />
-                <div className="w-4 h-4 bg-emerald-500 rounded-full relative z-10 group-hover:bg-emerald-400 transition-colors" />
+
+              {/* Minimal Monochrome Logo Container */}
+              <div className="relative w-9 h-9 flex items-center justify-center group">
+
+                {/* Soft Neutral Border Glow */}
+                <div
+                  className="
+          absolute inset-0 rounded-xl 
+          bg-gradient-to-br from-gray-300 to-gray-500
+          opacity-60
+          group-hover:opacity-90
+          transition-all duration-500
+        "
+                />
+
+                {/* Inner Container */}
+                <div
+                  className="
+          absolute inset-[2px] rounded-lg 
+          bg-white dark:bg-gray-900
+          group-hover:bg-gray-100 dark:group-hover:bg-gray-800
+          transition-colors duration-500
+        "
+                />
+
+                {/* Logo Image */}
+                <img
+                  src="/logo.png"
+                  alt="NextStep.io Logo"
+                  className="
+          relative z-10 w-5 h-5 object-contain
+          transition-all duration-500 
+          group-hover:scale-110 group-hover:rotate-12
+          drop-shadow-[0_0_8px_rgba(0,0,0,0.35)]
+          filter brightness-110
+        "
+                />
               </div>
-              <span className="text-2xl font-extrabold bg-gradient-to-r from-emerald-400 via-cyan-400 to-purple-400 bg-clip-text text-transparent hover:scale-105 transition-transform flex items-center gap-1">
-                NextStep.io
-                <Rocket className="w-5 h-5 text-purple-400 group-hover:translate-x-1 transition-transform" />
-              </span>
+
+              {/* Brand Title – Minimal Black/White Gradient */}
+              <div className="flex flex-col gap-0.5">
+                <span
+                  className="
+    text-2xl font-black 
+    bg-gradient-to-r from-emerald-500 via-cyan-400 to-purple-500
+    dark:from-emerald-300 dark:via-cyan-300 dark:to-purple-300
+    bg-clip-text text-transparent 
+    flex items-center gap-2
+    transition-all duration-500
+    group-hover:scale-[1.02]
+    tracking-tight
+  "
+                >
+                  NextStep.io
+
+                  <Rocket
+                    className="
+      w-6 h-6
+      transition-all duration-500
+      group-hover:translate-x-1 
+      group-hover:scale-110 
+      group-hover:rotate-45
+      text-emerald-500 dark:text-emerald-300
+    "
+                    style={{
+                      color: "url(#rocketGradient)"
+                    }}
+                  />
+                </span>
+
+                <svg width="0" height="0">
+                  <linearGradient id="rocketGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop stopColor="#10b981" offset="0%" />
+                    <stop stopColor="#22d3ee" offset="50%" />
+                    <stop stopColor="#a855f7" offset="100%" />
+                  </linearGradient>
+                </svg>
+
+                {/* Subline */}
+                <div className="flex items-center gap-1.5">
+                  <div className="w-1.5 h-1.5 bg-gray-500 rounded-full animate-pulse" />
+                  <span className="text-xs font-semibold text-gray-700 dark:text-gray-300 tracking-wider uppercase">
+                    Us chasing Excellence
+                  </span>
+                </div>
+              </div>
             </div>
-            <p className="text-gray-700 dark:text-muted-foreground/80 leading-relaxed text-[14px] group-hover:text-gray-900 dark:group-hover:text-gray-300 transition-colors">
-              Building the future of digital experiences with AI, clean design,
-              and scalable systems 🚀
-            </p>
+
+            {/* Enhanced Description */}
+            <div className="relative group/desc pl-1">
+              <p className="
+      text-gray-700 dark:text-muted-foreground/80
+      leading-relaxed text-sm
+      transition-all duration-500
+      group-hover/desc:text-gray-900 dark:group-hover/desc:text-gray-200
+      font-medium relative
+    "
+              >
+
+                {/* Gradient Title Text */}
+                <span
+                  className="
+        font-semibold 
+        bg-gradient-to-r from-emerald-400 via-cyan-400 to-purple-400
+        dark:from-emerald-300 dark:via-cyan-300 dark:to-purple-300
+        bg-clip-text text-transparent
+        transition-all duration-500
+        group-hover/desc:brightness-110
+      "
+                >
+                  Building the future of career growth
+                </span>
+
+                {/* Body Text */}
+                <span
+                  className="
+        inline-block transition-all duration-500
+        group-hover/desc:translate-x-[1px]
+      "
+                >
+                  powered by intelligent AI systems, thoughtful design frameworks,
+                  and enterprise-ready solutions that elevate professional development.
+
+                  {/* Gradient Rocket */}
+                  <span
+                    className="
+          inline-block ml-1 transition-transform duration-500 
+          group-hover/desc:translate-y-[-2px] group-hover/desc:rotate-3"
+                  >
+                    🚀
+                  </span>
+                </span>
+              </p>
+
+              {/* Soft Glow on Hover */}
+              <div
+                className="
+      absolute inset-0 rounded-md
+      opacity-0 group-hover/desc:opacity-100
+      transition-opacity duration-700 pointer-events-none
+      bg-gradient-to-r from-emerald-100/10 to-transparent
+      dark:from-emerald-900/10 dark:to-transparent
+    "
+              />
+            </div>
+
+            {/* Contact Button – Neutral & Clean */}
             <button
               onClick={handleEmailClick}
-              onMouseEnter={() => setIsHovered("email")}
+              onMouseEnter={() => setIsHovered('email')}
               onMouseLeave={() => setIsHovered(null)}
-              className="inline-flex items-center gap-2 text-emerald-600 dark:text-emerald-400 text-sm hover:text-blue-500 transition-all duration-300 group relative"
+              className="
+      relative inline-flex items-center gap-3 
+      text-gray-800 dark:text-gray-300
+      text-sm font-semibold
+      hover:text-black dark:hover:text-white
+      transition-all duration-500
+      group p-3 rounded-xl
+      bg-gradient-to-r from-gray-50 to-gray-100
+      dark:from-gray-900 dark:to-gray-800
+      hover:from-gray-100 hover:to-gray-200
+      dark:hover:from-gray-800 dark:hover:to-gray-700
+      border border-gray-300/50 dark:border-gray-700/50
+      hover:border-gray-400 dark:hover:border-gray-600
+      hover:shadow-lg hover:shadow-black/10
+      transform hover:-translate-y-0.5
+      overflow-hidden
+    "
             >
-              <Mail className="w-5 h-5 group-hover:scale-110 transition-transform" />
-              <span className="group-hover:underline">Contact Us</span>
-              <ArrowRight
-                className={`w-4 h-4 transition-all duration-300 ${isHovered === "email"
-                  ? "translate-x-1 opacity-100"
-                  : "opacity-0 -translate-x-1"
-                  }`}
-              />
+              {/* Animated Background */}
+              <div className="absolute inset-0 bg-gradient-to-r from-gray-300/0 via-gray-400/10 to-gray-300/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+
+              {/* Button Content */}
+              <div className="relative flex items-center gap-3">
+                <div className="relative">
+                  <Mail className="w-5 h-5 transition-all duration-500 group-hover:scale-110 group-hover:rotate-12" />
+                </div>
+
+                <span
+                  className="
+          bg-gradient-to-r from-black to-gray-600 dark:from-white dark:to-gray-400
+          bg-clip-text text-transparent
+          transition-all duration-500
+          font-bold
+        "
+                >
+                  Contact Us
+                </span>
+
+                <ArrowRight
+                  className={`
+          w-4 h-4 transition-all duration-500
+          ${isHovered === "email"
+                      ? "translate-x-2 opacity-100 scale-110 text-black dark:text-white"
+                      : "opacity-0 -translate-x-1 text-gray-600 dark:text-gray-400"
+                    }
+        `}
+                />
+              </div>
             </button>
           </div>
 
@@ -313,7 +486,7 @@ export default function Footer() {
               </div>
             </>
           ) : (
-            
+
             /* Desktop layout */
             <>
               {/* Quick Links */}
@@ -430,9 +603,25 @@ export default function Footer() {
         {/* Bottom bar */}
         <div className="relative border-t border-gray-200 dark:border-white/10 py-4 sm:py-6">
           <div className="px-4 sm:px-10 flex flex-col md:flex-row justify-between items-center gap-4">
-            <div className="text-sm text-gray-600 dark:text-muted-foreground/70 flex items-center gap-1 group">
-              © {currentYear} NextStep.io — Crafted with precision
-              <Sparkles className="w-4 h-4 text-blue-400 animate-pulse group-hover:rotate-180 transition-transform duration-500" />
+            <div className="px-4 sm:px-10 flex flex-col md:flex-row justify-between items-center gap-4">
+              <div className="flex items-center gap-3 group cursor-default">
+                {/* Copyright Text */}
+                <div className="text-sm text-gray-600 dark:text-muted-foreground/70 flex items-center gap-2">
+                  <span>© {currentYear} Crafted with precision</span>
+                  <Sparkles className="w-4 h-4 text-blue-400 animate-pulse group-hover:rotate-180 group-hover:scale-110 transition-all duration-500" />
+                </div>
+
+                {/* Status Section */}
+                <div className="hidden sm:flex items-center gap-3 text-xs">
+                  <div className="flex items-center gap-1.5 px-2 py-1 rounded-full bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800 group hover:bg-emerald-100 dark:hover:bg-emerald-900/40 transition-colors duration-300">
+                    <div className="text-gray-400 dark:text-gray-500 font-mono">
+                      v2.1.0
+                    </div>
+                    <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
+                    <span className="text-emerald-700 dark:text-emerald-400 font-medium">Live</span>
+                  </div>
+                </div>
+              </div>
             </div>
 
             {/* THEME BUTTON — now uses provider's toggleTheme */}

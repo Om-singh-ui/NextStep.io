@@ -1,13 +1,14 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { ThemeProvider } from "@/components/theme-provider"; 
-import  Header  from "@/components/header";
+import { ThemeProvider } from "@/components/theme-provider";
+import Header from "@/components/header";
 import { ClerkProvider } from "@clerk/nextjs";
 import { dark } from "@clerk/themes";
 import Footer from "@/components/footer";
 import HeroSection from "@/components/hero";
 import Chatbot from "@/components/chatbot";
-
+import { icons } from "lucide-react";
+import { image } from "pdfkit";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -20,8 +21,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata = {
-  title: "NextStep.io",
-  description: "Ai Based Carrer Growth Platform",
+  title: "NextStep.io - AI-Powered Career Growth Platform",
+  description: "Transforming Career Growth Through AI Precision.",
+  icons: "/logo.png",
 };
 
 export default function RootLayout({ children }) {
@@ -33,7 +35,7 @@ export default function RootLayout({ children }) {
       >
         <ClerkProvider
           appearance={{
-            baseTheme: dark, 
+            baseTheme: dark,
           }}
         >
           <ThemeProvider>
@@ -42,7 +44,7 @@ export default function RootLayout({ children }) {
             <main suppressHydrationWarning className="flex-grow">
               {children}
             </main>
-            <Footer/>
+            <Footer />
           </ThemeProvider>
         </ClerkProvider>
       </body>
