@@ -2,53 +2,35 @@
 
 import React, { useState, useEffect, useCallback, useMemo, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Waves, Sparkles, Rocket, ArrowRight, Play, X, ChevronLeft, ChevronRight, Star, Zap, Target, LineChart, Brain, Users } from "lucide-react";
+import { Waves, Sparkles, Rocket, ArrowRight, Play, X, ChevronLeft, ChevronRight, Star, Zap, Target, LineChart, Brain, Users, CheckCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
+import { MacbookScroll } from "@/components/ui/macbook-scroll";
+import { TextGenerateEffect } from "@/components/ui/text-generate-effect";
 
-// Placeholder image component to handle empty src
-const FeatureImage = ({ src, alt, className }) => {
-  if (!src) {
-    return (
-      <div className={`${className} bg-gradient-to-br from-gray-800 to-gray-900 flex items-center justify-center`}>
+// Optimized image component
+const OptimizedImage = ({ src, alt, className, fallback = null }) => {
+  const [error, setError] = useState(false);
+
+  if (error || !src) {
+    return fallback || (
+      <div className={`${className} bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-800 dark:to-slate-900 flex items-center justify-center rounded-2xl`}>
         <div className="text-center p-4">
-          <div className="w-12 h-12 bg-gray-700 rounded-lg flex items-center justify-center mx-auto mb-3">
-            <Sparkles className="w-6 h-6 text-gray-400" />
-          </div>
-          <p className="text-gray-400 text-sm">Feature Image</p>
-          <p className="text-gray-500 text-xs mt-1">Add your image URL</p>
+          <Sparkles className="w-8 h-8 text-slate-400 mx-auto mb-2" />
+          <p className="text-slate-500 text-sm">Hero Image</p>
         </div>
       </div>
     );
   }
-
-  const handleError = (e) => {
-    e.target.style.display = 'none';
-    // Create fallback element
-    const fallback = document.createElement('div');
-    fallback.className = `${className} bg-gradient-to-br from-gray-800 to-gray-900 flex items-center justify-center`;
-    fallback.innerHTML = `
-      <div class="text-center p-4">
-        <div class="w-12 h-12 bg-gray-700 rounded-lg flex items-center justify-center mx-auto mb-3">
-          <svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-          </svg>
-        </div>
-        <p class="text-gray-400 text-sm">Image not found</p>
-        <p class="text-gray-500 text-xs mt-1">Check image path</p>
-      </div>
-    `;
-    e.target.parentNode.appendChild(fallback);
-  };
 
   return (
     <img
       src={src}
       alt={alt}
       className={className}
-      loading="lazy"
-      onError={handleError}
+      loading="eager"
+      onError={() => setError(true)}
     />
   );
 };
@@ -62,68 +44,50 @@ const Hero = () => {
   const router = useRouter();
   const carouselIntervalRef = useRef(null);
 
-  // Fixed image paths - use absolute paths from public folder
+  // Optimized text content
+  const heroDescription = "With our expert career solutions, track your progress, develop skills, and accelerate career growth with AI-powered insights.";
+
+  // Optimized features array
   const features = useMemo(() => [
     {
       icon: Brain,
       title: "AI Career Pathing",
       description: "Intelligent career recommendations powered by machine learning",
-      color: "from-purple-500 to-pink-500",
+      color: "from-blue-500 to-purple-600",
       image: "/path.png"
     },
     {
       icon: Target,
       title: "Skill Assessment",
       description: "Comprehensive analysis of your strengths and growth areas",
-      color: "from-cyan-500 to-blue-500",
+      color: "from-emerald-500 to-cyan-600",
       image: "/skill.png"
     },
     {
       icon: LineChart,
       title: "Personalized Roadmaps",
       description: "Custom learning paths tailored to your career goals",
-      color: "from-emerald-500 to-green-500",
+      color: "from-orange-500 to-red-600",
       image: "/roadmap.png"
-    },
-    {
-      icon: Users,
-      title: "Job Matching",
-      description: "Smart connections with your ideal career opportunities",
-      color: "from-orange-500 to-red-500",
-      image: "/job.png"
-    },
-    {
-      icon: Zap,
-      title: "Progress Tracking",
-      description: "Real-time monitoring of your career development journey",
-      color: "from-yellow-500 to-amber-500",
-      image: "/progress.png"
     }
   ], []);
 
-  // Use the actual features array with your images
   const activeFeatures = features;
 
   useEffect(() => {
     setMounted(true);
   }, []);
 
-  // Enhanced video popup management
+  // Optimized video popup management
   useEffect(() => {
     if (showVideo) {
-      // Prevent background scroll when popup is open
       document.body.style.overflow = 'hidden';
-      
-      // Start carousel
       carouselIntervalRef.current = setInterval(() => {
         setDirection(1);
         setCurrentImageIndex(prev => (prev + 1) % activeFeatures.length);
       }, 4000);
     } else {
-      // Restore scroll
       document.body.style.overflow = 'unset';
-      
-      // Clear interval
       if (carouselIntervalRef.current) {
         clearInterval(carouselIntervalRef.current);
       }
@@ -144,7 +108,6 @@ const Hero = () => {
         handleCloseVideo();
       }
     };
-
     document.addEventListener('keydown', handleEscape);
     return () => document.removeEventListener('keydown', handleEscape);
   }, [showVideo]);
@@ -189,20 +152,17 @@ const Hero = () => {
     enter: (direction) => ({
       x: direction > 0 ? 300 : -300,
       opacity: 0,
-      scale: 0.8,
-      rotateY: direction > 0 ? 45 : -45,
+      scale: 0.9,
     }),
     center: {
       x: 0,
       opacity: 1,
       scale: 1,
-      rotateY: 0,
     },
     exit: (direction) => ({
       x: direction > 0 ? -300 : 300,
       opacity: 0,
-      scale: 0.8,
-      rotateY: direction > 0 ? -45 : 45,
+      scale: 0.9,
     })
   }), []);
 
@@ -212,223 +172,275 @@ const Hero = () => {
   );
 
   return (
-    <section className="relative min-h-[90vh] mt-16 sm:mt-20 flex flex-col items-center justify-center py-8 sm:py-12 px-4 overflow-hidden">
-      {/* Background Effects - UNCHANGED */}
+    <section className="relative min-h-[80vh] mt-12 sm:mt-16 flex flex-col items-center justify-center py-6 sm:py-8 px-4 overflow-hidden">
+      {/* Enhanced Background Effects */}
       <div className="absolute inset-0 -z-10 overflow-hidden">
         <div
-          className="absolute w-[500px] sm:w-[700px] h-[500px] sm:h-[700px] rounded-full blur-3xl top-0 -left-40 sm:-left-60 bg-gradient-to-r from-indigo-500/40 to-purple-600/20 animate-pulse"
+          className="absolute w-[400px] sm:w-[500px] h-[400px] sm:h-[500px] rounded-full blur-3xl top-10 -left-20 sm:-left-32 bg-gradient-to-r from-blue-500/10 to-purple-600/5 animate-pulse"
           aria-hidden="true"
         />
         <div
-          className="absolute w-[400px] sm:w-[600px] h-[400px] sm:h-[600px] rounded-full blur-3xl bottom-0 right-0 bg-gradient-to-r from-cyan-400/40 to-emerald-400/20 animate-pulse delay-700"
+          className="absolute w-[350px] sm:w-[450px] h-[350px] sm:h-[450px] rounded-full blur-3xl bottom-10 right-10 bg-gradient-to-r from-emerald-400/10 to-cyan-500/5 animate-pulse delay-1000"
           aria-hidden="true"
         />
 
-        <div className="absolute inset-0 opacity-25" aria-hidden="true">
+        {/* Subtle grid pattern */}
+        <div className="absolute inset-0 opacity-10" aria-hidden="true">
           <div
-            className="absolute inset-0 bg-[linear-gradient(to_right,#80808010_1px,transparent_1px),linear-gradient(to_bottom,#80808010_1px,transparent_1px)] bg-[size:24px_24px] sm:bg-[size:28px_28px] [mask-image:radial-gradient(ellipse_70%_70%_at_50%_50%,#000_90%,transparent_100%)]"
+            className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:32px_32px] [mask-image:radial-gradient(ellipse_60%_60%_at_50%_50%,#000_70%,transparent_100%)]"
             aria-hidden="true"
           />
         </div>
 
-        <div className="absolute inset-0 bg-background/80 backdrop-blur-2xl" aria-hidden="true" />
+        <div className="absolute inset-0 bg-background/90 backdrop-blur-xl" aria-hidden="true" />
       </div>
 
-      {/* Hero Content - UNCHANGED */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: mounted ? 1 : 0, y: mounted ? 0 : 20 }}
-        transition={{ duration: 0.8, ease: "easeOut" }}
-        className="relative space-y-6 sm:space-y-8 text-center max-w-6xl mx-auto"
-      >
-        {/* Tagline - UNCHANGED */}
-        <motion.div
-          className="relative inline-flex items-center gap-2 rounded-full px-4 sm:px-6 py-1.5 sm:py-2 text-xs sm:text-sm font-medium border border-blue-500/40 bg-gradient-to-r from-indigo-500/10 via-blue-400/10 to-cyan-400/10 backdrop-blur-sm transition-all duration-500 ease-out hover:border-blue-400 hover:shadow-[0_0_25px_rgba(59,130,246,0.5),0_0_45px_rgba(96,165,250,0.4),0_0_65px_rgba(147,197,253,0.35)] cursor-pointer group select-none"
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          role="button"
-          tabIndex={0}
-          onKeyDown={(e) => e.key === 'Enter' && handleGetStarted()}
-        >
+      {/* Optimized Hero Content */}
+      <div className="relative w-full max-w-6xl mx-auto">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-12 items-center">
+          {/* Left Side - Text Content */}
           <motion.div
-            animate={{ y: [0, -2, 0] }}
-            transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: mounted ? 1 : 0, x: mounted ? 0 : -20 }}
+            transition={{ duration: 0.6, ease: "easeOut" }}
+            className="space-y-5 sm:space-y-6 text-left"
           >
-            <Waves className="w-4 h-4 text-blue-400" aria-hidden="true" />
-          </motion.div>
-
-          <span className="text-foreground/90 dark:text-foreground relative z-10">
-            Unlock Your Career Potential
-          </span>
-
-          <Rocket className="w-4 h-4 text-blue-500 group-hover:translate-y-[-3px] transition-all" aria-hidden="true" />
-
-          <span
-            className="absolute inset-0 rounded-full bg-gradient-to-r from-blue-400/30 via-blue-500/30 to-cyan-400/30 opacity-0 group-hover:opacity-100 transition-opacity duration-700 blur-md"
-            aria-hidden="true"
-          />
-        </motion.div>
-
-        {/* Main Heading - UNCHANGED */}
-        <div className="space-y-3 sm:space-y-4 mb-4 sm:mb-6">
-          <motion.h1
-            className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold font-plus-jakarta tracking-tight leading-tight px-2"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2, duration: 0.7 }}
-          >
-            <motion.span
-              className="inline-block font-extrabold text-4xl sm:text-5xl md:text-6xl bg-gradient-to-r from-emerald-400 via-teal-300 to-cyan-500 bg-clip-text text-transparent"
-              animate={{
-                backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"],
-              }}
-              transition={{
-                duration: 8,
-                repeat: Infinity,
-                ease: "linear",
-              }}
-              style={{
-                backgroundSize: "200% 200%",
-              }}
+            {/* Enhanced Tagline */}
+            <motion.div
+              className="relative inline-flex items-center gap-2 rounded-full px-3 sm:px-4 py-1 sm:py-1.5 text-xs font-medium border border-slate-300/50 dark:border-slate-600/50 bg-white/10 dark:bg-slate-800/20 backdrop-blur-sm transition-all duration-300 ease-out hover:border-slate-400/70 hover:shadow-sm cursor-pointer group"
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
             >
-              NextStep.io
-            </motion.span>
-
-            <br />
-            <motion.span
-              className="inline-block mt-2 sm:mt-3 md:mt-5"
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.4, duration: 0.7 }}
-            >
-              Your{" "}
-              <span className="bg-gradient-to-r from-violet-500 via-purple-400 to-fuchsia-500 bg-clip-text text-transparent drop-shadow-[0_0_8px_rgba(139,92,246,0.7)] sm:drop-shadow-[0_0_10px_rgba(139,92,246,0.8)] transition-transform duration-300 hover:scale-105">
-                AI Career Coach
-              </span>
-              <motion.span
-                className="text-primary ml-1.5 sm:ml-2 md:ml-3"
-                animate={{
-                  scale: [1, 1.05, 1],
-                  opacity: [0.9, 1, 0.9],
-                }}
-                transition={{ duration: 2, repeat: Infinity }}
+              <motion.div
+                animate={{ y: [0, -1, 0] }}
+                transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
               >
-                redefined
+                <Waves className="w-3 h-3 text-slate-600 dark:text-slate-400" />
+              </motion.div>
+              <span className="text-slate-700 dark:text-slate-300 relative z-10">
+                Unlock Your Career Potential
+              </span>
+              <Rocket className="w-3 h-3 text-slate-600 dark:text-slate-400 group-hover:translate-y-[-1px] transition-transform" />
+            </motion.div>
+
+            {/* Enhanced Main Heading */}
+            <div className="space-y-3 sm:space-y-4">
+              <motion.h1
+                className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold font-plus-jakarta tracking-tight leading-tight"
+                initial={{ opacity: 0, y: 15 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.1, duration: 0.6 }}
+              >
                 <motion.span
+                  className="inline-block font-bold bg-gradient-to-r from-slate-900 via-slate-800 to-slate-700 dark:from-slate-100 dark:via-slate-200 dark:to-slate-300 bg-clip-text text-transparent"
                   animate={{
-                    scale: [1, 1.3, 1],
-                    opacity: [0.7, 1, 0.7],
-                    rotate: [0, 15, 0],
+                    backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"],
                   }}
                   transition={{
-                    duration: 3,
+                    duration: 6,
                     repeat: Infinity,
-                    repeatType: "reverse",
+                    ease: "linear",
                   }}
-                  className="inline-block ml-1 sm:ml-2"
+                  style={{
+                    backgroundSize: "200% 200%",
+                  }}
                 >
-                  <Sparkles className="inline w-5 h-5 sm:w-7 sm:h-7 md:w-9 md:h-9 text-yellow-400" aria-hidden="true" />
+                  Make your career
                 </motion.span>
-              </motion.span>
-            </motion.span>
-          </motion.h1>
+
+                <br />
+                <motion.span
+                  className="inline-block mt-1 sm:mt-2"
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.2, duration: 0.6 }}
+                >
+                  <span className="bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 dark:from-blue-400 dark:via-purple-400 dark:to-indigo-400 bg-clip-text text-transparent">
+                    10x more optimized
+                  </span>
+                  <motion.span
+                    className="text-blue-500 ml-1"
+                    animate={{
+                      scale: [1, 1.1, 1],
+                      opacity: [0.8, 1, 0.8],
+                    }}
+                    transition={{ duration: 1.5, repeat: Infinity }}
+                  >
+                    .
+                  </motion.span>
+                </motion.span>
+              </motion.h1>
+            </div>
+
+            {/* Enhanced Subtitle */}
+            <motion.div
+              className="max-w-[100%]"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.3, duration: 0.6 }}
+            >
+              <TextGenerateEffect
+                words={heroDescription}
+                className="text-sm sm:text-base text-slate-600 dark:text-slate-400 leading-relaxed tracking-wide font-medium text-left"
+              />
+            </motion.div>
+
+            {/* Enhanced Trusted By Section */}
+            <motion.div
+              className="flex items-center gap-3 py-3 border-y border-slate-200 dark:border-slate-800"
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4, duration: 0.5 }}
+            >
+              <div className="flex items-center gap-1">
+                {[1, 2, 3, 4].map((i) => (
+                  <div
+                    key={i}
+                    className="w-6 h-6 rounded-full bg-gradient-to-r from-slate-600 to-slate-700 border border-background -ml-1 first:ml-0 shadow-sm"
+                  />
+                ))}
+              </div>
+              <div className="text-xs text-slate-600 dark:text-slate-400">
+                <span className="font-semibold text-slate-700 dark:text-slate-300">Trusted by 27,000+ professionals</span>
+              </div>
+            </motion.div>
+
+            {/* CTA Buttons - ORIGINAL UI KEPT INTACT */}
+            <motion.div
+              className="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 1, duration: 0.6 }}
+            >
+              <Button
+                onClick={handleGetStarted}
+                size="lg"
+                className="group w-full sm:w-auto px-6 sm:px-10 py-4 sm:py-6 text-base sm:text-lg rounded-xl sm:rounded-2xl font-semibold flex items-center justify-center gap-3 border-2 relative overflow-hidden bg-transparent text-primary border-transparent before:absolute before:inset-0 before:z-0 before:bg-gradient-to-r before:from-primary/20 before:opacity-0 before:transition-opacity before:duration-300 hover:before:opacity-100 after:absolute after:inset-0 after:z-0 after:bg-gradient-to-r after:from-primary after:opacity-0 after:transition-all after:duration-300 hover:after:opacity-100 hover:text-black hover:shadow-[0_0_30px_rgba(139,92,246,0.7)] transition-all duration-500 hover:scale-105"
+              >
+                <span className="relative z-10">{buttonText}</span>
+                <ArrowRight className="w-5 h-5 relative z-10 group-hover:translate-x-1 transition-transform" aria-hidden="true" />
+              </Button>
+
+              <Button
+                onClick={handleWatchDemo}
+                size="lg"
+                className="group w-full sm:w-auto px-6 sm:px-10 py-4 sm:py-6 text-base sm:text-lg rounded-xl sm:rounded-2xl font-semibold flex items-center justify-center gap-3 border-2 relative overflow-hidden bg-transparent text-primary border-transparent before:absolute before:inset-0 before:z-0 before:bg-gradient-to-r before:from-primary/20 before:opacity-0 before:transition-opacity before:duration-300 hover:before:opacity-100 after:absolute after:inset-0 after:z-0 after:bg-gradient-to-r after:from-primary after:opacity-0 after:transition-all after:duration-300 hover:after:opacity-100 hover:text-black hover:shadow-[0_0_30px_rgba(139,92,246,0.7)] transition-all duration-500 hover:scale-105"
+              >
+                <span className="relative z-10">Book a demo</span>
+                <Play className="w-5 h-5 relative z-10 group-hover:scale-110 transition-transform" aria-hidden="true" />
+              </Button>
+            </motion.div>
+
+            {/* Enhanced Features List */}
+            <motion.div
+              className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-3"
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.6, duration: 0.5 }}
+            >
+              {[
+                "Real-time progress tracking",
+                "AI-powered recommendations",
+                "Personalized roadmaps",
+                "Skill assessment tools"
+              ].map((feature) => (
+                <div key={feature} className="flex items-center gap-2 text-xs sm:text-sm text-slate-600 dark:text-slate-400">
+                  <CheckCircle className="w-3 h-3 text-green-500 flex-shrink-0" />
+                  <span>{feature}</span>
+                </div>
+              ))}
+            </motion.div>
+          </motion.div>
+
+          {/* Right Side - Enhanced Image Container */}
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: mounted ? 1 : 0, x: mounted ? 0 : 20 }}
+            transition={{ duration: 0.6, ease: "easeOut", delay: 0.2 }}
+            className="relative lg:ml-12 xl:ml-16"
+          >
+            {/* Main Hero Image */}
+            <div className="relative bg-gradient-to-br from-white to-slate-50 dark:from-slate-900 dark:to-slate-800 rounded-xl sm:rounded-2xl p-3 sm:p-4 shadow-lg border border-slate-200 dark:border-slate-700">
+              <OptimizedImage
+                src="/hero2.png"
+                alt="Career Optimization Dashboard"
+                className="w-full h-auto rounded-lg sm:rounded-xl shadow-md"
+                fallback={
+                  <div className="w-full h-64 sm:h-80 bg-gradient-to-br from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 rounded-lg sm:rounded-xl flex items-center justify-center">
+                    <div className="text-center">
+                      <Sparkles className="w-8 h-8 text-blue-500 mx-auto mb-2" />
+                      <p className="text-blue-600 dark:text-blue-400 text-sm">Career Dashboard</p>
+                    </div>
+                  </div>
+                }
+              />
+
+              {/* Floating Elements */}
+              <div className="absolute -top-2 -right-2 w-12 h-12 bg-blue-500 rounded-xl rotate-6 opacity-90 shadow-md"></div>
+              <div className="absolute -bottom-2 -left-2 w-10 h-10 bg-green-500 rounded-lg -rotate-6 opacity-90 shadow-md"></div>
+            </div>
+
+            {/* Background Decoration */}
+            <div className="absolute inset-0 -z-10 bg-gradient-to-r from-blue-500/10 to-purple-500/10 rounded-2xl blur-lg transform rotate-2 scale-105"></div>
+          </motion.div>
         </div>
+      </div>
 
-        {/* Subtitle - UNCHANGED */}
-        <motion.p
-          className="max-w-[95%] sm:max-w-[700px] mx-auto text-sm sm:text-base md:text-lg text-muted-foreground leading-relaxed tracking-wide font-medium px-2"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.6, duration: 0.7 }}
-        >
-          Step confidently into your future. With personalized career guidance,
-          AI-powered insights, and actionable roadmaps,{" "}
-          <span className="text-primary font-semibold">NextStep.io</span>{" "}
-          transforms ambition into achievement. Your next big move starts here.
-        </motion.p>
-
-        {/* CTA Buttons - UNCHANGED */}
-        <motion.div
-          className="mt-8 sm:mt-10 flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6"
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 1, duration: 0.6 }}
-        >
-          <Button
-            onClick={handleGetStarted}
-            size="lg"
-            className="group w-full sm:w-auto px-6 sm:px-10 py-4 sm:py-6 text-base sm:text-lg rounded-xl sm:rounded-2xl font-semibold flex items-center justify-center gap-3 border-2 relative overflow-hidden bg-transparent text-primary border-transparent before:absolute before:inset-0 before:z-0 before:bg-gradient-to-r before:from-primary/20 before:opacity-0 before:transition-opacity before:duration-300 hover:before:opacity-100 after:absolute after:inset-0 after:z-0 after:bg-gradient-to-r after:from-primary after:opacity-0 after:transition-all after:duration-300 hover:after:opacity-100 hover:text-black hover:shadow-[0_0_30px_rgba(139,92,246,0.7)] transition-all duration-500 hover:scale-105"
-          >
-            <span className="relative z-10">{buttonText}</span>
-            <ArrowRight className="w-5 h-5 relative z-10 group-hover:translate-x-1 transition-transform" aria-hidden="true" />
-          </Button>
-
-          <Button
-            onClick={handleWatchDemo}
-            size="lg"
-            className="group w-full sm:w-auto px-6 sm:px-10 py-4 sm:py-6 text-base sm:text-lg rounded-xl sm:rounded-2xl font-semibold flex items-center justify-center gap-3 border-2 relative overflow-hidden bg-transparent text-primary border-transparent before:absolute before:inset-0 before:z-0 before:bg-gradient-to-r before:from-primary/20 before:opacity-0 before:transition-opacity before:duration-300 hover:before:opacity-100 after:absolute after:inset-0 after:z-0 after:bg-gradient-to-r after:from-primary after:opacity-0 after:transition-all after:duration-300 hover:after:opacity-100 hover :text-black hover:shadow-[0_0_30px_rgba(139,92,246,0.7)] transition-all duration-500 hover:scale-105"
-          >
-            <span className="relative z-10">Watch Demo</span>
-            <Play className="w-5 h-5 relative z-10 group-hover:scale-110 transition-transform" aria-hidden="true" />
-          </Button>
-        </motion.div>
-      </motion.div>
-
-      {/* ENHANCED & OPTIMIZED VIDEO POPUP */}
+      {/* Optimized Video Popup */}
       <AnimatePresence>
         {showVideo && (
           <motion.div
-            className="fixed inset-0 z-50 bg-black/80 backdrop-blur-2xl flex items-center justify-center p-2 sm:p-4"
+            className="fixed inset-0 z-50 bg-black/80 backdrop-blur-xl flex items-center justify-center p-3 sm:p-4"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={handleCloseVideo}
-            transition={{ duration: 0.3, ease: "easeOut" }}
+            transition={{ duration: 0.2, ease: "easeOut" }}
           >
             <motion.div
-              className="relative w-full max-w-6xl max-h-[95vh] overflow-y-auto bg-white dark:bg-gray-900 rounded-xl sm:rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-700"
-              initial={{ scale: 0.9, opacity: 0, y: 20 }}
+              className="relative w-full max-w-4xl max-h-[85vh] overflow-y-auto bg-white dark:bg-slate-900 rounded-lg sm:rounded-xl shadow-xl border border-slate-200 dark:border-slate-700"
+              initial={{ scale: 0.95, opacity: 0, y: 10 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
-              exit={{ scale: 0.9, opacity: 0, y: 20 }}
-              transition={{ duration: 0.4, type: "spring", damping: 25 }}
+              exit={{ scale: 0.95, opacity: 0, y: 10 }}
+              transition={{ duration: 0.3, type: "spring", damping: 30 }}
               onClick={(e) => e.stopPropagation()}
               role="dialog"
               aria-modal="true"
               aria-labelledby="popup-title"
             >
-              {/* Enhanced Header */}
-              <div className="sticky top-0 z-10 flex items-center justify-between p-4 sm:p-6 bg-gradient-to-r from-purple-50 to-blue-50 dark:from-purple-600/20 dark:to-blue-600/20 backdrop-blur-xl border-b border-gray-200 dark:border-white/20">
-                <div className="flex items-center gap-3 sm:gap-4">
-                  <div className="p-2 sm:p-3 rounded-xl bg-gradient-to-r from-purple-500 to-blue-600 shadow-lg">
-                    <Play className="w-4 h-4 sm:w-6 sm:h-6 text-white" />
+              {/* Optimized Header */}
+              <div className="sticky top-0 z-10 flex items-center justify-between p-3 sm:p-4 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 backdrop-blur-lg border-b border-slate-200 dark:border-slate-700">
+                <div className="flex items-center gap-2 sm:gap-3">
+                  <div className="p-1.5 sm:p-2 rounded-lg bg-gradient-to-r from-blue-500 to-purple-600 shadow-sm">
+                    <Play className="w-3 h-3 sm:w-4 sm:h-4 text-white" />
                   </div>
                   <div>
-                    <h3 id="popup-title" className="text-lg sm:text-xl font-bold text-gray-900 dark:text-white">
+                    <h3 id="popup-title" className="text-base sm:text-lg font-semibold text-slate-900 dark:text-white">
                       Product Demo
                     </h3>
-                    <p className="text-gray-600 dark:text-gray-300 text-xs sm:text-sm mt-1">
-                      Experience the future of career development
+                    <p className="text-slate-600 dark:text-slate-300 text-xs sm:text-sm">
+                      See how we transform careers
                     </p>
                   </div>
                 </div>
 
                 <button
                   onClick={handleCloseVideo}
-                  className="p-2 rounded-lg bg-white/10 hover:bg-white/20 border border-white/20 hover:border-pink-500/50 transition-all duration-300 hover:scale-110"
+                  className="p-1.5 rounded-md bg-white/10 hover:bg-white/20 border border-white/20 hover:border-red-500/50 transition-all duration-200 hover:scale-110"
                   aria-label="Close dialog"
                 >
-                  <X className="w-4 h-4 sm:w-5 sm:h-5 text-gray-300 hover:text-white transition-colors" />
+                  <X className="w-3 h-3 sm:w-4 sm:h-4 text-slate-300 hover:text-white transition-colors" />
                 </button>
               </div>
 
-              {/* Enhanced Responsive Layout */}
+              {/* Optimized Content Layout */}
               <div className="flex flex-col lg:flex-row">
-                {/* Video Section - Enhanced for Mobile */}
-                <div className="flex-1 p-4 sm:p-6 space-y-4 sm:space-y-6">
-                  <div className="relative bg-black rounded-lg sm:rounded-xl overflow-hidden aspect-video border border-white/20">
+                {/* Video Section */}
+                <div className="flex-1 p-3 sm:p-4 space-y-3 sm:space-y-4">
+                  <div className="relative bg-black rounded-lg overflow-hidden aspect-video border border-white/20">
                     <iframe
                       src="https://www.youtube.com/embed/PDk4G1Ck6A0?autoplay=1&mute=0"
-                      title="NextStep.io Demo"
+                      title="CareerFlow Demo"
                       allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                       allowFullScreen
                       className="w-full h-full"
@@ -436,56 +448,56 @@ const Hero = () => {
                     />
                   </div>
 
-                  {/* Enhanced Thank You Note */}
+                  {/* Thank You Note */}
                   <motion.div
-                    className="p-4 bg-gradient-to-r from-purple-500/15 to-pink-500/15 rounded-xl border border-purple-500/30 backdrop-blur-lg"
-                    initial={{ opacity: 0, y: 10 }}
+                    className="p-3 bg-gradient-to-r from-blue-500/10 to-purple-500/10 rounded-lg border border-blue-500/20 backdrop-blur-sm"
+                    initial={{ opacity: 0, y: 8 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.3 }}
+                    transition={{ delay: 0.2 }}
                   >
-                    <div className="flex items-start gap-3 sm:gap-4">
-                      <div className="p-2 bg-gradient-to-r from-yellow-400 to-amber-500 rounded-lg flex-shrink-0">
-                        <Star className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
+                    <div className="flex items-start gap-2 sm:gap-3">
+                      <div className="p-1.5 bg-gradient-to-r from-yellow-400 to-amber-500 rounded-md flex-shrink-0">
+                        <Star className="w-3 h-3 text-white" />
                       </div>
                       <div>
-                        <h4 className="font-bold text-white text-base sm:text-lg mb-2">
+                        <h4 className="font-semibold text-white text-sm sm:text-base mb-1">
                           Ready to Transform Your Career?
                         </h4>
-                        <p className="text-gray-200 text-sm leading-relaxed">
-                          Join thousands of professionals who've accelerated their growth with AI-powered career guidance.
+                        <p className="text-slate-200 text-xs leading-relaxed">
+                          Join professionals accelerating growth with AI-powered guidance.
                         </p>
                       </div>
                     </div>
                   </motion.div>
                 </div>
 
-                {/* Enhanced Features Carousel */}
-                <div className="flex-1 p-4 sm:p-6 bg-gradient-to-b from-purple-900/10 to-blue-900/10 border-t lg:border-t-0 lg:border-l border-white/20">
-                  <div className="flex items-center justify-between mb-4 sm:mb-6">
-                    <h3 className="text-lg sm:text-xl font-bold text-white flex items-center gap-2 sm:gap-3">
-                      <Sparkles className="w-5 h-5 sm:w-6 sm:h-6 text-yellow-400" />
-                      Core Features
+                {/* Features Carousel */}
+                <div className="flex-1 p-3 sm:p-4 bg-gradient-to-b from-blue-900/5 to-purple-900/5 border-t lg:border-t-0 lg:border-l border-slate-200 dark:border-slate-700">
+                  <div className="flex items-center justify-between mb-3 sm:mb-4">
+                    <h3 className="text-sm sm:text-base font-semibold text-slate-900 dark:text-white flex items-center gap-1.5 sm:gap-2">
+                      <Sparkles className="w-4 h-4 sm:w-5 sm:h-5 text-yellow-500" />
+                      Key Features
                     </h3>
-                    <div className="flex gap-1 bg-white/10 rounded-xl p-1 backdrop-blur-sm">
+                    <div className="flex gap-1 bg-white/10 rounded-lg p-0.5 backdrop-blur-sm">
                       {activeFeatures.map((_, index) => (
                         <button
                           key={index}
                           onClick={() => goToImage(index)}
-                          className={`p-1.5 sm:p-2 rounded-lg transition-all duration-300 ${index === currentImageIndex
-                            ? "bg-gradient-to-r from-pink-500 to-purple-500 scale-110"
-                            : "bg-white/5 hover:bg-white/10"
+                          className={`p-1 rounded-md transition-all duration-200 ${index === currentImageIndex
+                              ? "bg-gradient-to-r from-blue-500 to-purple-500 scale-110"
+                              : "bg-white/5 hover:bg-white/10"
                             }`}
                           aria-label={`View feature ${index + 1}`}
                         >
-                          <div className={`w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full ${index === currentImageIndex ? "bg-white" : "bg-white/40"
+                          <div className={`w-1.5 h-1.5 rounded-full ${index === currentImageIndex ? "bg-white" : "bg-white/40"
                             }`} />
                         </button>
                       ))}
                     </div>
                   </div>
 
-                  {/* Enhanced Card Shuffle Container */}
-                  <div className="relative h-40 sm:h-52 mb-4 sm:mb-6 rounded-xl overflow-hidden">
+                  {/* Carousel Container */}
+                  <div className="relative h-32 sm:h-40 mb-3 sm:mb-4 rounded-lg overflow-hidden">
                     <AnimatePresence mode="wait" custom={direction}>
                       <motion.div
                         key={currentImageIndex}
@@ -496,55 +508,55 @@ const Hero = () => {
                         exit="exit"
                         transition={{
                           type: "spring",
-                          stiffness: 400,
-                          damping: 30,
-                          duration: 0.6
+                          stiffness: 300,
+                          damping: 25,
+                          duration: 0.4
                         }}
-                        className="relative w-full h-full rounded-xl overflow-hidden border border-white/20"
+                        className="relative w-full h-full rounded-lg overflow-hidden border border-slate-200 dark:border-slate-600"
                       >
-                        <FeatureImage
+                        <OptimizedImage
                           src={activeFeatures[currentImageIndex].image}
                           alt={activeFeatures[currentImageIndex].title}
                           className="w-full h-full object-cover"
                         />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent" />
-                        <div className="absolute bottom-0 left-0 right-0 p-3 sm:p-5">
-                          <div className="flex items-center gap-2 sm:gap-3 mb-2 sm:mb-3">
-                            <div className={`p-1.5 sm:p-2 rounded-lg bg-gradient-to-r ${activeFeatures[currentImageIndex].color}`}>
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
+                        <div className="absolute bottom-0 left-0 right-0 p-2 sm:p-3">
+                          <div className="flex items-center gap-1.5 sm:gap-2 mb-1 sm:mb-2">
+                            <div className={`p-1 rounded-md bg-gradient-to-r ${activeFeatures[currentImageIndex].color}`}>
                               {React.createElement(activeFeatures[currentImageIndex].icon, {
-                                className: "w-3 h-3 sm:w-4 sm:h-4 text-white"
+                                className: "w-2.5 h-2.5 sm:w-3 sm:h-3 text-white"
                               })}
                             </div>
-                            <h4 className="text-white font-bold text-sm sm:text-lg">
+                            <h4 className="text-white font-semibold text-xs sm:text-sm">
                               {activeFeatures[currentImageIndex].title}
                             </h4>
                           </div>
-                          <p className="text-gray-200 text-xs sm:text-sm leading-relaxed">
+                          <p className="text-slate-200 text-xs leading-tight">
                             {activeFeatures[currentImageIndex].description}
                           </p>
                         </div>
                       </motion.div>
                     </AnimatePresence>
 
-                    {/* Enhanced Navigation Arrows */}
+                    {/* Navigation Arrows */}
                     <button
                       onClick={prevImage}
-                      className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/60 hover:bg-black/80 text-white rounded-lg sm:rounded-xl p-2 backdrop-blur-lg transition-all duration-300 hover:scale-110"
+                      className="absolute left-1 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white rounded-md p-1 backdrop-blur-sm transition-all duration-200 hover:scale-110"
                       aria-label="Previous feature"
                     >
-                      <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5" />
+                      <ChevronLeft className="w-3 h-3 sm:w-4 sm:h-4" />
                     </button>
                     <button
                       onClick={nextImage}
-                      className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/60 hover:bg-black/80 text-white rounded-lg sm:rounded-xl p-2 backdrop-blur-lg transition-all duration-300 hover:scale-110"
+                      className="absolute right-1 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white rounded-md p-1 backdrop-blur-sm transition-all duration-200 hover:scale-110"
                       aria-label="Next feature"
                     >
-                      <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5" />
+                      <ChevronRight className="w-3 h-3 sm:w-4 sm:h-4" />
                     </button>
                   </div>
 
-                  {/* Enhanced Feature Grid */}
-                  <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-2 gap-2 sm:gap-3 mb-4 sm:mb-6">
+                  {/* Feature Grid */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5 sm:gap-2 mb-3 sm:mb-4">
                     {activeFeatures.map((feature, index) => {
                       const IconComponent = feature.icon;
                       const isActive = index === currentImageIndex;
@@ -553,16 +565,16 @@ const Hero = () => {
                         <button
                           key={feature.title}
                           onClick={() => goToImage(index)}
-                          className={`relative p-2 sm:p-3 rounded-lg sm:rounded-xl border backdrop-blur-lg transition-all duration-300 text-left overflow-hidden group ${isActive
-                            ? `border-transparent bg-gradient-to-r ${feature.color}/20 scale-105 shadow-lg`
-                            : "border-white/10 bg-white/5 hover:border-white/20"
+                          className={`relative p-1.5 sm:p-2 rounded-lg border backdrop-blur-sm transition-all duration-200 text-left overflow-hidden group ${isActive
+                              ? `border-transparent bg-gradient-to-r ${feature.color}/20 scale-105 shadow-sm`
+                              : "border-slate-200 dark:border-slate-600 bg-white/5 hover:border-slate-300 dark:hover:border-slate-500"
                             }`}
                         >
-                          <div className="flex items-center gap-2 sm:gap-3">
-                            <div className={`p-1.5 sm:p-2 rounded-lg bg-gradient-to-r ${feature.color} group-hover:scale-110 transition-transform`}>
-                              <IconComponent className="w-3 h-3 sm:w-4 sm:h-4 text-white" />
+                          <div className="flex items-center gap-1.5 sm:gap-2">
+                            <div className={`p-1 rounded-md bg-gradient-to-r ${feature.color} group-hover:scale-105 transition-transform`}>
+                              <IconComponent className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-white" />
                             </div>
-                            <span className={`font-semibold text-xs sm:text-sm ${isActive ? 'text-white' : 'text-gray-300'
+                            <span className={`font-medium text-xs sm:text-sm ${isActive ? 'text-slate-900 dark:text-white' : 'text-slate-600 dark:text-slate-300'
                               }`}>
                               {feature.title}
                             </span>
@@ -572,19 +584,19 @@ const Hero = () => {
                     })}
                   </div>
 
-                  {/* Enhanced CTA */}
+                  {/* CTA */}
                   <motion.div
-                    initial={{ opacity: 0, y: 10 }}
+                    initial={{ opacity: 0, y: 8 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.5 }}
+                    transition={{ delay: 0.3 }}
                   >
                     <Button
                       onClick={handleGetStarted}
-                      className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white py-3 sm:py-4 rounded-xl font-bold text-sm sm:text-base transition-all duration-300 hover:scale-105 shadow-lg border-0"
+                      className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white py-2 sm:py-3 rounded-lg font-semibold text-xs sm:text-sm transition-all duration-200 hover:scale-105 shadow-sm border-0"
                     >
-                      <Zap className="w-4 h-4 sm:w-5 sm:h-5 mr-2 sm:mr-3" />
+                      <Zap className="w-3 h-3 sm:w-4 sm:h-4 mr-1.5 sm:mr-2" />
                       Begin Your Journey
-                      <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 ml-2 sm:ml-3" />
+                      <ArrowRight className="w-3 h-3 sm:w-4 sm:h-4 ml-1.5 sm:ml-2" />
                     </Button>
                   </motion.div>
                 </div>
@@ -593,6 +605,10 @@ const Hero = () => {
           </motion.div>
         )}
       </AnimatePresence>
+
+      <section className="mt-8 sm:mt-12">
+        <MacbookScroll />
+      </section>
     </section>
   );
 };
