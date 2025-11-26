@@ -24,6 +24,7 @@ import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "./theme-toggle";
 import { useUser, SignInButton, SignUpButton, UserButton } from "@clerk/nextjs";
 import { motion, AnimatePresence } from "framer-motion";
+import { Bot, MapPin} from "lucide-react";
 
 // GitHub Star Component (Client-Side Only)
 function GithubStarCount() {
@@ -118,7 +119,7 @@ export default function HeaderClient() {
     {
       href: "/career-paths",
       label: "Career Paths",
-      icon: <Briefcase className="h-4 w-4 text-blue-500" />,
+      icon: <MapPin className="h-4 w-4 text-blue-500" />,
     },
     {
       href: "/interview/mock",
@@ -126,9 +127,9 @@ export default function HeaderClient() {
       icon: <GraduationCap className="h-4 w-4 text-green-500" />,
     },
     {
-      href: "/career-paths/generate-roadmap",
-      label: "Mentorship",
-      icon: <Users className="h-4 w-4 text-purple-500" />,
+      href: "/trust-apply",
+      label: "AI Assist",
+      icon: <Bot className="h-4 w-4 text-purple-500" />,
     },
   ];
 
@@ -644,7 +645,7 @@ export default function HeaderClient() {
                     <svg className="w-3 h-3 text-blue-500 animate-bounce" fill="currentColor" viewBox="0 0 16 16">
                       <path d="M8 0a8 8 0 1 1 0 16A8 8 0 0 1 8 0zM4.5 7.5a.5.5 0 0 0 0 1h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5H4.5z" />
                     </svg>
-                  </div>  
+                  </div>
                 </Link>
               </div>
 

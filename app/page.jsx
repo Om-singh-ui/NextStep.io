@@ -16,6 +16,9 @@ import {
 import { motion, AnimatePresence } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";
 import { useState, useEffect } from "react";
+import { CardBody, CardContainer, CardItem } from "@/components/ui/3d-card";
+import { AnimatedTestimonials } from "@/components/ui/animated-testimonials";
+
 
 // Particle component for background animations
 const ClientParticle = ({ index }) => {
@@ -87,7 +90,7 @@ export default function Home() {
         className="relative w-full py-16 sm:py-20 md:py-28 bg-background overflow-hidden"
       >
         <HeroBackground />
-        
+
         {/* Background effects */}
         <div className="absolute inset-0">
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(59,130,246,0.12)_0%,transparent_70%)]" />
@@ -234,370 +237,107 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Stats section with Hero Background */}
-      <section
-        id="stats"
-        className="relative w-full py-16 sm:py-20 md:py-28 bg-gradient-to-b from-background to-muted/20 overflow-hidden"
-      >
-        <HeroBackground />
-        <div className="container mx-auto px-4 md:px-6">
-          {/* Section header */}
-          <div className="text-center mb-20">
-            <motion.h2
-              className="
-      text-4xl sm:text-5xl md:text-6xl font-bold mb-6
-      leading-[1.15] tracking-tight
-      transition-all duration-500
-      group-hover:scale-[1.02]
-    "
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.7 }}
-            >
-              <span
-                className="
-        bg-gradient-to-r from-blue-700 via-indigo-600 to-slate-700
-        bg-clip-text text-transparent
-        transition-all duration-700
-        group-hover:tracking-tight
-        group-hover:opacity-95
-      "
-              >
-                Trusted by Professionals
-              </span>
+      <section>
+        {/* New Premium Animated Testimonials Section */}
+        <motion.div
+          className="relative py-24"
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          transition={{ duration: 0.8 }}
+          viewport={{ once: true }}
+        >
 
-              {/* Subtle depth shadow behind text (very clean) */}
-              <span
-                className="
-        absolute inset-0 -z-10 mx-auto w-2/3 h-8
-        bg-gradient-to-r from-blue-600/20 via-indigo-600/15 to-slate-600/20
-        blur-2xl opacity-0
-        group-hover:opacity-40
-        transition-opacity duration-700
-      "
-              />
-            </motion.h2>
-            <motion.p
-              className="text-muted-foreground text-xl max-w-3xl mx-auto leading-relaxed"
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2, duration: 0.7 }}
+          {/* Section heading */}
+          <div className="text-center mb-16">
+            <motion.h3
+              className="
+          text-4xl sm:text-5xl md:text-6xl 
+          font-extrabold tracking-tight
+          bg-gradient-to-r from-neutral-900 via-neutral-700 to-neutral-600
+          dark:from-neutral-100 dark:via-neutral-300 dark:to-neutral-500
+          bg-clip-text text-transparent
+        "
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8 }}
             >
-              Our platform delivers measurable results through advanced AI
-              technology and data-driven insights
+              Loved by Professionals Worldwide
+            </motion.h3>
+
+            <motion.p
+              className="
+          text-muted-foreground 
+          text-xl 
+          max-w-2xl 
+          mx-auto 
+          mt-4 
+          leading-relaxed
+          font-medium
+        "
+              initial={{ opacity: 0, y: 10 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2, duration: 0.8 }}
+            >
+              Real stories from the leaders and innovators using NextStep.io every day.
             </motion.p>
           </div>
 
-          {/* Stats cards grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto mb-24">
-            {[
+          {/* Animated testimonials integration */}
+          <AnimatedTestimonials
+            testimonials={[
               {
-                value: "50+",
-                label: "Industries Covered",
-                icon: "🌐",
-                color: "from-blue-500 to-cyan-500",
-                description: "Comprehensive industry knowledge",
+                quote:
+                  "The attention to detail and innovative features have completely transformed our workflow. This is exactly what we've been looking for.",
+                name: "Sarah Chen",
+                designation: "Product Manager at TechFlow",
+                src: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=3560&auto=format&fit=crop",
               },
               {
-                value: "1000+",
-                label: "Interview Questions",
-                icon: "💼",
-                color: "from-purple-500 to-fuchsia-500",
-                description: "Curated question database",
+                quote:
+                  "Implementation was seamless and the results exceeded our expectations. The platform's flexibility is remarkable.",
+                name: "Michael Rodriguez",
+                designation: "CTO at InnovateSphere",
+                src: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=3540&auto=format&fit=crop",
               },
               {
-                value: "95%",
-                label: "Success Rate",
-                icon: "📈",
-                color: "from-green-500 to-emerald-500",
-                description: "Of users achieve their goals",
+                quote:
+                  "This solution has significantly improved our team's productivity. The intuitive interface makes complex tasks simple.",
+                name: "Emily Watson",
+                designation: "Operations Director at CloudScale",
+                src: "https://images.unsplash.com/photo-1623582854588-d60de57fa33f?q=80&w=3540&auto=format&fit=crop",
               },
               {
-                value: "24/7",
-                label: "AI Support",
-                icon: "🤖",
-                color: "from-orange-500 to-amber-500",
-                description: "Always available assistance",
+                quote:
+                  "Outstanding support and robust features. It's rare to find a product that delivers on all its promises.",
+                name: "James Kim",
+                designation: "Engineering Lead at DataPro",
+                src: "https://images.unsplash.com/photo-1636041293178-808a6762ab39?q=80&w=3464&auto=format&fit=crop",
               },
-            ].map((stat, i) => (
-              <motion.div
-                key={i}
-                className="relative group flex flex-col items-center justify-center 
-                      p-8 rounded-3xl bg-gradient-to-br from-card to-card/80
-                      border border-border/50
-                      hover:shadow-2xl hover:border-primary/20
-                      transition-all duration-500 overflow-hidden"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.3 + i * 0.1, duration: 0.5 }}
-                whileHover={{ y: -8, scale: 1.02 }}
-              >
-                {/* Hover gradient background */}
-                <div
-                  className={`absolute inset-0 bg-gradient-to-br ${stat.color} opacity-0 
-                          group-hover:opacity-10 transition-opacity duration-700 rounded-3xl`}
-                ></div>
+              {
+                quote:
+                  "The scalability and performance have been game-changing for our organization. Highly recommend to any growing business.",
+                name: "Lisa Thompson",
+                designation: "VP of Technology at FutureNet",
+                src: "https://images.unsplash.com/photo-1624561172888-ac93c696e10c?q=80&w=2592&auto=format&fit=crop",
+              },
+            ]}
+          />
 
-                {/* Animated icon container */}
-                <div className="relative mb-6">
-                  <div
-                    className={`absolute -inset-3 bg-gradient-to-br ${stat.color} 
-                            rounded-full opacity-0 group-hover:opacity-20 
-                            blur-xl transition-all duration-700`}
-                  ></div>
-                  <div
-                    className={`relative text-4xl bg-gradient-to-br from-background to-muted/50 
-                            p-4 rounded-2xl shadow-sm group-hover:shadow-md 
-                            transition-all duration-500`}
-                  >
-                    {stat.icon}
-                  </div>
-                </div>
-
-                {/* Stat value with gradient text */}
-                <h3
-                  className={`text-4xl font-bold mb-3 bg-gradient-to-r ${stat.color} 
-                        bg-clip-text text-transparent`}
-                >
-                  {stat.value}
-                </h3>
-
-                {/* Stat label */}
-                <p className="text-foreground font-semibold text-center mb-2 text-lg">
-                  {stat.label}
-                </p>
-
-                {/* Stat description */}
-                <p className="text-muted-foreground text-sm text-center">
-                  {stat.description}
-                </p>
-
-                {/* Animated underline */}
-                <div
-                  className={`absolute bottom-0 left-1/2 w-0 h-1 bg-gradient-to-r ${stat.color} 
-                          group-hover:w-4/5 transition-all duration-700 transform -translate-x-1/2 
-                          rounded-full`}
-                ></div>
-              </motion.div>
-            ))}
-          </div>
-
-          {/* Team testimonials section */}
-          <motion.div
-            className="text-center py-12"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.5, duration: 0.7 }}
-          >
-
-            <div className="mb-16 text-center">
-              <motion.div
-                className="inline-block relative group cursor-pointer mb-5"
-                initial={{ opacity: 0, y: 24 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.4, duration: 0.6 }}
-              >
-                {/* Large Premium Gradient Heading */}
-                <motion.h3
-                  className="
-          text-4xl sm:text-5xl md:text-6xl font-semibold
-          bg-gradient-to-r from-blue-700 via-indigo-600 to-slate-700
-          bg-clip-text text-transparent
-          leading-tight
-          transition-all duration-500
-          group-hover:scale-[1.03]
-          group-hover:tracking-tight
-        "
-                  whileHover={{ scale: 1.03 }}
-                >
-                  Trusted by Visionaries
-                </motion.h3>
-
-                {/* Proportional Bottom Glow */}
-                <div
-                  className="
-          absolute bottom-0 left-1/2 -translate-x-1/2
-          w-[75%] h-7
-          bg-gradient-to-r from-blue-600/20 via-indigo-600/20 to-slate-600/20
-          blur-2xl 
-          rounded-full
-          opacity-0 group-hover:opacity-40
-          transition-opacity duration-500
-          -z-10
-        "
-                />
-
-                {/* Ultra-soft depth layer */}
-                <div
-                  className="
-          absolute inset-0 
-          bg-gradient-to-b from-white/0 to-white/5
-          opacity-0 group-hover:opacity-20
-          transition-opacity duration-500
-          rounded-xl
-          -z-20
-        "
-                />
-              </motion.div>
-
-              {/* Subtext */}
-              <motion.p
-                className="
-        text-muted-foreground text-xl max-w-2xl mx-auto leading-relaxed
-        transition-colors duration-300
-        hover:text-foreground/80
-      "
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.6, duration: 0.5 }}
-              >
-                Join industry leaders building the future with our intelligent platform.
-              </motion.p>
-            </div>
-
-            {/* Team member grid */}
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-8 mb-16">
-              {[
-                {
-                  name: "Om Singh Chouhan",
-                  logo: "O",
-                  role: "FinTech Innovator",
-                  color: "from-blue-500 to-cyan-500",
-                },
-                {
-                  name: "Jeet Chetry",
-                  logo: "J",
-                  role: "Blockchain Expert",
-                  color: "from-purple-500 to-fuchsia-500",
-                },
-                {
-                  name: "Madhur Virli",
-                  logo: "M",
-                  role: "Crypto Analyst",
-                  color: "from-green-500 to-emerald-500",
-                },
-                {
-                  name: "Abhishek Upmanyu",
-                  logo: "A",
-                  role: "Investment Strategist",
-                  color: "from-orange-500 to-amber-500",
-                },
-                {
-                  name: "Maheep Singh",
-                  logo: "M",
-                  role: "Digital Assets Advisor",
-                  color: "from-red-500 to-rose-500",
-                },
-                {
-                  name: "Onkar yadav",
-                  logo: "",
-                  role: "Web3 Developer",
-                  color: "from-indigo-500 to-blue-500",
-                },
-              ].map((person, i) => (
-                <motion.div
-                  key={i}
-                  className="flex flex-col items-center group"
-                  initial={{ opacity: 0, y: 15 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.8 + i * 0.1, duration: 0.5 }}
-                  whileHover={{ y: -5, scale: 1.05 }}
-                >
-                  <div
-                    className={`w-18 h-18 rounded-full bg-gradient-to-br from-primary/10 to-primary/5 
-                          border border-primary/20 flex items-center justify-center 
-                          group-hover:shadow-lg group-hover:border-primary/40
-                          transition-all duration-300 mb-4 relative overflow-hidden`}
-                  >
-                    {/* Hover gradient effect */}
-                    <div
-                      className={`absolute inset-0 bg-gradient-to-br ${person.color} opacity-0 group-hover:opacity-10 transition-opacity duration-500`}
-                    ></div>
-
-                    {/* Background glow */}
-                    <div
-                      className={`absolute -inset-2 bg-gradient-to-br ${person.color} rounded-full opacity-0 group-hover:opacity-5 blur-md transition-opacity duration-500`}
-                    ></div>
-
-                    <span
-                      className={`text-2xl font-bold bg-gradient-to-br ${person.color} bg-clip-text text-transparent group-hover:scale-110 transition-transform duration-300 z-10`}
-                    >
-                      {person.logo}
-                    </span>
-                  </div>
-                  <span
-                    className="text-sm font-medium text-foreground group-hover:text-primary 
-                          transition-colors duration-300 text-center leading-tight"
-                  >
-                    {person.name}
-                  </span>
-                  <span
-                    className="text-xs text-muted-foreground group-hover:text-foreground/80 
-                          transition-colors duration-300 mt-1 text-center"
-                  >
-                    {person.role}
-                  </span>
-                </motion.div>
-              ))}
-            </div>
-
-            {/* Enhanced testimonial quote */}
-            <motion.div
-              className="mt-14 max-w-4xl mx-auto p-10 bg-gradient-to-br from-muted/30 to-muted/10 rounded-3xl border border-border/50 backdrop-blur-sm relative overflow-hidden"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 1.6, duration: 0.5 }}
-            >
-              {/* Background decorative elements */}
-              <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/5 rounded-full -translate-y-16 translate-x-16"></div>
-              <div className="absolute bottom-0 left-0 w-24 h-24 bg-purple-500/5 rounded-full translate-y-12 -translate-x-12"></div>
-
-              <div className="flex justify-center mb-6">
-                <div className="flex space-x-1">
-                  {[1, 2, 3, 4, 5].map((star) => (
-                    <motion.span
-                      key={star}
-                      className="text-amber-500 text-xl"
-                      initial={{ scale: 0 }}
-                      animate={{ scale: 1 }}
-                      transition={{ delay: 1.7 + star * 0.1, type: "spring", stiffness: 200 }}
-                    >
-                      ★
-                    </motion.span>
-                  ))}
-                </div>
-              </div>
-              <motion.p
-                className="text-foreground/80 italic text-center text-lg md:text-xl leading-relaxed mb-6"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 1.8, duration: 0.7 }}
-              >
-                "NextStep.io has completely transformed how we approach career
-                development. The AI-powered insights and personalized guidance
-                have helped our team members accelerate their growth and achieve
-                their professional goals faster than ever before."
-              </motion.p>
-              <motion.div
-                className="flex items-center justify-center mt-6"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 1.9, duration: 0.5 }}
-              >
-                <div className="w-2 h-2 rounded-full bg-primary mr-2"></div>
-                <span className="text-sm text-muted-foreground">
-                  Based on 250+ reviews from industry professionals
-                </span>
-              </motion.div>
-            </motion.div>
-          </motion.div>
-        </div>
+          {/* Bottom subtle glow decoration */}
+          <div
+            className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[70%] h-24
+                 bg-gradient-to-r from-neutral-300/10 via-neutral-400/10 to-neutral-500/10
+                 dark:from-neutral-700/10 dark:via-neutral-600/10 dark:to-neutral-500/10
+                 blur-3xl opacity-40"
+          ></div>
+        </motion.div>
       </section>
+
 
       {/* How It Works Section with Hero Background */}
       <section className="relative w-full py-28 bg-background overflow-hidden">
         <HeroBackground />
-        
+
         {/* SUBTLE BACKGROUND EFFECTS */}
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute top-1/4 left-1/4 w-[600px] h-[600px] bg-primary/10 dark:bg-primary/5 blur-[200px]" />
@@ -1086,64 +826,32 @@ export default function Home() {
           </div>
         </div>
       </section>
-
-      {/* Call-to-action section - KEEP ORIGINAL DARK/LIGHT BACKGROUND */}
+      {/* Call-to-action section - Button Removed */}
       <section className="w-full py-24 md:py-32 bg-gradient-to-br from-background via-background to-primary/5 relative overflow-hidden">
         {/* Background animation elements */}
         <div className="absolute inset-0 overflow-hidden">
           <motion.div
             className="absolute -top-40 -right-40 w-80 h-80 bg-primary/10 rounded-full blur-3xl"
-            animate={{
-              scale: [1, 1.2, 1],
-              opacity: [0.3, 0.5, 0.3],
-            }}
-            transition={{
-              duration: 8,
-              repeat: Infinity,
-              ease: "easeInOut",
-            }}
-          ></motion.div>
+            animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.5, 0.3] }}
+            transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+          />
           <motion.div
             className="absolute -bottom-40 -left-40 w-80 h-80 bg-purple-500/10 rounded-full blur-3xl"
-            animate={{
-              scale: [1.2, 1, 1.2],
-              opacity: [0.5, 0.3, 0.5],
-            }}
-            transition={{
-              duration: 10,
-              repeat: Infinity,
-              ease: "easeInOut",
-            }}
-          ></motion.div>
+            animate={{ scale: [1.2, 1, 1.2], opacity: [0.5, 0.3, 0.5] }}
+            transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
+          />
           <motion.div
             className="absolute top-1/2 left-1/4 w-40 h-40 bg-cyan-500/10 rounded-full blur-3xl"
-            animate={{
-              y: [0, -40, 0],
-              opacity: [0.4, 0.6, 0.4],
-            }}
-            transition={{
-              duration: 7,
-              repeat: Infinity,
-              ease: "easeInOut",
-            }}
-          ></motion.div>
+            animate={{ y: [0, -40, 0], opacity: [0.4, 0.6, 0.4] }}
+            transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }}
+          />
 
-          {/* Grid pattern overlay */}
+          {/* Grid Pattern */}
           <div className="absolute inset-0 opacity-10">
             <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
               <defs>
-                <pattern
-                  id="grid"
-                  width="40"
-                  height="40"
-                  patternUnits="userSpaceOnUse"
-                >
-                  <path
-                    d="M 40 0 L 0 0 0 40"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="1"
-                  />
+                <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+                  <path d="M 40 0 L 0 0 0 40" fill="none" stroke="currentColor" strokeWidth="1" />
                 </pattern>
               </defs>
               <rect width="100%" height="100%" fill="url(#grid)" />
@@ -1159,64 +867,55 @@ export default function Home() {
             viewport={{ once: true, margin: "-100px" }}
             transition={{ duration: 0.7 }}
           >
-            {/* Animated notification badge */}
+            {/* Notification Badge */}
             <motion.div
               className="inline-flex items-center justify-center px-4 py-2 rounded-full bg-primary/10 border border-primary/20 mb-8 cursor-pointer"
               initial={{ opacity: 0, scale: 0.8 }}
               whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true }}
               transition={{ delay: 0.2, duration: 0.5 }}
-              whileHover={{
-                scale: 1.05,
-                backgroundColor: "rgba(16, 185, 129, 0.15)",
-              }}
+              whileHover={{ scale: 1.05, backgroundColor: "rgba(16, 185, 129, 0.15)" }}
               whileTap={{ scale: 0.95 }}
             >
               <motion.span
                 className="h-2 w-2 rounded-full bg-primary mr-2"
                 animate={{ scale: [1, 1.5, 1] }}
                 transition={{ duration: 2, repeat: Infinity }}
-              ></motion.span>
-              <span className="text-sm font-medium text-primary">
-                Ready to get started?
-              </span>
+              />
+              <span className="text-sm font-medium text-primary">Ready to get started?</span>
             </motion.div>
 
-            {/* Main CTA heading */}
+            {/* Headings */}
             <motion.h2
               className="text-4xl sm:text-5xl md:text-6xl font-bold mb-6"
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
               transition={{ delay: 0.3, duration: 0.7 }}
             >
               <motion.span
                 className="block bg-gradient-to-r from-foreground via-primary to-cyan-400 bg-clip-text text-transparent"
                 initial={{ backgroundPosition: "200% 0" }}
                 whileInView={{ backgroundPosition: "0% 0" }}
-                viewport={{ once: true }}
                 transition={{ delay: 0.5, duration: 1.5, ease: "easeOut" }}
                 style={{ backgroundSize: "200% 100%" }}
               >
                 Transform Your Career
               </motion.span>
+
               <motion.span
                 className="block text-2xl sm:text-3xl md:text-4xl font-semibold mt-2 bg-gradient-to-r from-primary to-cyan-500 bg-clip-text text-transparent"
                 initial={{ opacity: 0, x: -20 }}
                 whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
                 transition={{ delay: 0.8, duration: 0.7 }}
               >
                 with AI-Powered Guidance
               </motion.span>
             </motion.h2>
 
-            {/* Description text */}
+            {/* Description */}
             <motion.p
               className="text-muted-foreground text-lg md:text-xl max-w-2xl mx-auto mb-10 leading-relaxed"
               initial={{ opacity: 0 }}
               whileInView={{ opacity: 1 }}
-              viewport={{ once: true }}
               transition={{ delay: 0.5, duration: 0.7 }}
             >
               Join{" "}
@@ -1224,213 +923,131 @@ export default function Home() {
                 className="font-semibold text-primary"
                 initial={{ scale: 0.5 }}
                 whileInView={{ scale: 1 }}
-                viewport={{ once: true }}
                 transition={{ delay: 1, type: "spring", stiffness: 100 }}
               >
                 thousands of professionals
               </motion.span>{" "}
-              who have accelerated their careers with our personalized AI
-              mentorship platform.
+              who have accelerated their careers with our personalized AI mentorship platform.
             </motion.p>
 
-            {/* Stats indicators */}
-            <motion.div
-              className="flex flex-wrap justify-center gap-6 mb-12"
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.6, duration: 0.7 }}
-            >
-              {[
-                { value: "95%", label: "Success Rate", icon: "📈" },
-                { value: "24/7", label: "AI Support", icon: "🤖" },
-                { value: "1000+", label: "Happy Users", icon: "😊" },
-              ].map((stat, i) => (
-                <motion.div
-                  key={i}
-                  className="flex flex-col items-center px-6 py-4 bg-background/50 backdrop-blur-sm rounded-2xl border border-border/30 shadow-sm hover:shadow-md transition-all duration-300 cursor-pointer"
-                  whileHover={{
-                    y: -5,
-                    scale: 1.05,
-                    borderColor: "rgba(16, 185, 129, 0.3)",
-                  }}
-                  whileTap={{ scale: 0.95 }}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: 0.7 + i * 0.1, duration: 0.5 }}
-                >
-                  <span className="text-2xl mb-2">{stat.icon}</span>
-                  <span className="text-2xl font-bold text-primary">
-                    {stat.value}
-                  </span>
-                  <span className="text-sm text-muted-foreground mt-1">
-                    {stat.label}
-                  </span>
-                </motion.div>
-              ))}
-            </motion.div>
+            {/* ⭐ FIXED CARD ALIGNMENT ⭐ */}
+            <div className="flex flex-col md:flex-row justify-center items-center gap-10 md:gap-14 mt-0">
 
-            {/* Main CTA button with animations */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.8, duration: 0.5 }}
-              className="relative"
-            >
-              <motion.button
-                className="group relative px-8 py-4 rounded-full bg-gradient-to-r from-primary to-cyan-500 text-white font-semibold text-lg overflow-hidden"
-                whileHover={{
-                  scale: 1.05,
-                  boxShadow: "0 10px 25px -5px rgba(16, 185, 129, 0.4)",
-                }}
-                whileTap={{ scale: 0.98 }}
-                transition={{ type: "spring", stiffness: 400, damping: 17 }}
-                onClick={() => {
-                  // Scroll to top of the page
-                  window.scrollTo({
-                    top: 0,
-                    behavior: 'smooth'
-                  });
-                }}
-              >
-                {/* Button shine animation */}
-                <motion.div
-                  className="absolute inset-0 overflow-hidden"
-                  initial={{ x: "-100%" }}
-                  whileHover={{ x: "100%" }}
-                  transition={{ duration: 0.8, ease: "easeInOut" }}
-                >
-                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent"></div>
-                </motion.div>
+              {/* Card 1 */}
+              <CardContainer className="inter-var">
+                <CardBody className="bg-gray-50 relative group/card dark:hover:shadow-2xl dark:hover:shadow-emerald-500/[0.1] dark:bg-black dark:border-white/[0.2] border-black/[0.1] w-[22rem] md:w-[26rem] rounded-xl p-6 border">
+                  <CardItem translateZ="50" className="text-xl font-bold text-neutral-600 dark:text-white">
+                    Make things float in air
+                  </CardItem>
 
-                {/* Button text content */}
-                <span className="relative flex items-center justify-center">
-                  Begin Your Journey
-                  <motion.svg
-                    className="ml-2 h-5 w-5"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    initial={{ x: 0 }}
-                    whileHover={{ x: 5 }}
-                    transition={{ type: "spring", stiffness: 500, damping: 15 }}
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M13 7l5 5m0 0l-5 5m5-5H6"
+                  <CardItem as="p" translateZ="60" className="text-neutral-500 text-sm max-w-sm mt-2 dark:text-neutral-300">
+                    Hover over this card to unleash the power of CSS perspective
+                  </CardItem>
+
+                  <CardItem translateZ="100" className="w-full mt-4">
+                    <img
+                      src="https://images.unsplash.com/photo-1441974231531-c6227db76b6e?q=80&w=2560&auto=format&fit=crop"
+                      className="h-60 w-full object-cover rounded-xl group-hover/card:shadow-xl"
+                      alt="thumbnail"
                     />
-                  </motion.svg>
-                </span>
+                  </CardItem>
 
-                {/* Button pulse effect */}
-                <motion.div
-                  className="absolute -inset-2 bg-primary/30 rounded-full"
-                  initial={{ scale: 0.8, opacity: 0 }}
-                  whileHover={{ scale: 1, opacity: 1 }}
-                  transition={{ duration: 0.5 }}
-                ></motion.div>
-              </motion.button>
+                  <div className="flex justify-between items-center mt-12">
+                    <CardItem translateZ={20} as="a" href="#" className="px-4 py-2 rounded-xl text-xs font-normal dark:text-white">
+                      Try now →
+                    </CardItem>
 
-              {/* Background particles */}
-              {[0, 1, 2, 3].map((i) => (
-                <motion.div
-                  key={i}
-                  className="absolute w-2 h-2 bg-primary/40 rounded-full"
-                  style={{
-                    left: `${20 + i * 15}%`,
-                    top: `${10 + i * 20}%`,
-                  }}
-                  animate={{
-                    y: [0, -20, 0],
-                    opacity: [0, 1, 0],
-                    scale: [0, 1, 0],
-                  }}
-                  transition={{
-                    duration: 3,
-                    repeat: Infinity,
-                    delay: i * 0.5,
-                  }}
-                />
-              ))}
-            </motion.div>
+                    <CardItem translateZ={20} as="button" className="px-4 py-2 rounded-xl bg-black dark:bg-white dark:text-black text-white text-xs font-bold">
+                      Sign up
+                    </CardItem>
+                  </div>
+                </CardBody>
+              </CardContainer>
+
+              {/* Card 2 */}
+              <CardContainer className="inter-var">
+                <CardBody className="bg-gray-50 relative group/card dark:hover:shadow-2xl dark:hover:shadow-emerald-500/[0.1] dark:bg-black dark:border-white/[0.2] border-black/[0.1] w-[22rem] md:w-[26rem] rounded-xl p-6 border">
+                  <CardItem translateZ="50" className="text-xl font-bold text-neutral-600 dark:text-white">
+                    Make things float in air
+                  </CardItem>
+
+                  <CardItem as="p" translateZ="60" className="text-neutral-500 text-sm max-w-sm mt-2 dark:text-neutral-300">
+                    Hover over this card to unleash the power of CSS perspective
+                  </CardItem>
+
+                  <CardItem translateZ="100" className="w-full mt-4">
+                    <img
+                      src="https://images.unsplash.com/photo-1441974231531-c6227db76b6e?q=80&w=2560&auto=format&fit=crop"
+                      className="h-60 w-full object-cover rounded-xl group-hover/card:shadow-xl"
+                      alt="thumbnail"
+                    />
+                  </CardItem>
+
+                  <div className="flex justify-between items-center mt-12">
+                    <CardItem translateZ={20} as="a" href="#" className="px-4 py-2 rounded-xl text-xs font-normal dark:text-white">
+                      Try now →
+                    </CardItem>
+
+                    <CardItem translateZ={20} as="button" className="px-4 py-2 rounded-xl bg-black dark:bg-white dark:text-black text-white text-xs font-bold">
+                      Sign up
+                    </CardItem>
+                  </div>
+                </CardBody>
+              </CardContainer>
+
+              {/* Card 3 */}
+              <CardContainer className="inter-var">
+                <CardBody className="bg-gray-50 relative group/card dark:hover:shadow-2xl dark:hover:shadow-emerald-500/[0.1] dark:bg-black dark:border-white/[0.2] border-black/[0.1] w-[22rem] md:w-[26rem] rounded-xl p-6 border">
+                  <CardItem translateZ="50" className="text-xl font-bold text-neutral-600 dark:text-white">
+                    Make things float in air
+                  </CardItem>
+
+                  <CardItem as="p" translateZ="60" className="text-neutral-500 text-sm max-w-sm mt-2 dark:text-neutral-300">
+                    Hover over this card to unleash the power of CSS perspective
+                  </CardItem>
+
+                  <CardItem translateZ="100" className="w-full mt-4">
+                    <img
+                      src="https://images.unsplash.com/photo-1441974231531-c6227db76b6e?q=80&w=2560&auto=format&fit=crop"
+                      className="h-60 w-full object-cover rounded-xl group-hover/card:shadow-xl"
+                      alt="thumbnail"
+                    />
+                  </CardItem>
+
+                  <div className="flex justify-between items-center mt-12">
+                    <CardItem translateZ={20} as="a" href="#" className="px-4 py-2 rounded-xl text-xs font-normal dark:text-white">
+                      Try now →
+                    </CardItem>
+
+                    <CardItem translateZ={20} as="button" className="px-4 py-2 rounded-xl bg-black dark:bg-white dark:text-black text-white text-xs font-bold">
+                      Sign up
+                    </CardItem>
+                  </div>
+                </CardBody>
+              </CardContainer>
+            </div>
 
             {/* Footer note */}
             <motion.p
-              className="text-sm text-muted-foreground mt-6 inline-block cursor-pointer"
+              className="text-sm text-muted-foreground mt-12 inline-block cursor-pointer"
               initial={{ opacity: 0 }}
               whileInView={{ opacity: 1 }}
-              viewport={{ once: true }}
               transition={{ delay: 1, duration: 0.5 }}
               whileHover={{ color: "hsl(0, 0%, 100%)" }}
               onClick={() => {
                 window.scrollTo({
                   top: 0,
-                  behavior: 'smooth'
+                  behavior: "smooth",
                 });
               }}
             >
               No credit card required.{" "}
               <span className="underline">Start your free trial today.</span>
             </motion.p>
-
-            {/* Decorative floating elements */}
-            <motion.div
-              className="absolute -bottom-20 -left-20 w-40 h-40 bg-primary/10 rounded-full blur-xl"
-              animate={{
-                y: [0, -20, 0],
-                scale: [1, 1.1, 1],
-              }}
-              transition={{
-                duration: 8,
-                repeat: Infinity,
-                ease: "easeInOut",
-              }}
-            ></motion.div>
-
-            <motion.div
-              className="absolute -top-20 -right-20 w-40 h-40 bg-cyan-500/10 rounded-full blur-xl"
-              animate={{
-                y: [0, 20, 0],
-                scale: [1, 1.1, 1],
-              }}
-              transition={{
-                duration: 10,
-                repeat: Infinity,
-                ease: "easeInOut",
-                delay: 1,
-              }}
-            ></motion.div>
-
-            {/* Animated border circles */}
-            {[1, 2, 3].map((i) => (
-              <motion.div
-                key={i}
-                className="absolute rounded-full border border-primary/20"
-                style={{
-                  width: `${i * 60}px`,
-                  height: `${i * 60}px`,
-                  top: `${20 + i * 10}%`,
-                  right: `${5 + i * 5}%`,
-                }}
-                animate={{
-                  scale: [1, 1.1, 1],
-                  opacity: [0.1, 0.2, 0.1],
-                  rotate: i % 2 === 0 ? [0, 5, 0] : [0, -5, 0],
-                }}
-                transition={{
-                  duration: 4 + i,
-                  repeat: Infinity,
-                  delay: i * 0.5,
-                }}
-              />
-            ))}
           </motion.div>
         </div>
       </section>
+
     </div>
   );
 }
