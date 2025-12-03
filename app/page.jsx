@@ -3,8 +3,8 @@
 import HeroSection from "@/components/hero";
 import { useTheme } from "@/components/theme-provider";
 import { Button } from "@/components/ui/button";
-import { Sun, Moon, Sparkles, ArrowRight, ArrowLeft } from "lucide-react";
-import { features } from "@/data/features";
+import { Github } from "lucide-react";
+import { Sun, Moon, Sparkles, ArrowRight, ArrowLeft, Box, Lock, Search, Settings, Target, TrendingUp, Users, Zap } from "lucide-react";
 import { howItWorks } from "@/data/howItWorks";
 import { faqs } from "@/data/faqs";
 import {
@@ -15,10 +15,10 @@ import {
 } from "@/components/ui/accordion";
 import { motion, AnimatePresence } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";
-import { useState, useEffect } from "react";
 import { CardBody, CardContainer, CardItem } from "@/components/ui/3d-card";
 import { AnimatedTestimonials } from "@/components/ui/animated-testimonials";
-
+import { GlowingEffect } from "@/components/ui/glowing-effect";
+import { useState, useEffect } from "react";
 
 // Particle component for background animations
 const ClientParticle = ({ index }) => {
@@ -26,7 +26,6 @@ const ClientParticle = ({ index }) => {
   const [duration, setDuration] = useState(2);
 
   useEffect(() => {
-    // Generate random positions and durations on client side only
     setPosition({
       top: `${Math.random() * 40 + 30}%`,
       left: `${Math.random() * 40 + 30}%`,
@@ -77,6 +76,96 @@ const HeroBackground = () => {
   );
 };
 
+// Glowing Features Grid Component
+const GlowingFeaturesGrid = () => {
+  const features = [
+    {
+      id: 1,
+      icon: <Target className="h-5 w-5 text-black dark:text-neutral-300" />,
+      title: "Personalized Career Path",
+      description: "AI-powered roadmap tailored to your skills, goals, and industry trends for maximum growth.",
+      area: "md:[grid-area:1/1/2/7] xl:[grid-area:1/1/2/5]"
+    },
+    {
+      id: 2,
+      icon: <Zap className="h-5 w-5 text-black dark:text-neutral-300" />,
+      title: "AI-Powered Resume Builder",
+      description: "Generate ATS-optimized resumes and cover letters with real-time feedback and scoring.",
+      area: "md:[grid-area:1/7/2/13] xl:[grid-area:2/1/3/5]"
+    },
+    {
+      id: 3,
+      icon: <TrendingUp className="h-5 w-5 text-black dark:text-neutral-300" />,
+      title: "Smart Job Matching",
+      description: "Get matched with ideal opportunities using advanced algorithms and market analysis.",
+      area: "md:[grid-area:2/1/3/7] xl:[grid-area:1/5/3/8]"
+    },
+    {
+      id: 4,
+      icon: <Users className="h-5 w-5 text-black dark:text-neutral-300" />,
+      title: "Expert Mentorship Network",
+      description: "Connect with industry leaders and career coaches for personalized guidance and support.",
+      area: "md:[grid-area:2/7/3/13] xl:[grid-area:1/8/2/13]"
+    },
+    {
+      id: 5,
+      icon: <Sparkles className="h-5 w-5 text-black dark:text-neutral-300" />,
+      title: "Real-time Skill Analytics",
+      description: "Track your progress with detailed insights and recommendations for skill improvement.",
+      area: "md:[grid-area:3/1/4/13] xl:[grid-area:2/8/3/13]"
+    }
+  ];
+
+  return (
+    <ul className="grid grid-cols-1 grid-rows-none gap-6 md:grid-cols-12 md:grid-rows-3 lg:gap-6 xl:max-h-[38rem] xl:grid-rows-2 relative z-20">
+      {features.map((feature) => (
+        <GridItem
+          key={feature.id}
+          area={feature.area}
+          icon={feature.icon}
+          title={feature.title}
+          description={feature.description}
+        />
+      ))}
+    </ul>
+  );
+};
+
+const GridItem = ({ area, icon, title, description }) => {
+  return (
+    <li className={`min-h-[16rem] list-none ${area}`}>
+      <div className="relative h-full rounded-2xl border border-primary/20 p-2 md:rounded-3xl md:p-3 group hover:border-primary/40 transition-all duration-500">
+        <GlowingEffect
+          blur={0}
+          borderWidth={3}
+          spread={80}
+          glow={true}
+          disabled={false}
+          proximity={64}
+          inactiveZone={0.01}
+          variant="default"
+          movementDuration={2}
+        />
+        <div className="border-0.75 relative flex h-full flex-col justify-between gap-6 overflow-hidden rounded-xl bg-gradient-to-br from-white/70 to-white/30 dark:from-gray-900/60 dark:to-gray-800/40 p-6 md:p-6 backdrop-blur-sm dark:shadow-[0px_0px_27px_0px_#2D2D2D]">
+          <div className="relative flex flex-1 flex-col justify-between gap-4">
+            <div className="w-fit rounded-lg border border-primary/20 bg-gradient-to-tr from-blue-400/20 to-indigo-500/20 p-3 group-hover:scale-110 group-hover:rotate-3 transition-all duration-500">
+              {icon}
+            </div>
+            <div className="space-y-3">
+              <h3 className="pt-0.5 font-sans text-xl font-semibold text-balance text-black md:text-2xl dark:text-white">
+                {title}
+              </h3>
+              <p className="font-sans text-sm text-black md:text-base dark:text-neutral-300 leading-relaxed">
+                {description}
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </li>
+  );
+};
+
 export default function Home() {
   const { theme, toggleTheme } = useTheme();
 
@@ -84,7 +173,7 @@ export default function Home() {
     <div>
       <HeroSection />
 
-      {/* Features Section with Hero Background */}
+      {/* Features Section with Glowing Effect */}
       <section
         id="features"
         className="relative w-full py-16 sm:py-20 md:py-28 bg-background overflow-hidden"
@@ -100,79 +189,118 @@ export default function Home() {
         <div className="container relative mx-auto px-4 sm:px-5 md:px-6">
           {/* Section header with animated title */}
           <div className="text-center mb-14 md:mb-20 relative z-10">
+            <motion.div
+              className="relative inline-block mb-8"
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5 }}
+            >
+              {/* Minimal badge */}
+              <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-neutral-100 dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-700 mb-6">
+                <div className="w-1.5 h-1.5 rounded-full bg-neutral-600 dark:bg-neutral-400" />
+                <span className="text-xs font-medium text-neutral-700 dark:text-neutral-300 tracking-wide">
+                  AI-POWERED PLATFORM
+                </span>
+              </div>
+            </motion.div>
+
             <motion.h2
-              className="text-3xl sm:text-4xl md:text-6xl font-extrabold tracking-tight leading-snug sm:leading-tight"
+              className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight mb-4"
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.7 }}
             >
+              {/* Main heading with subtle gradient */}
               <motion.span
-                className="inline-flex items-center gap-2 sm:gap-3 justify-center text-2xl sm:text-4xl md:text-6xl"
-                animate={{ scale: [1, 1.05, 1] }}
-                transition={{
-                  duration: 6,
-                  repeat: Infinity,
-                  ease: "easeInOut",
-                }}
+                className="block"
+                initial={{ opacity: 0 }}
+                whileInView={{ opacity: 1 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.1, duration: 0.7 }}
               >
-                <span className="text-2xl sm:text-3xl">🚀</span>
-                <span
-                  className="bg-gradient-to-r from-emerald-400 via-teal-300 to-cyan-500 
-                bg-clip-text text-transparent font-extrabold 
-                text-2xl sm:text-4xl md:text-5xl flex items-center gap-2
-                animate-gradient-x"
-                  style={{
-                    backgroundSize: "200% 200%",
-                    textShadow: `
-                  0 0 15px rgba(6,182,212,0.6),
-                  0 0 25px rgba(45,212,191,0.5),
-                  0 0 40px rgba(59,130,246,0.4)
-                `,
-                  }}
-                >
+                <span className="bg-gradient-to-r from-neutral-900 via-neutral-800 to-neutral-900 
+        dark:from-neutral-100 dark:via-neutral-300 dark:to-neutral-100
+        bg-clip-text text-transparent">
                   Advanced Features
-                  <span className="ml-3 animate-pulse text-white flex items-center gap-1">
-                    Start Exploring
-                  </span>
                 </span>
               </motion.span>
 
+              {/* Subtle separator */}
+              <motion.div
+                className="mt-4 mb-6 mx-auto w-16 h-px bg-gradient-to-r from-transparent via-neutral-400 to-transparent"
+                initial={{ scaleX: 0 }}
+                whileInView={{ scaleX: 1 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.2, duration: 0.8 }}
+              />
+
+              {/* Subheading */}
               <motion.span
-                className="block mt-3 sm:mt-5 text-foreground 
-              text-base sm:text-lg md:text-2xl font-semibold"
+                className="block text-xl sm:text-2xl md:text-3xl font-semibold text-neutral-700 dark:text-neutral-300"
                 initial={{ opacity: 0, y: 10 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ delay: 0.2, duration: 0.7 }}
+                transition={{ delay: 0.3, duration: 0.7 }}
               >
-                Transform Your Professional Trajectory
+                Transform Your{" "}
+                <span className="bg-gradient-to-r from-neutral-800 to-neutral-600 
+        dark:from-neutral-200 dark:to-neutral-400
+        bg-clip-text text-transparent">
+                  Professional Journey
+                </span>
               </motion.span>
             </motion.h2>
 
             {/* Section description */}
-            <motion.p
-              className="mt-6 text-muted-foreground max-w-2xl sm:max-w-3xl mx-auto 
-            text-sm sm:text-lg md:text-xl leading-relaxed"
+            <motion.div
+              className="mt-8 max-w-2xl mx-auto"
               initial={{ opacity: 0 }}
               whileInView={{ opacity: 1 }}
               viewport={{ once: true }}
-              transition={{ delay: 0.3, duration: 0.7 }}
+              transition={{ delay: 0.4, duration: 0.7 }}
             >
-              Leverage{" "}
-              <span className="bg-gradient-to-r from-emerald-400 via-teal-300 to-cyan-500 bg-clip-text text-transparent font-semibold">
-                cutting-edge AI
-              </span>{" "}
-              to navigate your career path with precision. Our platform delivers{" "}
-              <span className="bg-gradient-to-r from-teal-300 via-cyan-400 to-blue-500 bg-clip-text text-transparent font-semibold">
-                data-driven insights
-              </span>{" "}
-              and personalized strategies to accelerate your growth and unlock
-              new opportunities.
-            </motion.p>
+              <p className="text-neutral-600 dark:text-neutral-400 text-base sm:text-lg leading-relaxed">
+                Leverage{" "}
+                <span className="font-medium text-neutral-900 dark:text-neutral-200">
+                  intelligent AI
+                </span>{" "}
+                to navigate your career path. Our platform delivers{" "}
+                <span className="font-medium text-neutral-900 dark:text-neutral-200">
+                  data-driven insights
+                </span>{" "}
+                and personalized strategies for professional growth.
+              </p>
+
+              {/* Minimal dots */}
+              <motion.div
+                className="flex justify-center gap-2 mt-6"
+                initial={{ opacity: 0 }}
+                whileInView={{ opacity: 1 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.6, duration: 0.5 }}
+              >
+                {[...Array(3)].map((_, i) => (
+                  <motion.div
+                    key={i}
+                    className="w-1.5 h-1.5 rounded-full bg-neutral-400 dark:bg-neutral-600"
+                    animate={{
+                      scale: [1, 1.2, 1],
+                      opacity: [0.5, 1, 0.5]
+                    }}
+                    transition={{
+                      duration: 2,
+                      repeat: Infinity,
+                      delay: i * 0.3
+                    }}
+                  />
+                ))}
+              </motion.div>
+            </motion.div>
           </div>
 
-          {/* Features grid with animated cards */}
+          {/* Glowing Features Grid */}
           <div className="relative max-w-6xl mx-auto">
             {/* Background dot pattern */}
             <div className="absolute inset-0 pointer-events-none">
@@ -196,49 +324,13 @@ export default function Home() {
               </svg>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 relative z-10">
-              {features.map((feature, index) => (
-                <motion.div
-                  key={index}
-                  className="group relative border border-blue-400/30 dark:border-blue-500/30
-                bg-gradient-to-br from-white/70 to-white/30 dark:from-gray-900/60 dark:to-gray-800/40
-                backdrop-blur-md rounded-2xl overflow-hidden
-                hover:border-blue-400 hover:shadow-[0_0_25px_rgba(59,130,246,0.55)]
-                hover:scale-[1.04] active:scale-[0.98]
-                transition-all duration-500 ease-out"
-                  whileHover={{ y: -5 }}
-                >
-                  <CardContent className="relative z-10 p-6 flex flex-col items-center text-center h-full">
-                    {/* Feature icon */}
-                    <div
-                      className="p-4 rounded-xl bg-gradient-to-tr from-blue-400/20 to-indigo-500/20 
-                  mb-4 group-hover:scale-110 group-hover:rotate-3 transition-all duration-500 ease-out"
-                    >
-                      {feature.icon}
-                    </div>
-
-                    {/* Feature title */}
-                    <h3 className="text-lg sm:text-xl font-semibold mb-2 text-foreground">
-                      {feature.title}
-                    </h3>
-
-                    {/* Feature description */}
-                    <p className="text-muted-foreground text-sm sm:text-base leading-relaxed">
-                      {feature.description}
-                    </p>
-                  </CardContent>
-
-                  {/* Hover glow effect */}
-                  <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition duration-700 bg-gradient-to-br from-blue-500/10 via-transparent to-cyan-500/10 blur-2xl" />
-                </motion.div>
-              ))}
-            </div>
+            <GlowingFeaturesGrid />
           </div>
         </div>
       </section>
 
+      {/* Testimonials Section */}
       <section>
-        {/* New Premium Animated Testimonials Section */}
         <motion.div
           className="relative py-24"
           initial={{ opacity: 0 }}
@@ -246,7 +338,6 @@ export default function Home() {
           transition={{ duration: 0.8 }}
           viewport={{ once: true }}
         >
-
           {/* Section heading */}
           <div className="text-center mb-16">
             <motion.h3
@@ -333,8 +424,7 @@ export default function Home() {
         </motion.div>
       </section>
 
-
-      {/* How It Works Section with Hero Background */}
+      {/* How It Works Section */}
       <section className="relative w-full py-28 bg-background overflow-hidden">
         <HeroBackground />
 
@@ -345,89 +435,83 @@ export default function Home() {
         </div>
 
         <div className="container mx-auto px-6 relative z-10">
-          {/* REFINED HEADER */}
+          {/* ENHANCED */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, ease: "easeOut" }}
-            className="text-center max-w-2xl mx-auto mb-16"
+            className="text-center max-w-3xl mx-auto mb-24 px-4"
           >
-            {/* Enhanced Tag – Matching Futuristic Glow Style */}
+            {/* Animated Badge */}
             <motion.div
-              className="
-      group relative inline-flex items-center gap-2 px-4 py-1.5 rounded-full
-      text-xs font-medium select-none cursor-pointer
-      border border-blue-500/40
-      bg-gradient-to-r from-indigo-500/10 via-blue-400/10 to-cyan-400/10
-      backdrop-blur-sm
-      transition-all duration-500 ease-out
-      hover:border-blue-400
-      hover:shadow-[0_0_25px_rgba(59,130,246,0.5),0_0_45px_rgba(96,165,250,0.4),0_0_65px_rgba(147,197,253,0.35)]
-    "
-              initial={{ opacity: 0, scale: 0.9 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              transition={{ delay: 0.1, duration: 0.45 }}
-              role="button"
-              tabIndex={0}
+              className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full border border-neutral-200 dark:border-neutral-700 bg-white/80 dark:bg-neutral-900/70 backdrop-blur-sm shadow-sm mb-10 transition-all"
+              initial={{ opacity: 0, y: 10 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.05, duration: 0.55 }}
+              whileHover={{
+                boxShadow: "0 6px 18px rgba(0,0,0,0.08)",
+                borderColor: "rgb(180 180 180)"
+              }}
             >
-              {/* Bouncing Dot Icon */}
-              <motion.div
-                animate={{ y: [0, -2, 0] }}
-                transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-                className="w-2 h-2 rounded-full bg-blue-400 group-hover:bg-blue-500 transition-all"
-              />
-
-              {/* Text */}
-              <span className="text-foreground/90 dark:text-foreground z-10">
-                AI-Powered Growth
-              </span>
-
-              {/* Trailing Shimmer Dot */}
-              <div className="
-        w-2 h-2 rounded-full bg-blue-500/70
-        group-hover:translate-y-[-3px]
-        transition-all duration-300
-      "
-              />
-
-              {/* Hover Glow Layer */}
-              <span
-                className="
-        absolute inset-0 rounded-full opacity-0
-        bg-gradient-to-r from-blue-400/30 via-blue-500/30 to-cyan-400/30
-        group-hover:opacity-100 transition-opacity duration-700 blur-md
-      "
-              />
+              <div className="flex items-center gap-3">
+                <motion.div
+                  className="w-2 h-2 rounded-full bg-neutral-600 dark:bg-neutral-400 shadow-[0_0_6px_rgba(0,0,0,0.25)]"
+                  animate={{ scale: [1, 1.3, 1] }}
+                  transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
+                />
+                <span className="text-xs font-semibold text-neutral-700 dark:text-neutral-300 tracking-[0.22em] uppercase opacity-90">
+                  Methodology
+                </span>
+              </div>
             </motion.div>
 
-            {/* Title */}
-            <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight leading-tight mb-3">
-              <span className="bg-gradient-to-r from-primary via-blue-500 to-primary bg-clip-text text-transparent">
-                Accelerate Your Career
+            <motion.h2
+              className="text-4xl md:text-6xl lg:text-7xl font-bold mb-6 tracking-tight"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2, duration: 0.7 }}
+            >
+              <span
+                className="block bg-gradient-to-r from-neutral-900 to-neutral-600 dark:from-white dark:to-neutral-400 bg-clip-text text-transparent drop-shadow-[0_1px_4px_rgba(0,0,0,0.15)]"
+              >
+                How It Works
               </span>
-              <br />
-              <span className="bg-gradient-to-r from-blue-400 to-primary bg-clip-text text-transparent">
-                With Smarter Guidance
-              </span>
-            </h2>
+            </motion.h2>
+
+            {/* Soft Glow Divider */}
+            <motion.div
+              className="w-14 h-[2px] bg-gradient-to-r from-neutral-300 via-neutral-400 to-neutral-300 dark:from-neutral-600 dark:via-neutral-500 dark:to-neutral-600 mx-auto mb-10 rounded-full shadow-[0_0_12px_rgba(0,0,0,0.15)]"
+              initial={{ scaleX: 0 }}
+              whileInView={{ scaleX: 1 }}
+              transition={{ delay: 0.3, duration: 0.8 }}
+            />
 
             {/* Subtitle */}
             <motion.p
-              className="text-muted-foreground text-base md:text-lg leading-relaxed max-w-xl mx-auto"
+              className="text-xl md:text-2xl text-neutral-700 dark:text-neutral-300 mb-6 font-light"
               initial={{ opacity: 0 }}
               whileInView={{ opacity: 1 }}
-              transition={{ delay: 0.25, duration: 0.55 }}
+              transition={{ delay: 0.4, duration: 0.7 }}
             >
-              Get clear, AI-driven steps to grow faster and unlock your best opportunities.
+              Streamlined steps for
+              <span className="font-semibold text-neutral-900 dark:text-white ml-2">career advancement</span>
+            </motion.p>
+
+            {/* Minimal Description */}
+            <motion.p
+              className="text-base md:text-lg text-neutral-600 dark:text-neutral-400 leading-relaxed max-w-xl mx-auto opacity-90"
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              transition={{ delay: 0.5, duration: 0.7 }}
+            >
+              A clear, systematic approach to professional growth with intelligent guidance at each step.
             </motion.p>
           </motion.div>
 
           {/* CLEAN GRID LAYOUT */}
           <div className="space-y-16 relative max-w-5xl mx-auto">
             {howItWorks.map((item, index) => {
-              // PREMIUM IMAGE CAROUSEL WITH ZOOM BLUR TRANSITION
               const ZoomBlurCarousel = ({ images }) => {
                 const [currentImage, setCurrentImage] = useState(0);
                 const [isAnimating, setIsAnimating] = useState(false);
@@ -461,7 +545,6 @@ export default function Home() {
                   setTimeout(() => setIsAnimating(false), 700);
                 };
 
-                // ZOOM BLUR TRANSITION VARIANT
                 const zoomBlurVariants = {
                   enter: {
                     scale: 1.3,
@@ -578,7 +661,7 @@ export default function Home() {
                       </>
                     )}
 
-                    {/* ENHANCED COLORED BORDER SHADOW - INTENSIFIED BLUE */}
+                    {/* ENHANCED COLORED BORDER SHADOW */}
                     <div className="absolute inset-0 rounded-2xl border-2 border-transparent group-hover/image-container:border-blue-400/50 group-hover/image-container:shadow-[0_0_40px_rgba(59,130,246,0.6)] group-hover/image-container:shadow-blue-500/40 transition-all duration-500 pointer-events-none z-10" />
 
                     {/* ADDITIONAL GLOW EFFECT */}
@@ -601,10 +684,10 @@ export default function Home() {
                   }}
                   className="relative flex flex-col lg:flex-row gap-8 lg:gap-12 group rounded-3xl p-8 bg-card/50 backdrop-blur-xl border border-primary/15 shadow-lg hover:border-primary/30 transition-all duration-500 group/main-card"
                 >
-                  {/* ENHANCED COLORED SHADOW FOR MAIN CARD - INTENSIFIED BLUE */}
+                  {/* ENHANCED COLORED SHADOW FOR MAIN CARD */}
                   <div className="absolute inset-0 rounded-3xl border-2 border-transparent group-hover/main-card:border-blue-400/40 group-hover/main-card:shadow-[0_0_50px_rgba(59,130,246,0.5)] group-hover/main-card:shadow-blue-500/30 transition-all duration-500 pointer-events-none z-0" />
 
-                  {/* ADDITIONAL OUTER GLOW FOR MAIN CARD */}
+                  {/* ADDITIONAL OUTER GLOW */}
                   <div className="absolute inset-0 rounded-3xl border border-transparent group-hover/main-card:shadow-[0_0_80px_rgba(96,165,250,0.3)] group-hover/main-card:shadow-blue-400/20 transition-all duration-700 pointer-events-none z-0" />
 
                   {/* STEP NUMBER */}
@@ -641,7 +724,6 @@ export default function Home() {
                         transition: { duration: 0.2 }
                       }}
                     >
-                      {/* ICON GLOW EFFECT */}
                       <div className="relative">
                         {item.icon}
                         <div className="absolute inset-0 rounded-xl border border-transparent group-hover/icon:shadow-[0_0_20px_rgba(59,130,246,0.4)] group-hover/icon:shadow-blue-500/30 transition-all duration-300 pointer-events-none" />
@@ -692,11 +774,10 @@ export default function Home() {
         </div>
       </section>
 
-      {/* FAQ section with Hero Background */}
+      {/* FAQ section */}
       <section id="faq" className="relative w-full py-12 md:py-24 bg-background/50 overflow-hidden">
         <HeroBackground />
         <div className="container mx-auto px-4 md:px-6">
-          {/* FAQ header with animations */}
           <motion.div
             className="text-center max-w-4xl mx-auto mb-20"
             initial={{ opacity: 0, y: 20 }}
@@ -704,7 +785,6 @@ export default function Home() {
             transition={{ duration: 0.7 }}
           >
             <div className="relative inline-block mb-8">
-              {/* Background glow updated to CTA color tone */}
               <motion.div
                 className="absolute -inset-4 bg-gradient-to-r from-primary/60 via-cyan-400/60 to-primary/60
                 blur-2xl rounded-full opacity-30"
@@ -714,7 +794,6 @@ export default function Home() {
                 transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
               />
 
-              {/* Title updated with CTA gradient color */}
               <motion.h2
                 className="relative text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight
                 bg-gradient-to-r from-foreground via-primary to-cyan-400
@@ -728,7 +807,6 @@ export default function Home() {
                 Frequently Asked Questions
               </motion.h2>
 
-              {/* CTA-like sheen swipe */}
               <motion.div
                 className="absolute inset-0 bg-gradient-to-r from-transparent via-white/25 to-transparent 
                 rounded-full pointer-events-none"
@@ -762,7 +840,7 @@ export default function Home() {
               </motion.span>
             </motion.p>
 
-            {/* Enhanced Animated Dots Indicator */}
+            {/* Animated Dots Indicator */}
             <motion.div
               className="flex justify-center mt-10 space-x-3"
               initial={{ opacity: 0 }}
@@ -807,12 +885,6 @@ export default function Home() {
                           bg-card/30 hover:bg-gradient-to-r hover:from-emerald-200/10 hover:to-cyan-300/10 transition-all duration-300"
                   >
                     {faq.question}
-                    <motion.span
-                      className="ml-2"
-                      initial={{ rotate: 0 }}
-                      animate={{ rotate: faq.isOpen ? 180 : 0 }}
-                      transition={{ duration: 0.3 }}
-                    ></motion.span>
                   </AccordionTrigger>
                   <AccordionContent
                     className="px-5 py-4 text-muted-foreground text-sm sm:text-base leading-relaxed
@@ -826,7 +898,8 @@ export default function Home() {
           </div>
         </div>
       </section>
-      {/* Call-to-action section - Button Removed */}
+
+      {/* Call-to-action section */}
       <section className="w-full py-24 md:py-32 bg-gradient-to-br from-background via-background to-primary/5 relative overflow-hidden">
         {/* Background animation elements */}
         <div className="absolute inset-0 overflow-hidden">
@@ -930,8 +1003,7 @@ export default function Home() {
               who have accelerated their careers with our personalized AI mentorship platform.
             </motion.p>
 
-             <div className="flex flex-col md:flex-row justify-center items-center gap-10 md:gap-14 mt-0">
-
+            <div className="flex flex-col md:flex-row justify-center items-center gap-10 md:gap-14 mt-0">
               {/* Card 1 */}
               <CardContainer className="inter-var">
                 <CardBody className="bg-gray-50 relative group/card dark:hover:shadow-2xl dark:hover:shadow-emerald-500/[0.1] dark:bg-black dark:border-white/[0.2] border-black/[0.1] w-[22rem] md:w-[26rem] rounded-xl p-6 border min-h-[27rem]">
@@ -940,7 +1012,7 @@ export default function Home() {
                   </CardItem>
 
                   <CardItem as="p" translateZ="60" className="text-neutral-500 text-sm max-w-sm mt-2 dark:text-neutral-300">
-                    Experience AI assistance, personalized career paths, real-time progress tracking, and mentorship designed to make you ahed of the curve.
+                    Experience AI assistance, personalized career paths, real-time progress tracking, and mentorship designed to make you ahead of the curve.
                   </CardItem>
 
                   <CardItem translateZ="100" className="w-full mt-4">
@@ -952,7 +1024,7 @@ export default function Home() {
                   </CardItem>
 
                   <div className="flex justify-between items-center mt-12">
-                    <CardItem translateZ={20} as="a" href="#" className="px-4 py-2 rounded-xl text-xs font-normal dark:text-white">
+                    <CardItem translateZ={20} as="a" href="/career-paths" className="px-4 py-2 rounded-xl text-xs font-normal dark:text-white">
                       Try now →
                     </CardItem>
 
@@ -965,7 +1037,7 @@ export default function Home() {
 
               {/* Card 2 */}
               <CardContainer className="inter-var">
-                 <CardBody className="bg-gray-50 relative group/card dark:hover:shadow-2xl dark:hover:shadow-emerald-500/[0.1] dark:bg-black dark:border-white/[0.2] border-black/[0.1] w-[22rem] md:w-[26rem] rounded-xl p-6 border min-h-[27rem]">
+                <CardBody className="bg-gray-50 relative group/card dark:hover:shadow-2xl dark:hover:shadow-emerald-500/[0.1] dark:bg-black dark:border-white/[0.2] border-black/[0.1] w-[22rem] md:w-[26rem] rounded-xl p-6 border min-h-[27rem]">
                   <CardItem translateZ="50" className="text-xl font-bold text-neutral-600 dark:text-white">
                     Growth tools that will blow your mind 🤯🔥
                   </CardItem>
@@ -983,7 +1055,7 @@ export default function Home() {
                   </CardItem>
 
                   <div className="flex justify-between items-center mt-12">
-                    <CardItem translateZ={20} as="a" href="#" className="px-4 py-2 rounded-xl text-xs font-normal dark:text-white">
+                    <CardItem translateZ={20} as="a" href="/resume" className="px-4 py-2 rounded-xl text-xs font-normal dark:text-white">
                       Try now →
                     </CardItem>
 
@@ -1002,7 +1074,7 @@ export default function Home() {
                   </CardItem>
 
                   <CardItem as="p" translateZ="60" className="text-neutral-500 text-sm max-w-sm mt-2 dark:text-neutral-300">
-                    Be part of something bigger contribute, collaborate, and build the future with a passionate community of innovators.  
+                    Be part of something bigger contribute, collaborate, and build the future with a passionate community of innovators.
                   </CardItem>
 
                   <CardItem translateZ="100" className="w-full mt-4">
@@ -1018,13 +1090,20 @@ export default function Home() {
                       Try now →
                     </CardItem>
 
-                    <CardItem translateZ={20} as="button" className="px-4 py-2 rounded-xl bg-black dark:bg-white dark:text-black text-white text-xs font-bold">
-                      Sign up
+                    <CardItem
+                      translateZ={20}
+                      as="button"
+                      onClick={() => window.open("https://github.com/Om-singh-ui/NextStep.io", "_blank")}
+                      className="flex items-center gap-2 px-4 py-2 rounded-xl bg-black text-white dark:bg-white dark:text-black text-xs font-semibold hover:opacity-90 transition"
+                    >
+                      <Github className="w-4 h-4" />
+                      Source Code
                     </CardItem>
+
                   </div>
                 </CardBody>
               </CardContainer>
-            </div> 
+            </div>
 
             {/* Footer note */}
             <motion.p
@@ -1046,7 +1125,6 @@ export default function Home() {
           </motion.div>
         </div>
       </section>
-
     </div>
   );
 }
