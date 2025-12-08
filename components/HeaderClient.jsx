@@ -255,7 +255,7 @@ export default function HeaderClient() {
           </Link>
 
           <div className="flex items-center gap-4">
-            {/* GitHub Star Count - Desktop */}s
+            {/* GitHub Star Count - Desktop */}
             <div className="hidden md:flex relative">
               <Link
                 href="https://github.com/Om-singh-ui/NextStep.io"
