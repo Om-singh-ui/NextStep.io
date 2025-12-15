@@ -43,7 +43,7 @@ export default function NegotiatePage() {
   }
 
   // Enhanced theme-aware styles
-  const cardBackground = theme === 'dark' 
+  const cardBackground = theme === 'dark'
     ? "bg-gradient-to-br from-gray-800/90 to-gray-900/90 backdrop-blur-sm border-gray-700/60"
     : "bg-gradient-to-br from-white/95 to-gray-50/95 backdrop-blur-sm border-gray-200/60"
 
@@ -51,7 +51,7 @@ export default function NegotiatePage() {
   const mutedTextColor = theme === 'dark' ? "text-gray-400" : "text-gray-600"
   const lightTextColor = theme === 'dark' ? "text-gray-300" : "text-gray-700"
 
-  const badgeBackground = theme === 'dark' 
+  const badgeBackground = theme === 'dark'
     ? "bg-gradient-to-r from-green-600/20 to-emerald-600/20 text-green-300 border-green-700/30"
     : "bg-gradient-to-r from-green-500/15 to-emerald-500/15 text-green-700 border-green-300"
 
@@ -61,9 +61,9 @@ export default function NegotiatePage() {
 
   // Enhanced stats with better gradients
   const stats = [
-    { 
-      icon: TrendingUp, 
-      value: "15-25%", 
+    {
+      icon: TrendingUp,
+      value: "15-25%",
       label: "Average Salary Increase",
       description: "Higher compensation outcomes",
       color: "text-green-500",
@@ -71,9 +71,9 @@ export default function NegotiatePage() {
       borderColor: "border-green-200/50 dark:border-green-800/30",
       iconGradient: "from-green-500 to-emerald-500"
     },
-    { 
-      icon: Users, 
-      value: "10K+", 
+    {
+      icon: Users,
+      value: "10K+",
       label: "Successful Negotiations",
       description: "Professionals empowered",
       color: "text-blue-500",
@@ -81,9 +81,9 @@ export default function NegotiatePage() {
       borderColor: "border-blue-200/50 dark:border-blue-800/30",
       iconGradient: "from-blue-500 to-cyan-500"
     },
-    { 
-      icon: Clock, 
-      value: "< 2min", 
+    {
+      icon: Clock,
+      value: "< 2min",
       label: "Quick Generation",
       description: "Professional emails ready",
       color: "text-purple-500",
@@ -91,9 +91,9 @@ export default function NegotiatePage() {
       borderColor: "border-purple-200/50 dark:border-purple-800/30",
       iconGradient: "from-purple-500 to-violet-500"
     },
-    { 
-      icon: Star, 
-      value: "4.9/5", 
+    {
+      icon: Star,
+      value: "4.9/5",
       label: "User Rating",
       description: "Satisfaction score",
       color: "text-amber-500",
@@ -190,54 +190,82 @@ export default function NegotiatePage() {
       <div className="min-h-screen py-8 mt-20">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="mx-auto max-w-7xl">
-            {/* Enhanced Header Section */}
+
+
+            {/* Header */}
             <motion.div
-              initial={{ opacity: 0, y: 30 }}
+              initial={{ opacity: 0, y: 24 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.7 }}
-              className="text-center mb-20"
+              transition={{ duration: 0.6, ease: "easeOut" }}
+              className="relative text-center mb-14 lg:mb-20"
             >
+              {/* Glass Badge */}
               <motion.div
-                initial={{ scale: 0.9, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                transition={{ delay: 0.2, duration: 0.5 }}
-                className={`inline-flex items-center gap-3 px-6 py-3 rounded-2xl border backdrop-blur-sm text-base font-semibold mb-8 ${badgeBackground}`}
+                initial={{ opacity: 0, scale: 0.96 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.15, duration: 0.4 }}
+                className="
+      inline-flex items-center gap-2
+      px-4 py-1.5 rounded-full
+      border border-white/10
+      bg-white/5 backdrop-blur-md
+      shadow-[0_0_0_1px_rgba(255,255,255,0.05)]
+      mb-6
+    "
               >
-                <Sparkles className="w-5 h-5" />
-                AI-Powered Salary Negotiation
+                <div className="flex items-center justify-center w-5 h-5 rounded-full bg-indigo-500/20">
+                  <Sparkles className="w-3.5 h-3.5 text-indigo-400" />
+                </div>
+
+                <span className="text-sm font-medium text-gray-600 tracking-wide">
+                  AI Negotiation
+                </span>
               </motion.div>
-              
+
+              {/* Heading */}
               <motion.h1
-                initial={{ opacity: 0, y: 20 }}
+                initial={{ opacity: 0, y: 16 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.3, duration: 0.6 }}
-                className="text-6xl md:text-7xl font-bold mb-6 bg-gradient-to-br from-amber-700 via-amber-600 to-amber-800 dark:from-amber-200 dark:via-amber-300 dark:to-amber-400 bg-clip-text text-transparent"
+                transition={{ delay: 0.3, duration: 0.5 }}
+                style={{
+                  fontFamily:
+                    '"Inter", "SF Pro Display", -apple-system, BlinkMacSystemFont, sans-serif',
+                  fontWeight: 600,
+                  letterSpacing: "-0.02em",
+                  lineHeight: "1.1",
+                  backgroundImage: "linear-gradient(to bottom, #e5e7eb, #6b7280)",
+                  WebkitBackgroundClip: "text",
+                  WebkitTextFillColor: "transparent",
+                }}
+                className="
+    text-3xl sm:text-4xl md:text-5xl lg:text-6xl
+    mb-6
+  "
               >
-                Negotiate Your
-                <span className="block">Worth Confidently</span>
+                Negotiate Your Worth Confidently!
               </motion.h1>
 
-              {/* Quick Stats */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.6 }}
-                className="flex flex-wrap justify-center gap-8 mt-12"
+              {/* Subtitle */}
+              <motion.p
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.45 }}
+                style={{
+                  fontFamily:
+                    '"Inter", "SF Pro Text", -apple-system, BlinkMacSystemFont, sans-serif',
+                  letterSpacing: "-0.01em",
+                }}
+                className="
+    text-base sm:text-lg
+    text-gray-400
+    max-w-xl mx-auto
+  "
               >
-                {["No Credit Card Required", "3 Email Templates", "Instant Results", "100% Confidential"].map((item, index) => (
-                  <motion.div 
-                    key={item} 
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ delay: 0.7 + index * 0.1 }}
-                    className="flex items-center gap-2 text-sm font-medium text-gray-600 dark:text-gray-400"
-                  >
-                    <CheckCircle className="w-4 h-4 text-green-500" />
-                    {item}
-                  </motion.div>
-                ))}
-              </motion.div>
+                AI-powered negotiation strategies to secure better compensation
+              </motion.p>
+
             </motion.div>
+
 
             {/* Enhanced Stats Section */}
             <motion.div
@@ -252,10 +280,10 @@ export default function NegotiatePage() {
                   initial={{ opacity: 0, scale: 0.9 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ delay: 0.4 + index * 0.1 }}
-                  whileHover={{ 
-                    y: -5, 
+                  whileHover={{
+                    y: -5,
                     scale: 1.02,
-                    transition: { duration: 0.2 } 
+                    transition: { duration: 0.2 }
                   }}
                   className={`relative rounded-3xl p-8 border backdrop-blur-sm transition-all duration-300 hover:shadow-2xl ${stat.bgGradient} ${stat.borderColor}`}
                 >
@@ -298,7 +326,7 @@ export default function NegotiatePage() {
                     className="group relative"
                   >
                     <div className={`relative rounded-3xl p-8 backdrop-blur-sm border-2 transition-all duration-500 group-hover:shadow-2xl h-full ${cardBackground} border-gray-200/50 dark:border-gray-700/50 group-hover:border-green-300/30 dark:group-hover:border-green-600/30`}>
-                      
+
                       {/* Step Number with Gradient */}
                       <div className="relative mb-8">
                         <div className={`w-20 h-20 rounded-2xl bg-gradient-to-br ${step.gradient} flex items-center justify-center text-white text-xl font-bold mb-4 shadow-lg`}>
@@ -343,7 +371,7 @@ export default function NegotiatePage() {
                   initial={{ opacity: 0, y: 30 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.8 + index * 0.1 }}
-                  whileHover={{ 
+                  whileHover={{
                     y: -8,
                     scale: 1.02,
                     transition: { duration: 0.3 }
@@ -351,10 +379,10 @@ export default function NegotiatePage() {
                   className="group cursor-pointer"
                 >
                   <div className={`relative overflow-hidden rounded-3xl border-2 backdrop-blur-sm transition-all duration-500 group-hover:shadow-2xl h-full ${cardBackground} border-gray-200/50 dark:border-gray-700/50 group-hover:border-green-300/30 dark:group-hover:border-green-600/30`}>
-                    
+
                     {/* Animated gradient overlay */}
                     <div className={`absolute inset-0 bg-gradient-to-br ${feature.gradient} opacity-0 group-hover:opacity-5 transition-opacity duration-500`} />
-                    
+
                     <div className="relative p-8 h-full flex flex-col">
                       {/* Enhanced Icon */}
                       <div className={`inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br ${feature.gradient} shadow-xl mb-6 group-hover:scale-110 transition-transform duration-300`}>
@@ -369,12 +397,12 @@ export default function NegotiatePage() {
                         <p className={`text-lg leading-relaxed mb-6 ${lightTextColor}`}>
                           {feature.description}
                         </p>
-                        
+
                         {/* Benefits list */}
                         <div className="space-y-3">
                           {feature.benefits.map((benefit, benefitIndex) => (
-                            <motion.div 
-                              key={benefit} 
+                            <motion.div
+                              key={benefit}
                               initial={{ opacity: 0, x: -10 }}
                               animate={{ opacity: 1, x: 0 }}
                               transition={{ delay: 0.9 + index * 0.1 + benefitIndex * 0.1 }}
@@ -455,10 +483,10 @@ export default function NegotiatePage() {
                   Fill in the details below to generate your personalized negotiation email
                 </p>
               </div>
-              
+
               <div className="p-12">
-                <NegotiationForm 
-                  onGenerate={handleGenerate} 
+                <NegotiationForm
+                  onGenerate={handleGenerate}
                   isGenerating={isGenerating}
                 />
               </div>
