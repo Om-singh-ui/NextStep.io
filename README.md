@@ -4,7 +4,7 @@
 ## Your AI-Powered Career Companion
 ## Transform resumes and transcripts into actionable career insights, immersive 3D visualizations, and personalized growth paths.
 
-<img width="1790" height="903" alt="Screenshot 2025-12-01 215722" src="https://github.com/user-attachments/assets/97309d48-6210-4ac4-881b-5afe0c5ce090" />
+<img width="1741" height="898" alt="image" src="https://github.com/user-attachments/assets/b835336c-c982-4351-941c-088c44e4795a" />
 <img width="1757" height="905" alt="Screenshot 2025-12-01 220012" src="https://github.com/user-attachments/assets/67ed0309-54c0-4ee0-bdf9-cea2c953fe0d" />
 
 
