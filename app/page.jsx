@@ -19,6 +19,9 @@ import { CardBody, CardContainer, CardItem } from "@/components/ui/3d-card";
 import { AnimatedTestimonials } from "@/components/ui/animated-testimonials";
 import { GlowingEffect } from "@/components/ui/glowing-effect";
 import { useState, useEffect } from "react";
+import Orb from "@/components/visuals/Orb";
+import ScrollVelocity from "@/components/visuals/ScrollVelocity";
+
 
 // Particle component for background animations
 const ClientParticle = ({ index }) => {
@@ -173,161 +176,117 @@ export default function Home() {
     <div>
       <HeroSection />
 
-      {/* Features Section with Glowing Effect */}
+      {/* Features Section — Orb Hero with Theme-Aware Text */}
       <section
         id="features"
-        className="relative w-full py-16 sm:py-20 md:py-28 bg-background overflow-hidden"
+        className="relative w-full bg-background overflow-hidden"
       >
         <HeroBackground />
 
         {/* Background effects */}
-        <div className="absolute inset-0">
+        <div className="absolute inset-0 pointer-events-none">
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(59,130,246,0.12)_0%,transparent_70%)]" />
           <div className="absolute inset-0 bg-grid-white/[0.04] dark:bg-grid-white/[0.08] bg-[size:40px_40px]" />
         </div>
 
-        <div className="container relative mx-auto px-4 sm:px-5 md:px-6">
-          {/* Section header with animated title */}
-          <div className="text-center mb-14 md:mb-20 relative z-10">
-            <motion.div
-              className="relative inline-block mb-8"
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5 }}
-            >
-              {/* Minimal badge */}
-              <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-neutral-100 dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-700 mb-6">
-                <div className="w-1.5 h-1.5 rounded-full bg-neutral-600 dark:bg-neutral-400" />
-                <span className="text-xs font-medium text-neutral-700 dark:text-neutral-300 tracking-wide">
-                  AI-POWERED PLATFORM
-                </span>
-              </div>
-            </motion.div>
+        {/* ORB HERO */}
+        <div className="relative w-full h-[80vh] min-h-[600px] max-h-[900px]">
+          {/* Orb */}
+          <div className="absolute inset-0 z-10">
+            <Orb
+              hoverIntensity={0.5}
+              rotateOnHover
+              hue={0}
+              forceHoverState={false}
+            />
+          </div>
 
-            <motion.h2
-              className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight mb-4"
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.7 }}
-            >
-              {/* Main heading with subtle gradient */}
-              <motion.span
-                className="block"
-                initial={{ opacity: 0 }}
-                whileInView={{ opacity: 1 }}
-                viewport={{ once: true }}
-                transition={{ delay: 0.1, duration: 0.7 }}
-              >
-                <span className="bg-gradient-to-r from-neutral-900 via-neutral-800 to-neutral-900 
-        dark:from-neutral-100 dark:via-neutral-300 dark:to-neutral-100
-        bg-clip-text text-transparent">
-                  Advanced Features
-                </span>
-              </motion.span>
-
-              {/* Subtle separator */}
+          {/* CENTERED TEXT */}
+          <div className="absolute inset-0 z-20 flex items-center justify-center text-center pointer-events-none">
+            <div className="max-w-2xl px-6">
+              {/* Badge */}
               <motion.div
-                className="mt-4 mb-6 mx-auto w-16 h-px bg-gradient-to-r from-transparent via-neutral-400 to-transparent"
-                initial={{ scaleX: 0 }}
-                whileInView={{ scaleX: 1 }}
-                viewport={{ once: true }}
-                transition={{ delay: 0.2, duration: 0.8 }}
-              />
-
-              {/* Subheading */}
-              <motion.span
-                className="block text-xl sm:text-2xl md:text-3xl font-semibold text-neutral-700 dark:text-neutral-300"
+                className="
+              inline-flex items-center gap-2 px-4 py-1.5 mb-6 rounded-full
+              bg-neutral-900/5 dark:bg-white/10
+              border border-neutral-900/10 dark:border-white/20
+              text-neutral-700 dark:text-neutral-300
+              backdrop-blur text-xs tracking-wide
+            "
                 initial={{ opacity: 0, y: 10 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ delay: 0.3, duration: 0.7 }}
               >
-                Transform Your{" "}
-                <span className="bg-gradient-to-r from-neutral-800 to-neutral-600 
-        dark:from-neutral-200 dark:to-neutral-400
-        bg-clip-text text-transparent">
-                  Professional Journey
+                <span className="w-1.5 h-1.5 rounded-full bg-neutral-600 dark:bg-neutral-300" />
+                AI-POWERED PLATFORM
+              </motion.div>
+
+              {/* Heading */}
+              <motion.h2
+                className="
+              text-4xl sm:text-5xl md:text-6xl font-bold leading-tight
+              bg-gradient-to-r
+              from-neutral-900 via-neutral-700 to-neutral-900
+              dark:from-neutral-100 dark:via-neutral-300 dark:to-neutral-100
+              bg-clip-text text-transparent
+            "
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.7 }}
+              >
+                Advanced Features
+              </motion.h2>
+
+              {/* Subheading */}
+              <motion.p
+                className="
+              mt-4 text-xl sm:text-2xl font-semibold
+              text-neutral-700 dark:text-neutral-300
+            "
+                initial={{ opacity: 0, y: 10 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.2 }}
+              >
+                Transform your{" "}
+                <span
+                  className="
+                bg-gradient-to-r
+                from-neutral-800 to-neutral-600
+                dark:from-neutral-200 dark:to-neutral-400
+                bg-clip-text text-transparent
+              "
+                >
+                  professional journey
                 </span>
-              </motion.span>
-            </motion.h2>
+              </motion.p>
 
-            {/* Section description */}
-            <motion.div
-              className="mt-8 max-w-2xl mx-auto"
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.4, duration: 0.7 }}
-            >
-              <p className="text-neutral-600 dark:text-neutral-400 text-base sm:text-lg leading-relaxed">
-                Leverage{" "}
-                <span className="font-medium text-neutral-900 dark:text-neutral-200">
-                  intelligent AI
-                </span>{" "}
-                to navigate your career path. Our platform delivers{" "}
-                <span className="font-medium text-neutral-900 dark:text-neutral-200">
-                  data-driven insights
-                </span>{" "}
-                and personalized strategies for professional growth.
-              </p>
-
-              {/* Minimal dots */}
-              <motion.div
-                className="flex justify-center gap-2 mt-6"
+              {/* Description */}
+              <motion.p
+                className="
+              mt-6 text-base sm:text-lg max-w-xl mx-auto
+              text-neutral-600 dark:text-neutral-400
+            "
                 initial={{ opacity: 0 }}
                 whileInView={{ opacity: 1 }}
                 viewport={{ once: true }}
-                transition={{ delay: 0.6, duration: 0.5 }}
+                transition={{ delay: 0.4 }}
               >
-                {[...Array(3)].map((_, i) => (
-                  <motion.div
-                    key={i}
-                    className="w-1.5 h-1.5 rounded-full bg-neutral-400 dark:bg-neutral-600"
-                    animate={{
-                      scale: [1, 1.2, 1],
-                      opacity: [0.5, 1, 0.5]
-                    }}
-                    transition={{
-                      duration: 2,
-                      repeat: Infinity,
-                      delay: i * 0.3
-                    }}
-                  />
-                ))}
-              </motion.div>
-            </motion.div>
-          </div>
-
-          {/* Glowing Features Grid */}
-          <div className="relative max-w-6xl mx-auto">
-            {/* Background dot pattern */}
-            <div className="absolute inset-0 pointer-events-none">
-              <svg
-                className="w-full h-full opacity-20 dark:opacity-30"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <defs>
-                  <pattern
-                    id="dotPattern"
-                    x="0"
-                    y="0"
-                    width="32"
-                    height="32"
-                    patternUnits="userSpaceOnUse"
-                  >
-                    <circle cx="1.5" cy="1.5" r="1.3" fill="rgba(59,130,246,0.4)" />
-                  </pattern>
-                </defs>
-                <rect width="100%" height="100%" fill="url(#dotPattern)" />
-              </svg>
+                Leverage intelligent AI to navigate your career path with
+                data-driven insights and personalized strategies.
+              </motion.p>
             </div>
-
-            <GlowingFeaturesGrid />
           </div>
         </div>
+
+        {/* FEATURES GRID */}
+        <div className="relative max-w-6xl mx-auto px-4 sm:px-5 md:px-6 pb-24">
+          <GlowingFeaturesGrid />
+        </div>
       </section>
+
+
 
       {/* Testimonials Section */}
       <section>
@@ -423,6 +382,16 @@ export default function Home() {
           ></div>
         </motion.div>
       </section>
+      <ScrollVelocity
+        texts={[
+          'NextStep.io, Your Next Move',
+          'Career Growth, From Learning to Landing Jobs'
+        ]}
+        velocity={100}
+        className="custom-scroll-text"
+      />
+
+
 
       {/* How It Works Section */}
       <section className="relative w-full py-28 bg-background overflow-hidden">

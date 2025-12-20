@@ -35,6 +35,232 @@ const OptimizedImage = ({ src, alt, className, fallback = null }) => {
   );
 };
 
+// Video Component 1 - Fixed with proper audio handling
+const VideoComponent1 = () => {
+  const videoRef = useRef(null);
+  const [hasUserInteracted, setHasUserInteracted] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(false);
+
+  const handleMouseEnter = () => {
+    if (videoRef.current) {
+      // Only unmute if user has interacted with the page
+      videoRef.current.muted = !hasUserInteracted;
+      
+      videoRef.current.play()
+        .then(() => {
+          setIsPlaying(true);
+          // If user has interacted, fade in audio
+          if (hasUserInteracted) {
+            videoRef.current.muted = false;
+          }
+        })
+        .catch(e => {
+          console.log("Playback failed:", e);
+          // If autoplay fails, keep it muted but still play
+          videoRef.current.muted = true;
+          videoRef.current.play().catch(() => {});
+        });
+    }
+  };
+
+  const handleMouseLeave = () => {
+    if (videoRef.current && isPlaying) {
+      videoRef.current.pause();
+      setIsPlaying(false);
+    }
+  };
+
+  // Handle any user interaction on the page
+  const handleUserInteraction = () => {
+    if (!hasUserInteracted) {
+      setHasUserInteracted(true);
+      // If video is currently playing muted, unmute it
+      if (videoRef.current && isPlaying) {
+        videoRef.current.muted = false;
+      }
+    }
+  };
+
+  // Add click event to video container
+  useEffect(() => {
+    const videoElement = videoRef.current;
+    if (videoElement) {
+      videoElement.addEventListener('click', handleUserInteraction);
+      return () => videoElement.removeEventListener('click', handleUserInteraction);
+    }
+  }, []);
+
+  return (
+    <div
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+      onClick={handleUserInteraction}
+      className="relative group cursor-pointer overflow-hidden rounded-lg shadow-lg border border-slate-200/50 dark:border-slate-600/50 bg-gradient-to-br from-white/10 to-slate-50/20 dark:from-slate-800/20 dark:to-slate-900/20 backdrop-blur-sm h-full"
+    >
+      {/* Video element */}
+      <video
+        ref={videoRef}
+        src="/hero.mp4"
+        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+        muted={!hasUserInteracted} // Start muted until user interaction
+        loop
+        playsInline
+        preload="metadata"
+        poster="/hero2.png"
+      />
+
+      {/* Enhanced hover glow effect */}
+      <div className="absolute inset-0 bg-gradient-to-r from-blue-500/0 via-purple-500/0 to-indigo-500/0 group-hover:from-blue-500/10 group-hover:via-purple-500/10 group-hover:to-indigo-500/10 transition-all duration-500 pointer-events-none" />
+      
+      {/* Subtle play indicator with audio status */}
+      <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
+        <div className="bg-black/40 backdrop-blur-sm rounded-full p-1.5 border border-white/20 flex items-center gap-1">
+          <Play className="w-3 h-3 text-white" fill="white" />
+          {!hasUserInteracted && (
+            <div className="w-2 h-2 bg-yellow-500 rounded-full animate-pulse" title="Click to enable audio" />
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// Video Component 2 - Same fix
+const VideoComponent2 = () => {
+  const videoRef = useRef(null);
+  const [hasUserInteracted, setHasUserInteracted] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(false);
+
+  const handleMouseEnter = () => {
+    if (videoRef.current) {
+      videoRef.current.muted = !hasUserInteracted;
+      
+      videoRef.current.play()
+        .then(() => {
+          setIsPlaying(true);
+          if (hasUserInteracted) {
+            videoRef.current.muted = false;
+          }
+        })
+        .catch(e => {
+          console.log("Playback failed:", e);
+          videoRef.current.muted = true;
+          videoRef.current.play().catch(() => {});
+        });
+    }
+  };
+
+  const handleMouseLeave = () => {
+    if (videoRef.current && isPlaying) {
+      videoRef.current.pause();
+      setIsPlaying(false);
+    }
+  };
+
+  const handleUserInteraction = () => {
+    if (!hasUserInteracted) {
+      setHasUserInteracted(true);
+      if (videoRef.current && isPlaying) {
+        videoRef.current.muted = false;
+      }
+    }
+  };
+
+  useEffect(() => {
+    const videoElement = videoRef.current;
+    if (videoElement) {
+      videoElement.addEventListener('click', handleUserInteraction);
+      return () => videoElement.removeEventListener('click', handleUserInteraction);
+    }
+  }, []);
+
+  return (
+    <div
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+      onClick={handleUserInteraction}
+      className="relative group cursor-pointer overflow-hidden rounded-lg shadow-lg border border-slate-200/50 dark:border-slate-600/50 bg-gradient-to-br from-white/10 to-slate-50/20 dark:from-slate-800/20 dark:to-slate-900/20 backdrop-blur-sm h-full"
+    >
+      <video
+        ref={videoRef}
+        src="/Creating_Video_From_Illustrations.mp4"
+        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+        muted={!hasUserInteracted}
+        loop
+        playsInline
+        preload="metadata"
+        poster="/hero1.png"
+      />
+
+      <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/0 via-cyan-500/0 to-blue-500/0 group-hover:from-emerald-500/10 group-hover:via-cyan-500/10 group-hover:to-blue-500/10 transition-all duration-500 pointer-events-none" />
+      
+      <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
+        <div className="bg-black/40 backdrop-blur-sm rounded-full p-1.5 border border-white/20 flex items-center gap-1">
+          <Play className="w-3 h-3 text-white" fill="white" />
+          {!hasUserInteracted && (
+            <div className="w-2 h-2 bg-yellow-500 rounded-full animate-pulse" title="Click to enable audio" />
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// Fixed Particle Component - Client-side only to avoid hydration mismatch
+const FloatingParticles = ({ count = 3 }) => {
+  const [isClient, setIsClient] = useState(false);
+  const [particles, setParticles] = useState([]);
+
+  useEffect(() => {
+    setIsClient(true);
+    // Generate random positions only on client
+    setParticles(
+      Array.from({ length: count }, (_, i) => ({
+        id: i,
+        initialX: Math.random() * 100,
+        initialY: Math.random() * 100,
+        duration: 3 + i
+      }))
+    );
+  }, [count]);
+
+  if (!isClient || particles.length === 0) {
+    // Render invisible placeholders during SSR
+    return (
+      <div className="absolute -z-10 inset-0">
+        {[...Array(count)].map((_, i) => (
+          <div
+            key={i}
+            className="absolute w-1 h-1 bg-blue-400/30 rounded-full opacity-0"
+          />
+        ))}
+      </div>
+    );
+  }
+
+  return (
+    <div className="absolute -z-10 inset-0">
+      {particles.map((particle) => (
+        <motion.div
+          key={particle.id}
+          className="absolute w-1 h-1 bg-blue-400/30 rounded-full"
+          initial={{ x: particle.initialX, y: particle.initialY }}
+          animate={{
+            x: [particle.initialX, particle.initialX + 50],
+            y: [particle.initialY, particle.initialY + 50],
+          }}
+          transition={{
+            duration: particle.duration,
+            repeat: Infinity,
+            repeatType: "reverse",
+            ease: "linear"
+          }}
+        />
+      ))}
+    </div>
+  );
+};
+
 const Hero = () => {
   const [mounted, setMounted] = useState(false);
   const [showVideo, setShowVideo] = useState(false);
@@ -352,36 +578,40 @@ const Hero = () => {
             </motion.div>
           </motion.div>
 
-          {/* Right Side - Enhanced Image Container */}
+          {/* Right Side - Enhanced Video Container */}
           <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: mounted ? 1 : 0, x: mounted ? 0 : 20 }}
-            transition={{ duration: 0.6, ease: "easeOut", delay: 0.2 }}
-            className="relative lg:ml-12 xl:ml-16"
+            initial={{ opacity: 0, x: 30 }}
+            animate={{ opacity: mounted ? 1 : 0, x: mounted ? 0 : 30 }}
+            transition={{ duration: 0.7, ease: "easeOut" }}
+            className="relative flex justify-center lg:justify-end lg:ml-20 xl:ml-24"
           >
-            {/* Main Hero Image */}
-            <div className="relative bg-gradient-to-br from-white to-slate-50 dark:from-slate-900 dark:to-slate-800 rounded-xl sm:rounded-2xl p-3 sm:p-4 shadow-lg border border-slate-200 dark:border-slate-700">
-              <OptimizedImage
-                src="/hero2.png"
-                alt="Career Optimization Dashboard"
-                className="w-full h-auto rounded-lg sm:rounded-xl shadow-md"
-                fallback={
-                  <div className="w-full h-64 sm:h-80 bg-gradient-to-br from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 rounded-lg sm:rounded-xl flex items-center justify-center">
-                    <div className="text-center">
-                      <Sparkles className="w-8 h-8 text-blue-500 mx-auto mb-2" />
-                      <p className="text-blue-600 dark:text-blue-400 text-sm">Career Dashboard</p>
-                    </div>
-                  </div>
-                }
-              />
+            {/* Main container with enhanced glow */}
+            <div className="relative w-full max-w-[820px] aspect-[4/5] rounded-3xl overflow-hidden shadow-[0_60px_140px_rgba(0,0,0,0.45)] bg-gradient-to-br from-white/10 to-slate-50/20 dark:from-slate-900/40 dark:to-slate-800/30 backdrop-blur-md border border-slate-200/40 dark:border-slate-700/40">
+              {/* Videos Container - Minimal spacing */}
+              <div className="flex flex-col h-full p-0.5 gap-0.5">
+                {/* Video 2 (Top) - Reduced spacing */}
+                <div className="flex-1 min-h-0 relative">
+                  <VideoComponent2 />
+                </div>
 
-              {/* Floating Elements */}
-              <div className="absolute -top-2 -right-2 w-12 h-12 bg-blue-500 rounded-xl rotate-6 opacity-90 shadow-md"></div>
-              <div className="absolute -bottom-2 -left-2 w-10 h-10 bg-green-500 rounded-lg -rotate-6 opacity-90 shadow-md"></div>
+                {/* Video 1 (Bottom) - Reduced spacing */}
+                <div className="flex-1 min-h-0 relative">
+                  <VideoComponent1 />
+                </div>
+              </div>
+
+              {/* Container inner glow effect */}
+              <div className="absolute inset-0 pointer-events-none bg-gradient-to-t from-transparent via-transparent to-white/5 dark:to-slate-900/10" />
             </div>
 
-            {/* Background Decoration */}
-            <div className="absolute inset-0 -z-10 bg-gradient-to-r from-blue-500/10 to-purple-500/10 rounded-2xl blur-lg transform rotate-2 scale-105"></div>
+            {/* Enhanced ambient glow */}
+            <div className="absolute -z-10 inset-0 blur-[120px] opacity-80">
+              <div className="absolute inset-0 bg-gradient-to-br from-blue-500/30 via-purple-500/20 to-indigo-500/25 animate-pulse" />
+              <div className="absolute inset-0 bg-gradient-to-tl from-emerald-500/20 via-cyan-500/15 to-blue-500/20 animate-pulse delay-1000" />
+            </div>
+
+            {/* Fixed Floating particles effect - Now client-side only */}
+            <FloatingParticles count={3} />
           </motion.div>
         </div>
       </div>
@@ -484,8 +714,8 @@ const Hero = () => {
                           key={index}
                           onClick={() => goToImage(index)}
                           className={`p-1 rounded-md transition-all duration-200 ${index === currentImageIndex
-                              ? "bg-gradient-to-r from-blue-500 to-purple-500 scale-110"
-                              : "bg-white/5 hover:bg-white/10"
+                            ? "bg-gradient-to-r from-blue-500 to-purple-500 scale-110"
+                            : "bg-white/5 hover:bg-white/10"
                             }`}
                           aria-label={`View feature ${index + 1}`}
                         >
@@ -566,8 +796,8 @@ const Hero = () => {
                           key={feature.title}
                           onClick={() => goToImage(index)}
                           className={`relative p-1.5 sm:p-2 rounded-lg border backdrop-blur-sm transition-all duration-200 text-left overflow-hidden group ${isActive
-                              ? `border-transparent bg-gradient-to-r ${feature.color}/20 scale-105 shadow-sm`
-                              : "border-slate-200 dark:border-slate-600 bg-white/5 hover:border-slate-300 dark:hover:border-slate-500"
+                            ? `border-transparent bg-gradient-to-r ${feature.color}/20 scale-105 shadow-sm`
+                            : "border-slate-200 dark:border-slate-600 bg-white/5 hover:border-slate-300 dark:hover:border-slate-500"
                             }`}
                         >
                           <div className="flex items-center gap-1.5 sm:gap-2">
