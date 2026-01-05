@@ -42,7 +42,7 @@ const suggestions = [
   }
 ];
 
-export function AISuggestions({ onApplySuggestion, darkMode = false }) {
+export function AISuggestions({ onApplySuggestion }) {
   const [copiedId, setCopiedId] = useState(null);
 
   const handleCopy = async (suggestion, id) => {
@@ -53,9 +53,9 @@ export function AISuggestions({ onApplySuggestion, darkMode = false }) {
 
   const getImpactColor = (impact) => {
     switch (impact) {
-      case "high": return "bg-red-100 text-red-800 border-red-200";
-      case "medium": return "bg-yellow-100 text-yellow-800 border-yellow-200";
-      default: return "bg-blue-100 text-blue-800 border-blue-200";
+      case "high": return "bg-destructive/10 text-destructive border-destructive/20";
+      case "medium": return "bg-warning/10 text-warning-foreground border-warning/20";
+      default: return "bg-primary/10 text-primary border-primary/20";
     }
   };
 
@@ -69,30 +69,14 @@ export function AISuggestions({ onApplySuggestion, darkMode = false }) {
     }
   };
 
-  const cardClassName = darkMode 
-    ? "bg-gray-800 border-gray-700" 
-    : "bg-white";
-
-  const headerClassName = darkMode
-    ? "from-gray-700 to-green-900/50 border-gray-700"
-    : "from-gray-50 to-green-50/50 border-gray-200";
-
-  const suggestionCardClassName = darkMode
-    ? "border-gray-600 bg-gray-700/50"
-    : "border-gray-200 bg-white/50";
-
   return (
-    <Card className={`border-0 shadow-xl ${cardClassName}`}>
-      <CardHeader className={`bg-gradient-to-r border-b ${headerClassName}`}>
-        <CardTitle className={`flex items-center gap-2 text-lg ${
-          darkMode ? "text-white" : "text-gray-900"
-        }`}>
+    <Card className="border-0 shadow-xl bg-card">
+      <CardHeader className="bg-gradient-to-r border-b from-accent to-accent/50 border-border">
+        <CardTitle className="flex items-center gap-2 text-lg text-card-foreground">
           <Sparkles className="h-5 w-5" />
           AI Suggestions
         </CardTitle>
-        <p className={`text-sm ${
-          darkMode ? "text-gray-400" : "text-gray-600"
-        }`}>
+        <p className="text-sm text-muted-foreground">
           Smart recommendations to improve your resume
         </p>
       </CardHeader>
@@ -100,23 +84,19 @@ export function AISuggestions({ onApplySuggestion, darkMode = false }) {
         {suggestions.map((item) => (
           <div
             key={item.id}
-            className={`p-4 rounded-xl border backdrop-blur-sm ${suggestionCardClassName}`}
+            className="p-4 rounded-xl border backdrop-blur-sm border-border bg-card/50"
           >
             <div className="flex items-start justify-between mb-3">
               <div className="flex items-center gap-2">
                 {getCategoryIcon(item.category)}
-                <h4 className={`font-semibold ${
-                  darkMode ? "text-white" : "text-gray-900"
-                }`}>{item.title}</h4>
+                <h4 className="font-semibold text-card-foreground">{item.title}</h4>
               </div>
               <Badge variant="outline" className={getImpactColor(item.impact)}>
                 {item.impact === "high" ? "High Impact" : "Medium Impact"}
               </Badge>
             </div>
             
-            <p className={`text-sm mb-4 leading-relaxed ${
-              darkMode ? "text-gray-300" : "text-gray-700"
-            }`}>
+            <p className="text-sm mb-4 leading-relaxed text-card-foreground/80">
               {item.suggestion}
             </p>
             
@@ -132,7 +112,6 @@ export function AISuggestions({ onApplySuggestion, darkMode = false }) {
                 size="sm"
                 variant="outline"
                 onClick={() => handleCopy(item.suggestion, item.id)}
-                className={darkMode ? "bg-gray-600 border-gray-500 text-white" : ""}
               >
                 {copiedId === item.id ? (
                   <CheckCircle className="h-4 w-4 text-green-600" />
@@ -145,11 +124,11 @@ export function AISuggestions({ onApplySuggestion, darkMode = false }) {
           </div>
         ))}
         
-        <div className="pt-4 border-t border-gray-200 dark:border-gray-700">
+        <div className="pt-4 border-t border-border">
           <Button 
             variant="outline" 
             size="sm"
-            className={`w-full ${darkMode ? "bg-gray-700 border-gray-600 text-white" : ""}`}
+            className="w-full"
           >
             <Sparkles className="h-4 w-4 mr-2" />
             Generate More Suggestions

@@ -57,30 +57,30 @@ function SortableSection({ section, onToggle }) {
       style={style}
       className={`flex items-center justify-between p-4 rounded-xl border transition-all duration-200 ${
         section.enabled
-          ? "bg-white border-gray-200 shadow-sm"
-          : "bg-gray-50/50 border-gray-100"
-      } ${isDragging ? "shadow-lg ring-2 ring-blue-200" : ""}`}
+          ? "bg-card border-border shadow-sm"
+          : "bg-accent/30 border-border/50"
+      } ${isDragging ? "shadow-lg ring-2 ring-primary/20" : ""}`}
     >
       <div className="flex items-center gap-3 flex-1">
         <div
           {...attributes}
           {...listeners}
-          className="cursor-grab active:cursor-grabbing text-gray-400 hover:text-gray-600 transition-colors"
+          className="cursor-grab active:cursor-grabbing text-muted-foreground hover:text-foreground transition-colors"
         >
           <GripVertical className="h-5 w-5" />
         </div>
         <div className="flex-1">
           <div className="flex items-center gap-2">
-            <h3 className={`font-medium ${section.enabled ? "text-gray-900" : "text-gray-500"}`}>
+            <h3 className={`font-medium ${section.enabled ? "text-foreground" : "text-muted-foreground"}`}>
               {section.title}
             </h3>
             {section.required && (
-              <span className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full">
+              <span className="text-xs bg-primary/10 text-primary px-2 py-1 rounded-full">
                 Required
               </span>
             )}
           </div>
-          <p className="text-sm text-gray-500 mt-1">
+          <p className="text-sm text-muted-foreground mt-1">
             {section.enabled ? "Visible on resume" : "Hidden from resume"}
           </p>
         </div>
@@ -90,7 +90,7 @@ function SortableSection({ section, onToggle }) {
           checked={section.enabled}
           onCheckedChange={(checked) => onToggle(section.id, checked)}
         />
-        <Button variant="ghost" size="icon" className="text-gray-400 hover:text-gray-600">
+        <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-foreground">
           <Settings2 className="h-4 w-4" />
         </Button>
       </div>
@@ -130,13 +130,13 @@ export function SectionManager({ onSectionsChange }) {
   };
 
   return (
-    <Card className="border-0 shadow-xl">
-      <CardHeader className="bg-gradient-to-r from-gray-50 to-purple-50/50 border-b">
-        <CardTitle className="flex items-center gap-2 text-lg">
+    <Card className="border-0 shadow-xl bg-card">
+      <CardHeader className="bg-gradient-to-r border-b from-accent to-accent/50 border-border">
+        <CardTitle className="flex items-center gap-2 text-lg text-card-foreground">
           <GripVertical className="h-5 w-5" />
           Section Manager
         </CardTitle>
-        <p className="text-sm text-gray-600">
+        <p className="text-sm text-muted-foreground">
           Drag to reorder and toggle sections visibility
         </p>
       </CardHeader>

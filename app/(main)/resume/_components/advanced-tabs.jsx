@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 
-export function AdvancedTabs({ tabs, value, onValueChange, className, darkMode = false }) {
+export function AdvancedTabs({ tabs, value, onValueChange, className }) {
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
@@ -24,8 +24,7 @@ export function AdvancedTabs({ tabs, value, onValueChange, className, darkMode =
     return (
       <div
         className={cn(
-          "w-full h-10 rounded-xl animate-pulse",
-          darkMode ? "bg-gray-700/40" : "bg-gray-200/60"
+          "w-full h-10 rounded-xl animate-pulse bg-accent"
         )}
       />
     );
@@ -36,8 +35,7 @@ export function AdvancedTabs({ tabs, value, onValueChange, className, darkMode =
       <div className="relative">
         <div
           className={cn(
-            "flex space-x-1 rounded-2xl p-1 backdrop-blur-sm",
-            darkMode ? "bg-gray-700/50" : "bg-gray-100/80"
+            "flex space-x-1 rounded-2xl p-1 backdrop-blur-sm bg-accent/50"
           )}
         >
           {tabs.map((tab) => (
@@ -47,17 +45,15 @@ export function AdvancedTabs({ tabs, value, onValueChange, className, darkMode =
               className={cn(
                 "relative flex-1 rounded-xl px-4 py-3 text-sm font-medium transition-all duration-300",
                 value === tab.value
-                  ? "text-white"
-                  : darkMode
-                  ? "text-gray-400 hover:text-gray-200"
-                  : "text-gray-600 hover:text-gray-900"
+                  ? "text-primary-foreground"
+                  : "text-muted-foreground hover:text-foreground"
               )}
             >
               {/* Animated background for active tab */}
               {value === tab.value && (
                 <motion.div
                   layoutId="activeTab"
-                  className="absolute inset-0 rounded-xl bg-gradient-to-r from-blue-600 to-purple-600 shadow-lg"
+                  className="absolute inset-0 rounded-xl bg-gradient-to-r from-primary to-primary/80 shadow-lg"
                   transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
                 />
               )}
