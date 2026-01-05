@@ -3,7 +3,7 @@ import { BarLoader } from "react-spinners";
 
 export default function Layout({ children }) {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-indigo-50 dark:from-slate-900 dark:to-indigo-900/20">
+    <div className="min-h-screen">
       <Suspense
         fallback={
           <div className="flex justify-center items-center min-h-screen">

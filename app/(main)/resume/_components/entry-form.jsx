@@ -37,7 +37,6 @@ export function EntryForm({
   onChange,
   onImageChange,
   profileImage,
-  darkMode = false,
   onImproveWithAI,
 }) {
   const [isAdding, setIsAdding] = useState(false);
@@ -112,16 +111,6 @@ export function EntryForm({
     if (improved) setValue("description", improved);
   };
 
-  const baseCard =
-    "transition-all duration-300 backdrop-blur-lg border rounded-2xl shadow-lg";
-  const cardClass = darkMode
-    ? `${baseCard} bg-gray-800/80 border-gray-700 text-white hover:border-blue-500/60`
-    : `${baseCard} bg-white/70 border-gray-200 hover:border-blue-300`;
-
-  const inputClass = darkMode
-    ? "bg-gray-800 border-gray-600 text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500"
-    : "bg-white border-gray-300 focus:ring-2 focus:ring-blue-400";
-
   return (
     <motion.div
       initial={{ opacity: 0, y: 10 }}
@@ -132,9 +121,9 @@ export function EntryForm({
       {/* Profile Image Section */}
       {type === "Profile" && (
         <motion.div layout>
-          <Card className={cardClass}>
+          <Card className="transition-all duration-300 backdrop-blur-lg border rounded-2xl shadow-lg bg-card hover:border-primary/50">
             <CardHeader>
-              <CardTitle>Profile Image</CardTitle>
+              <CardTitle className="text-card-foreground">Profile Image</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="flex items-center space-x-6">
@@ -144,18 +133,14 @@ export function EntryForm({
                       layoutId="profile-photo"
                       src={profileImage}
                       alt="Profile"
-                      className="w-24 h-24 rounded-full object-cover border-2 border-blue-400 shadow-md"
+                      className="w-24 h-24 rounded-full object-cover border-2 border-primary shadow-md"
                       whileHover={{ scale: 1.05 }}
                     />
                   ) : (
                     <div
-                      className={`w-24 h-24 flex items-center justify-center rounded-full border-2 border-dashed ${
-                        darkMode
-                          ? "border-gray-600 bg-gray-700"
-                          : "border-gray-300 bg-gray-100"
-                      }`}
+                      className="w-24 h-24 flex items-center justify-center rounded-full border-2 border-dashed border-border bg-accent"
                     >
-                      <User className="h-8 w-8 text-gray-400" />
+                      <User className="h-8 w-8 text-muted-foreground" />
                     </div>
                   )}
                 </div>
@@ -171,11 +156,7 @@ export function EntryForm({
                     <Button
                       onClick={triggerFileInput}
                       variant="outline"
-                      className={
-                        darkMode
-                          ? "bg-gray-700 border-gray-600 text-white hover:bg-gray-600"
-                          : "bg-blue-50 border-blue-200 text-blue-700 hover:bg-blue-100"
-                      }
+                      className="bg-accent border-border hover:bg-accent/80 text-card-foreground"
                     >
                       <Upload className="h-4 w-4 mr-2" />
                       {profileImage ? "Change" : "Upload"}
@@ -185,18 +166,14 @@ export function EntryForm({
                         variant="ghost"
                         size="sm"
                         onClick={() => onImageChange(null)}
-                        className="text-red-500 hover:bg-red-100"
+                        className="text-destructive hover:bg-destructive/10"
                       >
                         <X className="h-4 w-4 mr-1" />
                         Remove
                       </Button>
                     )}
                   </div>
-                  <p
-                    className={`text-xs ${
-                      darkMode ? "text-gray-400" : "text-gray-500"
-                    }`}
-                  >
+                  <p className="text-xs text-muted-foreground">
                     Recommended: Square JPG/PNG, max 2MB
                   </p>
                 </div>
@@ -213,31 +190,31 @@ export function EntryForm({
           layout
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className={cardClass}
+          className="transition-all duration-300 backdrop-blur-lg border rounded-2xl shadow-lg bg-card hover:border-primary/50"
         >
           <CardHeader className="flex flex-row justify-between items-center">
-            <CardTitle className="text-base font-medium">
+            <CardTitle className="text-base font-medium text-card-foreground">
               {item.title} {item.organization && `@ ${item.organization}`}
             </CardTitle>
             <Button
               variant="ghost"
               size="icon"
               onClick={() => handleDelete(index)}
-              className="hover:bg-red-100 text-red-500"
+              className="hover:bg-destructive/10 text-destructive"
             >
               <X className="h-4 w-4" />
             </Button>
           </CardHeader>
           <CardContent className="text-sm space-y-1">
             {item.organization && (
-              <p className="opacity-80">{item.organization}</p>
+              <p className="text-muted-foreground">{item.organization}</p>
             )}
-            <p className="opacity-70">
+            <p className="text-muted-foreground">
               {item.current
                 ? `${item.startDate} - Present`
                 : `${item.startDate} - ${item.endDate}`}
             </p>
-            <p className="mt-2 whitespace-pre-wrap opacity-90">
+            <p className="mt-2 whitespace-pre-wrap text-card-foreground">
               {item.description}
             </p>
           </CardContent>
@@ -247,9 +224,9 @@ export function EntryForm({
       {/* Add New Entry Form */}
       {isAdding ? (
         <motion.div layout>
-          <Card className={cardClass}>
+          <Card className="transition-all duration-300 backdrop-blur-lg border rounded-2xl shadow-lg bg-card hover:border-primary/50">
             <CardHeader>
-              <CardTitle>Add {type}</CardTitle>
+              <CardTitle className="text-card-foreground">Add {type}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
@@ -258,13 +235,11 @@ export function EntryForm({
                     type === "Profile" ? "Full Name" : "Title / Position"
                   }
                   {...register("title")}
-                  className={inputClass}
                 />
                 {type !== "Profile" && (
                   <Input
                     placeholder="Organization / Company"
                     {...register("organization")}
-                    className={inputClass}
                   />
                 )}
               </div>
@@ -272,12 +247,11 @@ export function EntryForm({
               {type !== "Profile" && (
                 <>
                   <div className="grid grid-cols-2 gap-4">
-                    <Input type="month" {...register("startDate")} className={inputClass} />
+                    <Input type="month" {...register("startDate")} />
                     <Input
                       type="month"
                       {...register("endDate")}
                       disabled={current}
-                      className={inputClass}
                     />
                   </div>
                   <div className="flex items-center gap-2">
@@ -288,23 +262,23 @@ export function EntryForm({
                         setValue("current", e.target.checked);
                         if (e.target.checked) setValue("endDate", "");
                       }}
-                      className={darkMode ? "accent-blue-500" : ""}
+                      className="accent-primary"
                     />
-                    <span className="text-sm">Current {type}</span>
+                    <span className="text-sm text-card-foreground">Current {type}</span>
                   </div>
                 </>
               )}
 
               <div className="space-y-2">
                 <div className="flex justify-between items-center">
-                  <label className="text-sm">Description</label>
+                  <label className="text-sm text-card-foreground">Description</label>
                   <Button
                     type="button"
                     size="sm"
                     variant="ghost"
                     onClick={handleImproveDescription}
                     disabled={isImproving || !description}
-                    className="text-blue-500 hover:text-blue-600"
+                    className="text-primary hover:text-primary/80"
                   >
                     {isImproving ? (
                       <>
@@ -322,7 +296,7 @@ export function EntryForm({
                 <Textarea
                   {...register("description")}
                   placeholder={`Describe your ${type.toLowerCase()}...`}
-                  className={`h-32 ${inputClass}`}
+                  className="h-32"
                 />
               </div>
             </CardContent>
@@ -348,11 +322,7 @@ export function EntryForm({
           <Button
             variant="outline"
             onClick={() => setIsAdding(true)}
-            className={`w-full ${
-              darkMode
-                ? "bg-gray-700 border-gray-600 text-white hover:bg-gray-600"
-                : "hover:bg-blue-50"
-            }`}
+            className="w-full hover:bg-accent"
           >
             <PlusCircle className="h-4 w-4 mr-2" />
             Add {type}

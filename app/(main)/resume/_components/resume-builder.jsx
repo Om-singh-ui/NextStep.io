@@ -40,7 +40,6 @@ import { resumeTemplates } from "@/data/resume-templates";
 import { useUser } from "@clerk/nextjs";
 import useFetch from "@/hooks/use-fetch";
 import { saveResume, improveWithAI } from "@/actions/resume";
-import { useTheme } from "@/components/theme-provider"; // Import theme provider
 
 const builderTabs = [
   { value: "content", label: "Content", icon: Edit },
@@ -59,10 +58,6 @@ export default function EnhancedResumeBuilder({ initialContent }) {
   const [previewDevice, setPreviewDevice] = useState("desktop");
   const [isMounted, setIsMounted] = useState(false);
   const { user } = useUser();
-
-  // Use theme from theme provider
-  const { theme } = useTheme();
-  const darkMode = theme === "dark";
 
   const {
     control,
@@ -365,16 +360,12 @@ export default function EnhancedResumeBuilder({ initialContent }) {
   };
 
   const renderFormContent = () => (
-    <div className={`rounded-2xl shadow-xl border overflow-hidden ${
-      darkMode 
-        ? "bg-gray-800 border-gray-700" 
-        : "bg-white border-gray-100"
-    }`}>
-      <div className="bg-gradient-to-r from-blue-600 to-indigo-600 px-6 py-4">
+    <div className="rounded-2xl shadow-xl border overflow-hidden bg-card">
+      <div className="bg-gradient-to-r from-primary to-primary/80 px-6 py-4">
         <div className="flex justify-between items-center">
           <div>
             <h2 className="text-xl font-bold text-white">Resume Content</h2>
-            <p className="text-blue-100 text-sm">Fill in your professional details</p>
+            <p className="text-primary-foreground/80 text-sm">Fill in your professional details</p>
           </div>
           <div className="flex items-center gap-2">
             <Button
@@ -388,13 +379,11 @@ export default function EnhancedResumeBuilder({ initialContent }) {
           </div>
         </div>
       </div>
-      <div className={`p-6 space-y-8 ${darkMode ? "bg-gray-800" : "bg-white"}`}>
+      <div className="p-6 space-y-8 bg-card">
         <form onSubmit={handleSubmit(handleSaveResume)} className="space-y-8">
           {/* Personal Information */}
           <div className="space-y-6">
-            <h3 className={`text-lg font-semibold ${
-              darkMode ? "text-white" : "text-gray-900"
-            }`}>Personal Information</h3>
+            <h3 className="text-lg font-semibold text-card-foreground">Personal Information</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {[
                 { key: "name", label: "Full Name *", placeholder: "John Doe" },
@@ -405,21 +394,15 @@ export default function EnhancedResumeBuilder({ initialContent }) {
                 { key: "linkedin", label: "LinkedIn", placeholder: "https://linkedin.com/in/yourprofile" }
               ].map((field) => (
                 <div key={field.key} className="space-y-2">
-                  <label className={`text-sm font-medium ${
-                    darkMode ? "text-gray-300" : "text-gray-700"
-                  }`}>{field.label}</label>
+                  <label className="text-sm font-medium text-muted-foreground">{field.label}</label>
                   <Input
                     {...register(`personalInfo.${field.key}`)}
                     placeholder={field.placeholder}
                     type={field.type || "text"}
-                    className={`w-full ${
-                      darkMode 
-                        ? "bg-gray-700 border-gray-600 text-white placeholder-gray-400" 
-                        : "bg-white border-gray-300"
-                    }`}
+                    className="w-full"
                   />
                   {errors.personalInfo?.[field.key] && (
-                    <p className="text-sm text-red-500">{errors.personalInfo[field.key].message}</p>
+                    <p className="text-sm text-destructive">{errors.personalInfo[field.key].message}</p>
                   )}
                 </div>
               ))}
@@ -428,9 +411,7 @@ export default function EnhancedResumeBuilder({ initialContent }) {
 
           {/* Profile Image */}
           <div className="space-y-4">
-            <h3 className={`text-lg font-semibold ${
-              darkMode ? "text-white" : "text-gray-900"
-            }`}>Profile Photo</h3>
+            <h3 className="text-lg font-semibold text-card-foreground">Profile Photo</h3>
             <Controller
               name="profile"
               control={control}
@@ -441,7 +422,6 @@ export default function EnhancedResumeBuilder({ initialContent }) {
                   onChange={() => {}}
                   onImageChange={setProfileImage}
                   profileImage={profileImage}
-                  darkMode={darkMode}
                 />
               )}
             />
@@ -450,9 +430,7 @@ export default function EnhancedResumeBuilder({ initialContent }) {
           {/* Summary with AI Improvement */}
           <div className="space-y-4">
             <div className="flex justify-between items-center">
-              <h3 className={`text-lg font-semibold ${
-                darkMode ? "text-white" : "text-gray-900"
-              }`}>Professional Summary</h3>
+              <h3 className="text-lg font-semibold text-card-foreground">Professional Summary</h3>
               <Button
                 type="button"
                 variant="outline"
@@ -465,7 +443,6 @@ export default function EnhancedResumeBuilder({ initialContent }) {
                   }
                 }}
                 disabled={isImproving}
-                className={darkMode ? "bg-gray-700 text-white border-gray-600" : ""}
               >
                 <Sparkles className="h-4 w-4 mr-2" />
                 {isImproving ? "Improving..." : "AI Enhance"}
@@ -478,11 +455,7 @@ export default function EnhancedResumeBuilder({ initialContent }) {
                 <Textarea
                   {...field}
                   placeholder="Write a compelling professional summary that highlights your key achievements and career objectives..."
-                  className={`min-h-32 ${
-                    darkMode 
-                      ? "bg-gray-700 border-gray-600 text-white placeholder-gray-400" 
-                      : "bg-white border-gray-300"
-                  }`}
+                  className="min-h-32"
                 />
               )}
             />
@@ -490,9 +463,7 @@ export default function EnhancedResumeBuilder({ initialContent }) {
 
           {/* Skills */}
           <div className="space-y-4">
-            <h3 className={`text-lg font-semibold ${
-              darkMode ? "text-white" : "text-gray-900"
-            }`}>Skills</h3>
+            <h3 className="text-lg font-semibold text-card-foreground">Skills</h3>
             <Controller
               name="skills"
               control={control}
@@ -500,11 +471,7 @@ export default function EnhancedResumeBuilder({ initialContent }) {
                 <Textarea
                   {...field}
                   placeholder="List your key skills (comma separated or one per line)..."
-                  className={`min-h-32 ${
-                    darkMode 
-                      ? "bg-gray-700 border-gray-600 text-white placeholder-gray-400" 
-                      : "bg-white border-gray-300"
-                  }`}
+                  className="min-h-32"
                 />
               )}
             />
@@ -512,9 +479,7 @@ export default function EnhancedResumeBuilder({ initialContent }) {
 
           {/* Experience */}
           <div className="space-y-4">
-            <h3 className={`text-lg font-semibold ${
-              darkMode ? "text-white" : "text-gray-900"
-            }`}>Work Experience</h3>
+            <h3 className="text-lg font-semibold text-card-foreground">Work Experience</h3>
             <Controller
               name="experience"
               control={control}
@@ -523,7 +488,6 @@ export default function EnhancedResumeBuilder({ initialContent }) {
                   type="Experience"
                   entries={field.value}
                   onChange={field.onChange}
-                  darkMode={darkMode}
                   onImproveWithAI={handleImproveWithAI}
                 />
               )}
@@ -532,9 +496,7 @@ export default function EnhancedResumeBuilder({ initialContent }) {
 
           {/* Education */}
           <div className="space-y-4">
-            <h3 className={`text-lg font-semibold ${
-              darkMode ? "text-white" : "text-gray-900"
-            }`}>Education</h3>
+            <h3 className="text-lg font-semibold text-card-foreground">Education</h3>
             <Controller
               name="education"
               control={control}
@@ -543,7 +505,6 @@ export default function EnhancedResumeBuilder({ initialContent }) {
                   type="Education"
                   entries={field.value}
                   onChange={field.onChange}
-                  darkMode={darkMode}
                   onImproveWithAI={handleImproveWithAI}
                 />
               )}
@@ -552,9 +513,7 @@ export default function EnhancedResumeBuilder({ initialContent }) {
 
           {/* Projects */}
           <div className="space-y-4">
-            <h3 className={`text-lg font-semibold ${
-              darkMode ? "text-white" : "text-gray-900"
-            }`}>Projects</h3>
+            <h3 className="text-lg font-semibold text-card-foreground">Projects</h3>
             <Controller
               name="projects"
               control={control}
@@ -563,18 +522,17 @@ export default function EnhancedResumeBuilder({ initialContent }) {
                   type="Project"
                   entries={field.value}
                   onChange={field.onChange}
-                  darkMode={darkMode}
                   onImproveWithAI={handleImproveWithAI}
                 />
               )}
             />
           </div>
 
-          <div className="flex gap-4 pt-6 border-t border-gray-200 dark:border-gray-700">
+          <div className="flex gap-4 pt-6 border-t border-border">
             <Button
               type="submit"
               disabled={isSaving}
-              className="bg-blue-600 hover:bg-blue-700 text-white"
+              className="bg-primary hover:bg-primary/90 text-primary-foreground"
             >
               {isSaving ? (
                 <>
@@ -592,7 +550,6 @@ export default function EnhancedResumeBuilder({ initialContent }) {
               type="button"
               variant="outline"
               onClick={() => setActiveView("preview")}
-              className={darkMode ? "bg-gray-700 text-white border-gray-600" : ""}
             >
               <Eye className="h-4 w-4 mr-2" />
               Preview Resume
@@ -608,7 +565,6 @@ export default function EnhancedResumeBuilder({ initialContent }) {
       content={previewContent}
       onDownload={handleGeneratePDF}
       isGenerating={isGenerating}
-      darkMode={darkMode}
       previewDevice={previewDevice}
       onPreviewDeviceChange={setPreviewDevice}
       onEdit={() => setActiveView("form")}
@@ -616,64 +572,40 @@ export default function EnhancedResumeBuilder({ initialContent }) {
   );
 
   return (
-    <div className={`min-h-screen transition-colors duration-300 ${
-      darkMode 
-        ? "bg-gradient-to-br from-gray-900 via-blue-900/30 to-indigo-900/30" 
-        : "bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/30"
-    }`}>
+    <div className="min-h-screen">
       {/* Enhanced Header */}
-      <div className={`backdrop-blur-sm border-b sticky top-0 z-40 transition-colors duration-300 ${
-        darkMode 
-          ? "bg-gray-800/80 border-gray-700/50" 
-          : "bg-white/80 border-slate-200/50"
-      }`}>
+      <div className="backdrop-blur-sm border-b sticky top-0 z-40 bg-background/80 border-border/50">
         <div className="container mx-auto px-4 py-4">
           <div className="flex flex-col lg:flex-row justify-between items-center gap-4">
             <div className="text-center lg:text-left">
-              <h1 className={`font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 bg-clip-text text-transparent text-3xl md:text-4xl lg:text-5xl mb-2 ${
-                darkMode ? "text-white" : ""
-              }`}>
+              <h1 className="font-bold bg-gradient-to-r from-primary via-primary/90 to-primary/70 bg-clip-text text-transparent text-3xl md:text-4xl lg:text-5xl mb-2">
                 Resume Craft
               </h1>
-              <p className={darkMode ? "text-gray-300" : "text-slate-600"}>
+              <p className="text-muted-foreground">
                 Build a professional resume that gets you hired
               </p>
             </div>
             
             <div className="flex flex-col sm:flex-row gap-3 items-center">
               {/* Resume Score */}
-              <div className={`flex items-center gap-3 rounded-2xl px-4 py-2 border shadow-sm transition-colors ${
-                darkMode 
-                  ? "bg-gray-800/80 border-gray-700" 
-                  : "bg-white/80 border-slate-200"
-              }`}>
+              <div className="flex items-center gap-3 rounded-2xl px-4 py-2 border shadow-sm bg-card/80 border-border">
                 <div className="flex items-center gap-2">
                   <div className="relative">
-                    <div className={`w-12 h-12 rounded-full flex items-center justify-center ${
-                      darkMode ? "bg-gray-700" : "bg-slate-100"
-                    }`}>
+                    <div className="w-12 h-12 rounded-full flex items-center justify-center bg-accent">
                       <div 
                         className="absolute inset-1 rounded-full"
                         style={{
-                          background: `conic-gradient(#10b981 ${resumeScore * 3.6}deg, ${
-                            darkMode ? '#374151' : '#e5e7eb'
-                          } 0deg)`
+                          background: `conic-gradient(#10b981 ${resumeScore * 3.6}deg, var(--accent) 0deg)`
                         }}
                       />
-                      <span className={`relative text-sm font-bold ${
-                        darkMode ? "text-white" : "text-slate-700"
-                      }`}>
+                      <span className="relative text-sm font-bold text-card-foreground">
                         {resumeScore}
                       </span>
                     </div>
                   </div>
                   <div className="text-left">
-                    <p className={`text-xs font-medium ${
-                      darkMode ? "text-gray-400" : "text-slate-500"
-                    }`}>Resume Score</p>
-                    <p className={`text-sm font-semibold ${
-                      darkMode ? "text-white" : "text-slate-700"
-                    }`}>
+                    <p className="text-xs font-medium text-muted-foreground">Resume Score</p>
+                    <p className="text-sm font-semibold text-card-foreground">
                       {resumeScore >= 80 ? "Excellent" : resumeScore >= 60 ? "Good" : "Needs Work"}
                     </p>
                   </div>
@@ -710,7 +642,6 @@ export default function EnhancedResumeBuilder({ initialContent }) {
               tabs={builderTabs}
               value={activeBuilderTab}
               onValueChange={setActiveBuilderTab}
-              darkMode={darkMode}
             />
 
             <AnimatePresence mode="wait">
@@ -723,7 +654,6 @@ export default function EnhancedResumeBuilder({ initialContent }) {
                 >
                   <SectionManager 
                     onSectionsChange={setEnabledSections}
-                    darkMode={darkMode}
                   />
                 </motion.div>
               )}
@@ -737,24 +667,15 @@ export default function EnhancedResumeBuilder({ initialContent }) {
                 >
                   <AISuggestions 
                     onApplySuggestion={handleAISuggestion}
-                    darkMode={darkMode}
                   />
                 </motion.div>
               )}
             </AnimatePresence>
 
             {/* Template Quick Select */}
-            <Card className={`border-0 shadow-xl transition-colors ${
-              darkMode ? "bg-gray-800 border-gray-700" : "bg-white"
-            }`}>
-              <CardHeader className={`bg-gradient-to-r border-b ${
-                darkMode 
-                  ? "from-gray-700 to-orange-900/50 border-gray-700" 
-                  : "from-gray-50 to-orange-50/50 border-gray-200"
-              }`}>
-                <CardTitle className={`flex items-center gap-2 text-lg ${
-                  darkMode ? "text-white" : "text-gray-900"
-                }`}>
+            <Card className="border-0 shadow-xl bg-card">
+              <CardHeader className="bg-gradient-to-r border-b from-accent to-accent/50 border-border">
+                <CardTitle className="flex items-center gap-2 text-lg text-card-foreground">
                   <LayoutTemplate className="h-5 w-5" />
                   Quick Templates
                 </CardTitle>
@@ -764,16 +685,10 @@ export default function EnhancedResumeBuilder({ initialContent }) {
                   <button
                     key={template.id}
                     onClick={() => handleTemplateSelect(template)}
-                    className={`w-full text-left p-3 rounded-xl border transition-all duration-200 ${
-                      darkMode
-                        ? "border-gray-600 hover:border-orange-500 hover:bg-orange-900/20 text-white"
-                        : "border-gray-200 hover:border-orange-300 hover:bg-orange-50/50 text-gray-900"
-                    }`}
+                    className="w-full text-left p-3 rounded-xl border transition-all duration-200 border-border hover:border-primary hover:bg-accent/50 text-card-foreground"
                   >
                     <div className="font-medium">{template.name}</div>
-                    <div className={`text-sm mt-1 ${
-                      darkMode ? "text-gray-400" : "text-gray-600"
-                    }`}>{template.description}</div>
+                    <div className="text-sm mt-1 text-muted-foreground">{template.description}</div>
                   </button>
                 ))}
               </CardContent>
@@ -800,24 +715,18 @@ export default function EnhancedResumeBuilder({ initialContent }) {
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
                   transition={{ duration: 0.3 }}
-                  className={`rounded-2xl shadow-xl border p-8 ${
-                    darkMode 
-                      ? "bg-gray-800 border-gray-700" 
-                      : "bg-white border-gray-100"
-                  }`}
+                  className="rounded-2xl shadow-xl border p-8 bg-card border-border"
                 >
                   <div className="text-center py-12">
-                    <div className="w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                    <div className="w-16 h-16 bg-gradient-to-r from-primary to-primary/70 rounded-2xl flex items-center justify-center mx-auto mb-4">
                       {activeBuilderTab === "sections" && <GripVertical className="h-8 w-8 text-white" />}
                       {activeBuilderTab === "ai" && <Sparkles className="h-8 w-8 text-white" />}
                     </div>
-                    <h3 className={`text-xl font-bold mb-2 ${
-                      darkMode ? "text-white" : "text-gray-900"
-                    }`}>
+                    <h3 className="text-xl font-bold mb-2 text-card-foreground">
                       {activeBuilderTab === "sections" && "Manage Sections"}
                       {activeBuilderTab === "ai" && "AI Enhancements"}
                     </h3>
-                    <p className={darkMode ? "text-gray-400" : "text-gray-600"}>
+                    <p className="text-muted-foreground">
                       {activeBuilderTab === "sections" && "Drag and drop to reorder sections, toggle visibility to create the perfect layout."}
                       {activeBuilderTab === "ai" && "Get smart suggestions to improve your resume content and increase your chances."}
                     </p>
@@ -834,7 +743,7 @@ export default function EnhancedResumeBuilder({ initialContent }) {
         <Button
           onClick={handleGeneratePDF}
           disabled={isGenerating}
-          className="rounded-full w-14 h-14 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 shadow-2xl shadow-blue-500/25"
+          className="rounded-full w-14 h-14 bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary shadow-2xl shadow-primary/25"
         >
           <Download className="h-6 w-6" />
         </Button>
