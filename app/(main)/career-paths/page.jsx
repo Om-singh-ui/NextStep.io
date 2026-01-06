@@ -62,12 +62,13 @@ export default function CareerPathsPage() {
     return (
         <div className="container mx-auto px-4 py-8">
             <div className="mb-10 text-center">
-                <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight 
-    bg-gradient-to-r from-blue-600 via-purple-500 to-pink-500 
-    bg-clip-text text-transparent dark:from-blue-400 dark:via-purple-400 dark:to-pink-400 
-    animate-gradient">
+                <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight
+bg-gradient-to-r from-gray-800 via-gray-900 to-black
+dark:from-gray-200 dark:via-gray-100 dark:to-white
+bg-clip-text text-transparent">
                     Career Path Explorer
                 </h1>
+
                 <p className="mt-3 text-lg text-gray-700 dark:text-gray-300 max-w-2xl mx-auto leading-relaxed">
                     Plan your journey from{" "}
                     <span className="font-semibold text-primary">
