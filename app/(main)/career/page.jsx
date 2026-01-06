@@ -3,19 +3,11 @@
 import React, { useState, useEffect } from "react";
 
 const ComingSoonPage = () => {
-  const [darkMode, setDarkMode] = useState(false);
   const [bellActive, setBellActive] = useState(false);
   const [mounted, setMounted] = useState(false);
 
-  // ✅ Ensure hydration safety on Vercel (avoid window undefined)
   useEffect(() => {
     setMounted(true);
-    if (
-      window.matchMedia &&
-      window.matchMedia("(prefers-color-scheme: dark)").matches
-    ) {
-      setDarkMode(true);
-    }
   }, []);
 
   const handleExploreClick = () => {
@@ -27,7 +19,20 @@ const ComingSoonPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-950 dark:via-black dark:to-gray-900 text-gray-900 dark:text-gray-100 flex items-center justify-center px-6 transition-colors duration-500">
+    <div className="min-h-screen text-gray-900 dark:text-gray-100 flex items-center justify-center px-6 transition-colors duration-500">
+      {/* Remove the conflicting background gradient and use global background */}
+      <div className="absolute inset-0 -z-10 overflow-hidden pointer-events-none">
+        {/* Keep only subtle decorative elements that won't conflict */}
+        <div
+          className="absolute w-[400px] sm:w-[500px] h-[400px] sm:h-[500px] rounded-full blur-3xl top-10 left-10 bg-gradient-to-r from-indigo-500/5 to-purple-600/5 animate-pulse"
+          aria-hidden="true"
+        />
+        <div
+          className="absolute w-[350px] sm:w-[450px] h-[350px] sm:h-[450px] rounded-full blur-3xl bottom-10 right-10 bg-gradient-to-r from-blue-400/5 to-cyan-500/5 animate-pulse delay-1000"
+          aria-hidden="true"
+        />
+      </div>
+
       <div className="w-full max-w-5xl">
         {/* Header */}
         <header className="flex justify-between items-center mb-16">
@@ -114,7 +119,7 @@ const ComingSoonPage = () => {
               🚧 Feature Coming Soon
             </h2>
             <p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto leading-relaxed">
-              We’re building something amazing! This feature is currently in
+              We're building something amazing! This feature is currently in
               development and will be released in upcoming versions of{" "}
               <span className="text-indigo-500 font-medium">NextStep.io</span>.
             </p>
