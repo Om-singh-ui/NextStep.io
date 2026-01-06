@@ -22,7 +22,6 @@ import { useState, useEffect } from "react";
 import Orb from "@/components/visuals/Orb";
 import ScrollVelocity from "@/components/visuals/ScrollVelocity";
 
-
 // Particle component for background animations
 const ClientParticle = ({ index }) => {
   const [position, setPosition] = useState({ top: "50%", left: "50%" });
@@ -54,31 +53,32 @@ const ClientParticle = ({ index }) => {
   );
 };
 
-// Reusable Background Component based on Hero section
 const HeroBackground = () => {
   return (
-    <div className="absolute inset-0 -z-10 overflow-hidden">
+    <div className="absolute inset-0 -z-10 overflow-hidden pointer-events-none">
+      {/* Very subtle gradient overlays that won't conflict with global background */}
       <div
-        className="absolute w-[500px] sm:w-[700px] h-[500px] sm:h-[700px] rounded-full blur-3xl top-0 -left-40 sm:-left-60 bg-gradient-to-r from-indigo-500/40 to-purple-600/20 animate-pulse"
+        className="absolute w-[500px] sm:w-[700px] h-[500px] sm:h-[700px] rounded-full blur-3xl top-0 -left-40 sm:-left-60 bg-gradient-to-r from-indigo-500/10 to-purple-600/8 animate-pulse"
         aria-hidden="true"
       />
       <div
-        className="absolute w-[400px] sm:w-[600px] h-[400px] sm:h-[600px] rounded-full blur-3xl bottom-0 right-0 bg-gradient-to-r from-cyan-400/40 to-emerald-400/20 animate-pulse delay-700"
+        className="absolute w-[400px] sm:w-[600px] h-[400px] sm:h-[600px] rounded-full blur-3xl bottom-0 right-0 bg-gradient-to-r from-cyan-400/10 to-emerald-400/8 animate-pulse delay-700"
         aria-hidden="true"
       />
 
-      <div className="absolute inset-0 opacity-25" aria-hidden="true">
+      {/* Even more subtle grid pattern */}
+      <div className="absolute inset-0 opacity-15" aria-hidden="true">
         <div
-          className="absolute inset-0 bg-[linear-gradient(to_right,#80808010_1px,transparent_1px),linear-gradient(to_bottom,#80808010_1px,transparent_1px)] bg-[size:24px_24px] sm:bg-[size:28px_28px] [mask-image:radial-gradient(ellipse_70%_70%_at_50%_50%,#000_90%,transparent_100%)]"
+          className="absolute inset-0 bg-[linear-gradient(to_right,#80808008_1px,transparent_1px),linear-gradient(to_bottom,#80808008_1px,transparent_1px)] bg-[size:32px_32px] sm:bg-[size:36px_36px] [mask-image:radial-gradient(ellipse_70%_70%_at_50%_50%,#000_85%,transparent_100%)]"
           aria-hidden="true"
         />
       </div>
 
-      <div className="absolute inset-0 bg-background/80 backdrop-blur-2xl" aria-hidden="true" />
+      {/* Add a subtle noise texture for depth without blocking background */}
+      <div className="absolute inset-0 opacity-[0.02] bg-noise" aria-hidden="true" />
     </div>
   );
 };
-
 // Glowing Features Grid Component
 const GlowingFeaturesGrid = () => {
   const features = [
@@ -176,16 +176,17 @@ export default function Home() {
     <div>
       <HeroSection />
 
-      {/* Features Section — Orb Hero with Theme-Aware Text */}
+      {/* Features Section — Orb Hero with Theme-Aware Text - FIXED */}
       <section
         id="features"
-        className="relative w-full bg-background overflow-hidden"
+        className="relative w-full overflow-hidden"
       >
         <HeroBackground />
 
-        {/* Background effects */}
+        {/* Background effects - FIXED: Removed conflicting radial gradient */}
         <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(59,130,246,0.12)_0%,transparent_70%)]" />
+          {/* REMOVED THIS: It was covering the global background */}
+          {/* <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(59,130,246,0.12)_0%,transparent_70%)]" /> */}
           <div className="absolute inset-0 bg-grid-white/[0.04] dark:bg-grid-white/[0.08] bg-[size:40px_40px]" />
         </div>
 
@@ -286,12 +287,10 @@ export default function Home() {
         </div>
       </section>
 
-
-
       {/* Testimonials Section */}
-      <section>
+      <section className="relative py-24">
         <motion.div
-          className="relative py-24"
+          className="relative"
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           transition={{ duration: 0.8 }}
@@ -378,10 +377,11 @@ export default function Home() {
             className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[70%] h-24
                  bg-gradient-to-r from-neutral-300/10 via-neutral-400/10 to-neutral-500/10
                  dark:from-neutral-700/10 dark:via-neutral-600/10 dark:to-neutral-500/10
-                 blur-3xl opacity-40"
+                 blur-3xl opacity-40 pointer-events-none"
           ></div>
         </motion.div>
       </section>
+
       <ScrollVelocity
         texts={[
           'NextStep.io, Your Next Move',
@@ -391,13 +391,11 @@ export default function Home() {
         className="custom-scroll-text"
       />
 
-
-
-      {/* How It Works Section */}
-      <section className="relative w-full py-28 bg-background overflow-hidden">
+      {/* How It Works Section - FIXED: Added background class */}
+      <section className="relative w-full py-28 overflow-hidden">
         <HeroBackground />
 
-        {/* SUBTLE BACKGROUND EFFECTS */}
+        {/* SUBTLE BACKGROUND EFFECTS - KEEP THESE (they're transparent) */}
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute top-1/4 left-1/4 w-[600px] h-[600px] bg-primary/10 dark:bg-primary/5 blur-[200px]" />
           <div className="absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-blue-400/10 dark:bg-blue-300/5 blur-[150px]" />
@@ -744,7 +742,7 @@ export default function Home() {
       </section>
 
       {/* FAQ section */}
-      <section id="faq" className="relative w-full py-12 md:py-24 bg-background/50 overflow-hidden">
+      <section id="faq" className="relative w-full py-12 md:py-24 overflow-hidden">
         <HeroBackground />
         <div className="container mx-auto px-4 md:px-6">
           <motion.div
@@ -869,9 +867,9 @@ export default function Home() {
       </section>
 
       {/* Call-to-action section */}
-      <section className="w-full py-24 md:py-32 bg-gradient-to-br from-background via-background to-primary/5 relative overflow-hidden">
+      <section className="w-full py-24 md:py-32 relative overflow-hidden">
         {/* Background animation elements */}
-        <div className="absolute inset-0 overflow-hidden">
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <motion.div
             className="absolute -top-40 -right-40 w-80 h-80 bg-primary/10 rounded-full blur-3xl"
             animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.5, 0.3] }}
@@ -889,7 +887,7 @@ export default function Home() {
           />
 
           {/* Grid Pattern */}
-          <div className="absolute inset-0 opacity-10">
+          <div className="absolute inset-0 opacity-10 pointer-events-none">
             <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
               <defs>
                 <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
