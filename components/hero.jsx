@@ -399,8 +399,8 @@ const Hero = () => {
 
   return (
     <section className="relative min-h-[80vh] mt-12 sm:mt-16 flex flex-col items-center justify-center py-6 sm:py-8 px-4 overflow-hidden">
-      {/* Enhanced Background Effects */}
-      <div className="absolute inset-0 -z-10 overflow-hidden">
+      {/* Enhanced Background Effects - REMOVED bg-background/90 CONFLICT */}
+      <div className="absolute inset-0 -z-10 overflow-hidden pointer-events-none">
         <div
           className="absolute w-[400px] sm:w-[500px] h-[400px] sm:h-[500px] rounded-full blur-3xl top-10 -left-20 sm:-left-32 bg-gradient-to-r from-blue-500/10 to-purple-600/5 animate-pulse"
           aria-hidden="true"
@@ -417,8 +417,6 @@ const Hero = () => {
             aria-hidden="true"
           />
         </div>
-
-        <div className="absolute inset-0 bg-background/90 backdrop-blur-xl" aria-hidden="true" />
       </div>
 
       {/* Optimized Hero Content */}
@@ -605,7 +603,7 @@ const Hero = () => {
             </div>
 
             {/* Enhanced ambient glow */}
-            <div className="absolute -z-10 inset-0 blur-[120px] opacity-80">
+            <div className="absolute -z-10 inset-0 blur-[120px] opacity-80 pointer-events-none">
               <div className="absolute inset-0 bg-gradient-to-br from-blue-500/30 via-purple-500/20 to-indigo-500/25 animate-pulse" />
               <div className="absolute inset-0 bg-gradient-to-tl from-emerald-500/20 via-cyan-500/15 to-blue-500/20 animate-pulse delay-1000" />
             </div>
@@ -616,7 +614,7 @@ const Hero = () => {
         </div>
       </div>
 
-      {/* Optimized Video Popup */}
+      {/* Optimized Video Popup - REMOVED conflicting background colors */}
       <AnimatePresence>
         {showVideo && (
           <motion.div
@@ -628,7 +626,7 @@ const Hero = () => {
             transition={{ duration: 0.2, ease: "easeOut" }}
           >
             <motion.div
-              className="relative w-full max-w-4xl max-h-[85vh] overflow-y-auto bg-white dark:bg-slate-900 rounded-lg sm:rounded-xl shadow-xl border border-slate-200 dark:border-slate-700"
+              className="relative w-full max-w-4xl max-h-[85vh] overflow-y-auto rounded-lg sm:rounded-xl shadow-xl border border-slate-200 dark:border-slate-700 backdrop-blur-lg bg-gradient-to-br from-white/90 to-white/80 dark:from-slate-900/90 dark:to-slate-800/80"
               initial={{ scale: 0.95, opacity: 0, y: 10 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 0.95, opacity: 0, y: 10 }}
@@ -639,7 +637,7 @@ const Hero = () => {
               aria-labelledby="popup-title"
             >
               {/* Optimized Header */}
-              <div className="sticky top-0 z-10 flex items-center justify-between p-3 sm:p-4 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 backdrop-blur-lg border-b border-slate-200 dark:border-slate-700">
+              <div className="sticky top-0 z-10 flex items-center justify-between p-3 sm:p-4 backdrop-blur-lg border-b border-slate-200 dark:border-slate-700 bg-gradient-to-r from-blue-50/90 to-purple-50/90 dark:from-blue-900/30 dark:to-purple-900/30">
                 <div className="flex items-center gap-2 sm:gap-3">
                   <div className="p-1.5 sm:p-2 rounded-lg bg-gradient-to-r from-blue-500 to-purple-600 shadow-sm">
                     <Play className="w-3 h-3 sm:w-4 sm:h-4 text-white" />
@@ -667,7 +665,7 @@ const Hero = () => {
               <div className="flex flex-col lg:flex-row">
                 {/* Video Section */}
                 <div className="flex-1 p-3 sm:p-4 space-y-3 sm:space-y-4">
-                  <div className="relative bg-black rounded-lg overflow-hidden aspect-video border border-white/20">
+                  <div className="relative rounded-lg overflow-hidden aspect-video border border-white/20">
                     <iframe
                       src="https://www.youtube.com/embed/PDk4G1Ck6A0?autoplay=1&mute=0"
                       title="CareerFlow Demo"
@@ -702,7 +700,7 @@ const Hero = () => {
                 </div>
 
                 {/* Features Carousel */}
-                <div className="flex-1 p-3 sm:p-4 bg-gradient-to-b from-blue-900/5 to-purple-900/5 border-t lg:border-t-0 lg:border-l border-slate-200 dark:border-slate-700">
+                <div className="flex-1 p-3 sm:p-4 lg:border-l border-slate-200 dark:border-slate-700">
                   <div className="flex items-center justify-between mb-3 sm:mb-4">
                     <h3 className="text-sm sm:text-base font-semibold text-slate-900 dark:text-white flex items-center gap-1.5 sm:gap-2">
                       <Sparkles className="w-4 h-4 sm:w-5 sm:h-5 text-yellow-500" />
