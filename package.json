@@ -46,7 +46,7 @@
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
     "framer-motion": "^12.23.12",
-    "html2pdf.js": "^0.12.1",
+    "html2pdf.js": "^0.14.0",
     "inngest": "^3.40.2",
     "jsonwebtoken": "^9.0.2",
     "lucide-react": "^0.542.0",
