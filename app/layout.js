@@ -1,23 +1,24 @@
-import { Geist, Geist_Mono } from "next/font/google";
+import { Space_Grotesk, Inter } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import Header from "@/components/header";
 import { ClerkProvider } from "@clerk/nextjs";
 import { dark } from "@clerk/themes";
 import Footer from "@/components/footer";
-import HeroSection from "@/components/hero";
 import Chatbot from "@/components/chatbot";
-import { icons } from "lucide-react";
-import { image } from "pdfkit";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+/* Headings */
+const spaceGrotesk = Space_Grotesk({
   subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700"],
+  variable: "--font-heading",
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+/* Body / UI */
+const inter = Inter({
   subsets: ["latin"],
+  weight: ["400", "500", "600"],
+  variable: "--font-body",
 });
 
 export const metadata = {
@@ -30,20 +31,13 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        suppressHydrationWarning
-        className={`${geistSans.variable} ${geistMono.variable} antialiased flex flex-col min-h-screen`}
+        className={`${spaceGrotesk.variable} ${inter.variable} antialiased flex flex-col min-h-screen`}
       >
-        <ClerkProvider
-          appearance={{
-            baseTheme: dark,
-          }}
-        >
+        <ClerkProvider appearance={{ baseTheme: dark }}>
           <ThemeProvider>
             <Header />
             <Chatbot />
-            <main suppressHydrationWarning className="flex-grow">
-              {children}
-            </main>
+            <main className="flex-grow">{children}</main>
             <Footer />
           </ThemeProvider>
         </ClerkProvider>
