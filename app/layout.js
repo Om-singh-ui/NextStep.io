@@ -21,6 +21,12 @@ const inter = Inter({
   variable: "--font-body",
 });
 
+export const metadata = {
+  title: "NextStep.io - AI-Powered Career Growth Platform",
+  description: "Transforming Career Growth Through AI Precision.",
+  icons: "/logo.png",
+};
+
 export default function RootLayout({ children }) {
   return (
     <html lang="en" suppressHydrationWarning>
