@@ -47,7 +47,7 @@
     "date-fns": "^4.1.0",
     "framer-motion": "^12.23.12",
     "html2pdf.js": "^0.14.0",
-    "inngest": "^3.40.2",
+    "inngest": "^4.2.4",
     "jsonwebtoken": "^9.0.2",
     "lucide-react": "^0.542.0",
     "motion": "^12.23.26",
