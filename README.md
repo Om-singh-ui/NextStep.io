@@ -21,9 +21,7 @@
 
 ## Overview
 
-<img width="1741" height="898" alt="image" src="https://github.com/user-attachments/assets/b835336c-c982-4351-941c-088c44e4795a" />
-<br />
-<img width="1757" height="905" alt="Screenshot 2025-12-01 220012" src="https://github.com/user-attachments/assets/67ed0309-54c0-4ee0-bdf9-cea2c953fe0d" />
+NextStep.io transforms resumes and transcripts into actionable career insights, immersive 3D visualizations, and personalized growth paths. The platform leverages Google Gemini AI to extract skills, map career trajectories, and deliver automated guidance all within an interactive dashboard experience.
 
 ### Mission
 
