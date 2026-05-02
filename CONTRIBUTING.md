@@ -1,220 +1,116 @@
 # Contributing to NextStep.io
 
-Welcome, and thank you for your interest in contributing to NextStep.io!
-We’re building a community-driven platform designed to empower learners, job-seekers, and developers and your contributions play a crucial role in shaping that vision.
+Welcome, and thank you for your interest in contributing to **NextStep.io**!
+We're building a community-driven platform designed to empower learners, job-seekers, and developers — and your contributions play a crucial role in shaping that vision.
 
 This guide outlines how both new and experienced contributors can get involved: from reporting bugs and suggesting new features to improving documentation or contributing production-ready code. Whether you're fixing a typo or architecting a major feature, every contribution helps strengthen the NextStep.io ecosystem.
- **Audience:** developers, designers, writers, mentors, and community members who want to help make NextStep.io better.
 
+**Audience:** Developers, designers, writers, mentors, and community members who want to help make NextStep.io better.
 
-## Table of contents
+[![Contributions Welcome](https://img.shields.io/badge/Contributions-Welcome-brightgreen)](CONTRIBUTING.md)
+[![Code of Conduct](https://img.shields.io/badge/Code%20of%20Conduct-Contributor%20Covenant-ff69b4)](CODE_OF_CONDUCT.md)
+[![PRs Welcome](https://img.shields.io/badge/PRs-Welcome-181717?logo=github)](https://github.com/Om-singh-ui/NextStep.io/pulls)
+[![First Timers Friendly](https://img.shields.io/badge/First_Timers-Friendly-blue)](https://github.com/Om-singh-ui/NextStep.io/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22)
 
-* [Code of Conduct](#code-of-conduct)
-* [How can I contribute?](#how-can-i-contribute)
+## Table of Contents
 
-  * [Report a bug](#report-a-bug)
-  * [Request a feature](#request-a-feature)
-  * [Improve docs](#improve-docs)
-  * [Submit code (PRs)](#submit-code-prs)
-* [Getting started (local development)](#getting-started-local-development)
-* [Branching & workflow](#branching--workflow)
-* [Commit message convention](#commit-message-convention)
-* [Coding style & linting](#coding-style--linting)
-* [Testing](#testing)
-* [Review process](#review-process)
-* [Security & responsible disclosure](#security--responsible-disclosure)
-* [License and copyright](#license-and-copyright)
-* [Acknowledgements & contacts](#acknowledgements--contacts)
+- [Code of Conduct](#code-of-conduct)
+- [How Can I Contribute?](#how-can-i-contribute)
+  - [Report a Bug](#report-a-bug)
+  - [Request a Feature](#request-a-feature)
+  - [Improve Documentation](#improve-documentation)
+  - [Submit Code (PRs)](#submit-code-prs)
+- [Getting Started (Local Development)](#getting-started-local-development)
+- [Project Structure](#project-structure)
+- [Branching & Workflow](#branching--workflow)
+- [Commit Message Convention](#commit-message-convention)
+- [Coding Style & Linting](#coding-style--linting)
+- [Testing](#testing)
+- [Review Process](#review-process)
+- [Security & Responsible Disclosure](#security--responsible-disclosure)
+- [License and Copyright](#license-and-copyright)
+- [Acknowledgements & Contacts](#acknowledgements--contacts)
 
 ## Code of Conduct
 
-This project follows a [**Contributor Covenant**](https://www.contributor-covenant.org/) (v2) — we expect all community members to be professional, respectful, and inclusive. By participating you agree to abide by this code. If you experience or witness unacceptable behavior, contact the maintainers immediately (see **Contacts** below).
+This project follows the [**Contributor Covenant**](https://www.contributor-covenant.org/) (v2.1) — we expect all community members to be professional, respectful, and inclusive. By participating, you agree to abide by this code. If you experience or witness unacceptable behavior, contact the maintainers immediately (see [Acknowledgements & Contacts](#acknowledgements--contacts)).
 
-## How can I contribute?
+[![Code of Conduct](https://img.shields.io/badge/Contributor%20Covenant-2.1-4baaaa)](CODE_OF_CONDUCT.md)
 
-### Report a bug
+## How Can I Contribute?
 
-1. Search existing issues to avoid duplicates.
-2. Open a new issue and include:
+### Report a Bug
 
-   * A clear title (what's broken)
-   * Steps to reproduce
-   * Expected vs. actual behavior
-   * Environment (OS, Node version, browser, device)
-   * Relevant logs or screenshots
+[![Bug Reports](https://img.shields.io/badge/Bug-Report-red)](https://github.com/Om-singh-ui/NextStep.io/issues/new?template=bug_report.md)
 
-### Request a feature
+1. Search [existing issues](https://github.com/Om-singh-ui/NextStep.io/issues) to avoid duplicates
+2. Use the bug report template when creating a new issue
+3. Include the following:
+   - Clear description of the bug
+   - Steps to reproduce
+   - Expected vs actual behavior
+   - Screenshots or screen recordings if applicable
+   - Environment details (OS, browser, Node version)
 
-1. Check if there's an open discussion or issue.
-2. Create a feature-request issue with:
+### Request a Feature
 
-   * Problem statement
-   * Proposed solution or user flow
-   * Who benefits and why
-   * Possible alternatives
+[![Feature Requests](https://img.shields.io/badge/Feature-Request-blue)](https://github.com/Om-singh-ui/NextStep.io/issues/new?template=feature_request.md)
 
-### Improve docs
+1. Search [existing feature requests](https://github.com/Om-singh-ui/NextStep.io/issues) to avoid duplicates
+2. Use the feature request template
+3. Describe:
+   - The problem you're solving
+   - Your proposed solution
+   - Any alternatives you've considered
+   - Potential impact on users
 
-Docs improvements are the easiest way to start contributing.
+### Improve Documentation
 
-* Fork the repo, make changes to `/docs` or the relevant markdown files.
-* Add examples, clarify steps, or fix typos.
-* Submit a PR referencing the issue (if any).
+[![Documentation](https://img.shields.io/badge/Docs-Improvement-success)](https://github.com/Om-singh-ui/NextStep.io/wiki)
 
-### Submit code (PRs)
+- Fix typos, improve clarity, or add examples
+- Create tutorials or guides for the community
+- Submit changes via pull request with the `documentation` label
 
-1. Fork the repository and create a branch named like `feature/<short-description>` or `fix/<short-description>`.
-2. Implement small, focused changes.
-3. Add or update tests where applicable.
-4. Run linters and tests locally.
-5. Open a Pull Request against `master` and include:
+### Submit Code (PRs)
 
-   * A descriptive title
-   * What problem the PR solves
-   * Notes on migration, breaking changes, or runtime impact
-   * Screenshots or screencasts for UI changes
+[![Pull Requests](https://img.shields.io/badge/Pull_Requests-Review-6f42c1)](https://github.com/Om-singh-ui/NextStep.io/pulls)
 
-## Getting started (local development)
+1. Fork the repository
+2. Create a feature branch
+3. Write clear, well-documented code
+4. Add tests if applicable
+5. Ensure all checks pass
+6. Submit a pull request using the PR template
 
-> Assumes Node.js LTS and Git are installed.
+## Getting Started (Local Development)
+
+[![Setup](https://img.shields.io/badge/Setup-Local_Development-0a0a0a)](https://github.com/Om-singh-ui/NextStep.io#installation)
+
+### Prerequisites
+
+| Tool | Version |
+|---|---|
+| Node.js | 18+ |
+| pnpm | 8+ |
+| PostgreSQL | 15+ |
+
+### Setup
 
 ```bash
-# clone your fork
-git clone https://github.com/Om-singh-ui/NextStep.io.git
+# Clone your fork
+git clone https://github.com/YOUR_USERNAME/NextStep.io.git
 cd NextStep.io
 
-# install dependencies
-npm install  
+# Install dependencies
+pnpm install
 
-# run the dev server
-npm dev
+# Configure environment
+cp .env.example .env
 
-# run tests
-npm test
+# Setup database
+pnpm prisma generate
+pnpm prisma migrate dev
 
-# run linters
-npm lint
-```
-
-Add any environment variables to `.env.local` based on `.env.example`. Do not commit secrets.
-
-## Branching & workflow
-
-We follow a simple feature-branch workflow:
-
-* Create branches from `master`.
-* Keep PRs small and focused.
-* Use `master` as the production-ready branch; merges happen only after review and CI pass.
-
-Branch name convention examples:
-
-* `feature/auth-ui-improve`
-* `fix/onboarding-redirect`
-* `chore/deps-update`
-
-## Commit message convention
-
-We use concise, conventional-style commit messages. Examples:
-
-```
-feat(auth): add magic-link login
-fix(onboarding): prevent re-onboarding for existing users
-docs(readme): clarify setup steps
-chore(deps): bump tailwind to v3.4
-```
-
-Good commits make change history readable and help with automated changelogs.
-
----
-
-## Coding style & linting
-
-* Tailwind CSS + shadcn/ui for UI components.
-* React + Next.js where applicable.
-* Run `npm lint` before opening a PR. Lint and formatting are enforced via Prettier + ESLint.
-
-Accessibility:
-
-* Aim for semantic HTML, keyboard accessibility, and color contrast that meets WCAG AA where possible.
-
-
-## Testing
-
-* Add unit tests for logic and integration tests for components where feasible.
-* Run the full test suite with `npm test`.
-* If adding new features, include tests that validate expected behavior.
-
-
-## Review process
-
-* PRs should have a clear description and link to the related issue (if any).
-* Reviewers will check for correctness, tests, performance, and accessibility.
-* Maintain a positive, educational review style — suggest improvements with examples.
-
-Merge conditions:
-
-* CI passing
-* At least one approving review from a maintainer
-* No unresolved conversations
-
-## Security & responsible disclosure
-
-If you discover a security vulnerability, **do not** open a public issue. Instead, email the maintainers at `security@nextstep.io` (or use the project's private security contact) with details. We will acknowledge receipt and coordinate a fix.
-
-## License and copyright
-
-By contributing you agree that your contributions will be licensed under the project's existing license (see `LICENSE`). If you have concerns, discuss them with the maintainers before submitting.
-
-## Acknowledgements & contacts
-
-* Maintainers: `@Om-sing-ui`, `@_`
-* Mailing list / Discord / Slack: add links or invite here
-
-If you need help or want to discuss a contribution idea, open an issue labelled `discussion` or contact a maintainer directly.
-
-## Templates 
-
-### Pull Request template
-
-```md
-<!-- Describe the change and why it is needed -->
-
-## Related Issue
-Closes #<issue-number>
-
-## Proposed Changes
--
--
-
-## Checklist
-- [ ] I have read the contributing guidelines
-- [ ] Tests added/updated
-- [ ] Linting passes
-- [ ] Documentation updated (if applicable)
-```
-
-### Issue template (bug)
-
-```md
-**Describe the bug**
-A clear and concise description of what the bug is.
-
-**To Reproduce**
-Steps to reproduce the behavior:
-1.
-2.
-3.
-
-**Expected behavior**
-A clear and concise description of what you expected to happen.
-
-**Environment**
-- OS:
-- Node:
-- Browser:
-```
-
-We appreciate your contribution to NextStep.io. Every improvement you make advances our mission, enhances our ecosystem, and supports a growing community of future-ready talent. 🚀
-
-*Last updated: 2025-11-25*
--Om Singh
+# Start development server
+pnpm dev
